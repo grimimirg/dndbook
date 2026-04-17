@@ -16,8 +16,9 @@ RUN uv pip install --system -r pyproject.toml
 
 COPY . .
 
-RUN mkdir -p uploads
+RUN mkdir -p uploads && \
+    chmod +x docker-entrypoint.sh init-db.sh
 
 EXPOSE 5000
 
-CMD ["python", "app.py"]
+ENTRYPOINT ["./docker-entrypoint.sh"]

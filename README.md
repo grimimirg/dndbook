@@ -4,6 +4,8 @@
 
 ## 📑 Table of Contents
 
+- [🔧 Setup Scripts Overview](#-setup-scripts-overview)
+  - [Deployment Scenarios](#deployment-scenarios)
 - [⚡ Quick Setup (Recommended)](#-quick-setup-recommended)
 - [🐳 Quick Start with Docker Compose (Recommended for Production)](#-quick-start-with-docker-compose-recommended-for-production)
   - [Prerequisites](#prerequisites)
@@ -31,6 +33,39 @@
   - [Nginx Configuration](#nginx-configuration)
   - [Setup Instructions](#setup-instructions)
   - [Notes](#notes)
+
+## 🔧 Setup Scripts Overview
+
+This project includes several setup scripts for different deployment scenarios:
+
+| Script | Location | Purpose | When to Use |
+|--------|----------|---------|-------------|
+| `setup.sh` | Root | Complete local development setup | First time local development |
+| `setup.sh` | `be/` | Backend-only local setup | Backend development only |
+| `setup.sh` | `fe/` | Frontend-only local setup | Frontend development only |
+| `setup-postgres.sh` | `be/` | Creates local PostgreSQL container | Local development without Docker Compose |
+| `init-db.sh` | `be/` | Initializes database tables and admin user | Manual database initialization (auto in Docker) |
+| `docker-entrypoint.sh` | `be/` | Docker container entrypoint | **Automatic** - runs in Docker containers |
+
+### Deployment Scenarios
+
+**🐳 Docker Compose (Production/Testing)**
+- Uses: `docker-compose.yml`
+- Database: Included PostgreSQL container
+- Initialization: **Automatic** via `docker-entrypoint.sh`
+- No manual scripts needed
+
+**🏠 Homelab (IaC)**
+- Uses: `docker-compose.yaml.template` + `nginx.conf.template`
+- Database: External `shared_postgres`
+- Initialization: **Automatic** via `docker-entrypoint.sh`
+- No manual scripts needed
+
+**💻 Local Development**
+- Uses: `setup.sh` scripts
+- Database: Local PostgreSQL via `setup-postgres.sh` OR existing instance
+- Initialization: Via `init-db.sh` (called by setup scripts)
+- Manual setup required
 
 ## ⚡ Quick Setup (Recommended)
 
@@ -123,18 +158,20 @@ The application will be available at:
 
 ### Initial Database Setup
 
-After all containers are running, initialize the database in a new terminal:
+The database is **automatically initialized** on first startup! The backend container will:
+1. Wait for PostgreSQL to be ready
+2. Check if tables exist
+3. If not, create tables and default admin user
+4. Start the Flask application
 
-```bash
-docker exec -it dndbook-backend ./init-db.sh
-```
-
-This creates the database tables and a default admin user:
+Default admin credentials:
 - **Username**: `admin`
 - **Email**: `admin@dndbook.local`
 - **Password**: Value from `ADMIN_PASSWORD` in `be/.env`
 
-> ⚠️ **Important**: Make sure to set a secure `ADMIN_PASSWORD` in your `be/.env` file before running the initialization script.
+> ⚠️ **Important**: Make sure to set a secure `ADMIN_PASSWORD` in your `be/.env` file before starting the containers.
+
+> 💡 **Manual initialization**: If needed, you can manually run `docker exec -it dndbook-backend ./init-db.sh`
 
 ### Data Persistence
 
@@ -469,13 +506,10 @@ The nginx template provides:
    ```bash
    docker compose up -d dndbook_backend dndbook_frontend
    ```
+   
+   > ℹ️ **Note**: The backend will automatically initialize the database on first startup if tables don't exist.
 
-6. **Initialize database** (first time only):
-   ```bash
-   docker exec -it dndbook_backend ./init-db.sh
-   ```
-
-7. **Reload nginx**:
+6. **Reload nginx**:
    ```bash
    docker exec nginx nginx -t
    docker exec nginx nginx -s reload
