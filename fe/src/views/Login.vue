@@ -9,14 +9,14 @@
         </select>
       </div>
       
-      <h1>{{ $t('app.title') }}</h1>
+      <h1>{{ t('app.title') }}</h1>
       
       <form @submit.prevent="handleSubmit">
         <div class="form-group">
           <input 
             v-model="username" 
             type="text" 
-            :placeholder="$t('auth.username')" 
+            :placeholder="t('auth.username')" 
             required
           />
         </div>
@@ -25,7 +25,7 @@
           <input 
             v-model="email" 
             type="email" 
-            :placeholder="$t('auth.email')" 
+            :placeholder="t('auth.email')" 
             required
           />
         </div>
@@ -34,7 +34,7 @@
           <input 
             v-model="password" 
             type="password" 
-            :placeholder="$t('auth.password')" 
+            :placeholder="t('auth.password')" 
             required
           />
         </div>
@@ -42,13 +42,13 @@
         <div v-if="error" class="error">{{ error }}</div>
         
         <button type="submit" class="primary" :disabled="loading">
-          {{ loading ? $t('common.loading') : (isRegister ? $t('auth.register') : $t('auth.login')) }}
+          {{ loading ? t('common.loading') : (isRegister ? t('auth.register') : t('auth.login')) }}
         </button>
       </form>
       
       <div class="toggle">
         <button @click="isRegister = !isRegister" class="secondary">
-          {{ isRegister ? $t('auth.alreadyHaveAccount') : $t('auth.needAccount') }}
+          {{ isRegister ? t('auth.alreadyHaveAccount') : t('auth.needAccount') }}
         </button>
       </div>
     </div>
@@ -62,7 +62,7 @@ import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 
 const router = useRouter()
-const { locale } = useI18n()
+const { locale, t } = useI18n()
 const authStore = useAuthStore()
 
 const username = ref('')

@@ -2,7 +2,7 @@
   <div class="home">
     <header class="header">
       <div class="header-content">
-        <h1>{{ $t('app.title') }}</h1>
+        <h1>{{ t('app.title') }}</h1>
         <div class="user-info">
           <select v-model="currentLocale" @change="changeLocale" class="language-selector">
             <option value="en">English</option>
@@ -10,7 +10,7 @@
             <option value="de">Deutsch</option>
           </select>
           <span>{{ authStore.user?.username }}</span>
-          <button @click="handleLogout" class="secondary">{{ $t('auth.logout') }}</button>
+          <button @click="handleLogout" class="secondary">{{ t('auth.logout') }}</button>
         </div>
       </div>
     </header>
@@ -22,28 +22,28 @@
             @click="changeSortBy('created')" 
             :class="{ primary: postsStore.sortBy === 'created', secondary: postsStore.sortBy !== 'created' }"
           >
-            {{ $t('sort.byCreated') }}
+            {{ t('sort.byCreated') }}
           </button>
           <button 
             @click="changeSortBy('updated')" 
             :class="{ primary: postsStore.sortBy === 'updated', secondary: postsStore.sortBy !== 'updated' }"
           >
-            {{ $t('sort.byUpdated') }}
+            {{ t('sort.byUpdated') }}
           </button>
         </div>
         
         <PostCreator v-if="campaignsStore.currentCampaign" />
         
         <div v-if="postsStore.loading && postsStore.posts.length === 0" class="loading">
-          {{ $t('post.loading') }}
+          {{ t('post.loading') }}
         </div>
         
         <div v-else-if="!campaignsStore.currentCampaign" class="empty-state">
-          {{ $t('campaign.selectCampaign') }}
+          {{ t('campaign.selectCampaign') }}
         </div>
         
         <div v-else-if="postsStore.posts.length === 0" class="empty-state">
-          {{ $t('post.noPosts') }}
+          {{ t('post.noPosts') }}
         </div>
         
         <PostCard 
@@ -54,7 +54,7 @@
         />
         
         <div v-if="postsStore.hasMore && !postsStore.loading" class="load-more">
-          <button @click="loadMore" class="secondary">{{ $t('post.loadMore') }}</button>
+          <button @click="loadMore" class="secondary">{{ t('post.loadMore') }}</button>
         </div>
       </div>
       
@@ -75,7 +75,7 @@ import PostCard from '../components/PostCard.vue'
 import PostCreator from '../components/PostCreator.vue'
 
 const router = useRouter()
-const { locale } = useI18n()
+const { locale, t } = useI18n()
 const authStore = useAuthStore()
 const campaignsStore = useCampaignsStore()
 const postsStore = usePostsStore()

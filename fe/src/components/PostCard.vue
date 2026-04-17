@@ -3,9 +3,9 @@
     <div class="post-header">
       <h3>{{ post.title }}</h3>
       <div class="post-meta">
-        <span>{{ $t('post.created') }}: {{ formatDate(post.created_at) }}</span>
+        <span>{{ t('post.created') }}: {{ formatDate(post.created_at) }}</span>
         <span v-if="post.updated_at !== post.created_at">
-          {{ $t('post.updated') }}: {{ formatDate(post.updated_at) }}
+          {{ t('post.updated') }}: {{ formatDate(post.updated_at) }}
         </span>
       </div>
     </div>
@@ -30,6 +30,9 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   post: {

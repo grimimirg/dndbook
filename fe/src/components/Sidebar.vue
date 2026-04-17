@@ -1,11 +1,11 @@
 <template>
   <div class="sidebar">
     <div class="sidebar-header">
-      <h2>{{ $t('campaign.campaigns') }}</h2>
-      <button @click="showCreateModal = true" class="primary">+ {{ $t('campaign.new') }}</button>
+      <h2>{{ t('campaign.campaigns') }}</h2>
+      <button @click="showCreateModal = true" class="primary">+ {{ t('campaign.new') }}</button>
     </div>
     
-    <div v-if="campaignsStore.loading" class="loading">{{ $t('common.loading') }}</div>
+    <div v-if="campaignsStore.loading" class="loading">{{ t('common.loading') }}</div>
     
     <div v-else class="campaigns-tree">
       <div 
@@ -37,17 +37,17 @@
     
     <div v-if="showCreateModal" class="modal" @click.self="showCreateModal = false">
       <div class="modal-content">
-        <h3>{{ $t('campaign.create') }}</h3>
+        <h3>{{ t('campaign.create') }}</h3>
         <form @submit.prevent="handleCreateCampaign">
           <div class="form-group">
-            <input v-model="newCampaignName" :placeholder="$t('campaign.name')" required />
+            <input v-model="newCampaignName" :placeholder="t('campaign.name')" required />
           </div>
           <div class="form-group">
-            <textarea v-model="newCampaignDescription" :placeholder="$t('campaign.description')" rows="4"></textarea>
+            <textarea v-model="newCampaignDescription" :placeholder="t('campaign.description')" rows="4"></textarea>
           </div>
           <div class="modal-actions">
-            <button type="button" @click="showCreateModal = false" class="secondary">{{ $t('campaign.cancel') }}</button>
-            <button type="submit" class="primary">{{ $t('campaign.create') }}</button>
+            <button type="button" @click="showCreateModal = false" class="secondary">{{ t('campaign.cancel') }}</button>
+            <button type="submit" class="primary">{{ t('campaign.create') }}</button>
           </div>
         </form>
       </div>
@@ -57,9 +57,11 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useCampaignsStore } from '../stores/campaigns'
 import { usePostsStore } from '../stores/posts'
 
+const { t } = useI18n()
 const campaignsStore = useCampaignsStore()
 const postsStore = usePostsStore()
 

@@ -2,19 +2,19 @@
   <div class="post-creator card">
     <form @submit.prevent="handleCreatePost">
       <div class="form-group">
-        <input v-model="title" :placeholder="$t('post.title')" required />
+        <input v-model="title" :placeholder="t('post.title')" required />
       </div>
       <div class="form-group">
         <textarea 
           v-model="content" 
-          :placeholder="$t('post.content')" 
+          :placeholder="t('post.content')" 
           rows="4"
           required
         ></textarea>
       </div>
       <div class="actions">
         <button type="submit" class="primary" :disabled="loading">
-          {{ loading ? $t('post.creating') : $t('post.createPost') }}
+          {{ loading ? t('post.creating') : t('post.createPost') }}
         </button>
       </div>
     </form>
@@ -23,9 +23,11 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useCampaignsStore } from '../stores/campaigns'
 import { usePostsStore } from '../stores/posts'
 
+const { t } = useI18n()
 const campaignsStore = useCampaignsStore()
 const postsStore = usePostsStore()
 
