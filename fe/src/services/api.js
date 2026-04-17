@@ -63,6 +63,10 @@ const apiWrapper = {
       if (url === '/api/posts') {
         return mockApi.createPost(data)
       }
+      if (url.match(/\/api\/posts\/\d+\/images/)) {
+        const postId = parseInt(url.match(/\/api\/posts\/(\d+)\/images/)[1])
+        return mockApi.uploadImage(postId, data)
+      }
     }
     return api.post(url, data, config)
   },
