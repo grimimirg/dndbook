@@ -64,6 +64,13 @@ After starting the backend container, initialize the database:
 docker exec -it dndbook-backend ./init-db.sh
 ```
 
+This creates the database tables and a default admin user:
+- **Username**: `admin`
+- **Email**: `admin@dndbook.local`
+- **Password**: Value from `ADMIN_PASSWORD` in `be/.env` (defaults to `admin123` if not set)
+
+**Important**: Make sure to set a secure `ADMIN_PASSWORD` in your `be/.env` file before running the initialization script.
+
 ## Local Development
 
 ### Backend Setup
@@ -86,7 +93,9 @@ cd be
 cp .env.example .env
 ```
 
-4. Update `.env` with your configuration
+4. Update `.env` with your configuration:
+   - Set `DATABASE_URL` to your PostgreSQL connection string
+   - Set `ADMIN_PASSWORD` to configure the default admin user password (default: `admin123`)
 
 5. Create virtual environment with Python 3.11+:
 
@@ -114,6 +123,11 @@ uv pip install .
 ```bash
 ./init-db.sh
 ```
+
+This will create the database tables and a default admin user:
+- **Username**: `admin`
+- **Email**: `admin@dndbook.local`
+- **Password**: Value from `ADMIN_PASSWORD` in `.env` (defaults to `admin123` if not set)
 
 8. Run development server:
 
@@ -175,6 +189,11 @@ cp .env.example .env
 DATABASE_URL=postgresql://dndbook_user:dndbook_password@localhost:5432/dndbook_db
 ```
 
+Also set a secure password for the default admin user:
+```
+ADMIN_PASSWORD=your_secure_password_here
+```
+
 2. Create virtual environment with the correct Python version:
 
 ```bash
@@ -204,6 +223,7 @@ This script will:
 - Create and start a Docker container
 - Verify `.env` file exists
 - Initialize the database tables
+- Create a default admin user (username: `admin`, password from `ADMIN_PASSWORD` in `.env`)
 - Test the connection
 
 4. Start the backend:

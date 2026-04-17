@@ -27,7 +27,8 @@ def create_app():
     app.config['MAX_CONTENT_LENGTH'] = int(os.getenv('MAX_CONTENT_LENGTH', 16 * 1024 * 1024))
     app.config['POSTS_PER_PAGE'] = int(os.getenv('POSTS_PER_PAGE', 10))
     
-    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    # Create upload folder with proper permissions
+    os.makedirs(app.config['UPLOAD_FOLDER'], mode=0o755, exist_ok=True)
     
     if not app.config['MOCK_DATA']:
         db.init_app(app)

@@ -168,7 +168,12 @@ def upload_image(current_user, post_id):
     
     filename = secure_filename(file.filename)
     unique_filename = f"{uuid.uuid4()}_{filename}"
-    file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
+    
+    # Ensure upload directory exists
+    upload_folder = current_app.config['UPLOAD_FOLDER']
+    os.makedirs(upload_folder, mode=0o755, exist_ok=True)
+    
+    file_path = os.path.join(upload_folder, unique_filename)
     file.save(file_path)
     
     order_index = len(post.images)
