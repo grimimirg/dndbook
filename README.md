@@ -1,8 +1,29 @@
-# D&D Book
+# 🎲 D&D Book
 
-A web application for managing D&D campaigns with a Facebook-style post feed interface.
+> 📖 A web application for managing D&D campaigns with a Facebook-style post feed interface.
 
-## Quick Setup (Recommended)
+## 📑 Table of Contents
+
+- [⚡ Quick Setup (Recommended)](#-quick-setup-recommended)
+- [🐳 Quick Start with Docker Compose (Recommended for Production)](#-quick-start-with-docker-compose-recommended-for-production)
+  - [Prerequisites](#prerequisites)
+  - [Setup](#setup)
+  - [Initial Database Setup](#initial-database-setup)
+  - [Data Persistence](#data-persistence)
+  - [Stopping the Application](#stopping-the-application)
+  - [Viewing Logs](#viewing-logs)
+- [💻 Local Development](#-local-development)
+  - [🔧 Backend Setup](#-backend-setup)
+  - [🎨 Frontend Setup](#-frontend-setup)
+- [🗄️ PostgreSQL Setup with Docker](#️-postgresql-setup-with-docker)
+  - [Prerequisites](#prerequisites-1)
+  - [Setup](#setup-1)
+  - [Cleanup](#cleanup)
+- [🎭 Mock Data Mode](#-mock-data-mode)
+  - [Mock Credentials](#mock-credentials)
+- [🌍 Internationalization (i18n)](#-internationalization-i18n)
+
+## ⚡ Quick Setup (Recommended)
 
 The fastest way to get started is using the automated setup script:
 
@@ -21,44 +42,79 @@ This script will:
 - Backend only: `cd be && ./setup.sh`
 - Frontend only: `cd fe && ./setup.sh`
 
-## Quick Start with Docker
+## 🐳 Quick Start with Docker Compose (Recommended for Production)
 
 ### Prerequisites
 
-- Docker & Docker Compose
-- PostgreSQL database (accessible from your network)
+- 🐳 Docker & Docker Compose installed and running
+
+> ℹ️ **Note**: PostgreSQL is **included** in the Docker Compose setup. You don't need to install or configure a separate database.
 
 ### Setup
 
 1. Clone the repository
 
-2. Create `.env` files for backend and frontend:
+2. Create and configure `.env` files:
 
+**🔧 Backend** (`be/.env`):
 ```bash
 cd be
 cp .env.example .env
-# Edit be/.env with your PostgreSQL credentials
-
-cd ../fe
-cp .env.example .env
-# Edit fe/.env if needed (default values should work)
 ```
 
-3. Build and run with Docker Compose:
+Edit `be/.env` and set at minimum:
+```bash
+# Security - CHANGE THESE IN PRODUCTION!
+SECRET_KEY=your-secret-key-here
+JWT_SECRET_KEY=your-jwt-secret-key-here
+ADMIN_PASSWORD=your-secure-admin-password
+
+# Database - DO NOT CHANGE (managed by docker-compose)
+DATABASE_URL=postgresql://dndbook_user:dndbook_password@postgres:5432/dndbook_db
+
+# Mock Data - set to false for production
+MOCK_DATA=false
+```
+
+**🎨 Frontend** (`fe/.env`):
+```bash
+cd ../fe
+cp .env.example .env
+```
+
+Edit `fe/.env` and set:
+```bash
+# Backend API URL
+VITE_API_URL=http://localhost:5000
+
+# Mock Data - set to false for production
+VITE_MOCK_DATA=false
+
+# Optional: Locales (defaults to en,it,de,fr,es if not set)
+VITE_AVAILABLE_LOCALES=en,it,de,fr,es
+
+# Optional: Pagination (defaults shown)
+VITE_POSTS_PER_PAGE=10
+VITE_POST_PREVIEW_LIMIT=200
+```
+
+3. Build and start all services:
 
 ```bash
 cd ..
-docker-compose up --build
+docker compose up --build
 ```
 
-The application will be available at:
+> 💡 **Note**: Use `docker compose` (without hyphen) for modern Docker installations. If you have an older version, use `docker-compose`.
 
-- Frontend: `http://localhost`
-- Backend API: `http://localhost:5000`
+The application will be available at:
+- 🌐 **Frontend**: `http://localhost`
+- 🔌 **Backend API**: `http://localhost:5000`
+- 🗄️ **PostgreSQL**: `localhost:5432` (internal to Docker network)
 
 ### Initial Database Setup
 
-After starting the backend container, initialize the database:
+After all containers are running, initialize the database in a new terminal:
 
 ```bash
 docker exec -it dndbook-backend ./init-db.sh
@@ -67,13 +123,41 @@ docker exec -it dndbook-backend ./init-db.sh
 This creates the database tables and a default admin user:
 - **Username**: `admin`
 - **Email**: `admin@dndbook.local`
-- **Password**: Value from `ADMIN_PASSWORD` in `be/.env` (defaults to `admin123` if not set)
+- **Password**: Value from `ADMIN_PASSWORD` in `be/.env`
 
-**Important**: Make sure to set a secure `ADMIN_PASSWORD` in your `be/.env` file before running the initialization script.
+> ⚠️ **Important**: Make sure to set a secure `ADMIN_PASSWORD` in your `be/.env` file before running the initialization script.
 
-## Local Development
+### Data Persistence
 
-### Backend Setup
+PostgreSQL data is stored in a Docker volume named `dndbook-postgres-data`. This means:
+- ✅ Your data persists even if you stop/restart containers
+- ⚠️ To completely remove all data, you need to delete the volume: `docker volume rm dndbook-postgres-data`
+
+### Stopping the Application
+
+```bash
+# Stop containers (data is preserved) ✅
+docker compose down
+
+# Stop and remove volumes ⚠️ WARNING: deletes all data
+docker compose down -v
+```
+
+### Viewing Logs
+
+```bash
+# All services
+docker compose logs -f
+
+# Specific service
+docker compose logs -f backend
+docker compose logs -f frontend
+docker compose logs -f postgres
+```
+
+## 💻 Local Development
+
+### 🔧 Backend Setup
 
 1. Install uv:
 
@@ -137,7 +221,7 @@ python app.py
 
 Backend will be available at `http://localhost:5000`
 
-### Frontend Setup
+### 🎨 Frontend Setup
 
 1. Navigate to frontend directory:
 
@@ -165,7 +249,7 @@ npm run dev
 
 Frontend will be available at `http://localhost:5173`
 
-## PostgreSQL Setup with Docker
+## 🗄️ PostgreSQL Setup with Docker
 
 For local development with a real database, you can use the provided setup script:
 
@@ -184,7 +268,7 @@ cd be
 cp .env.example .env
 ```
 
-**Important**: Verify that `DATABASE_URL` in `.env` matches the Docker container configuration:
+> ⚠️ **Important**: Verify that `DATABASE_URL` in `.env` matches the Docker container configuration:
 ```
 DATABASE_URL=postgresql://dndbook_user:dndbook_password@localhost:5432/dndbook_db
 ```
@@ -246,7 +330,7 @@ To remove the PostgreSQL container and data:
 
 Note: `cleanup-postgres.sh` is in the project root, while `setup-postgres.sh` is in `be/` directory.
 
-## Mock Data Mode
+## 🎭 Mock Data Mode
 
 For development without a database, you can enable mock data mode:
 
@@ -273,16 +357,16 @@ VITE_MOCK_DATA=true
 
 Mock mode includes:
 
-- 3 pre-configured campaigns
-- 10 sample posts with realistic data
-- No database connection required
+- 🎯 3 pre-configured campaigns
+- 📝 10 sample posts with realistic data
+- 🚫 No database connection required
 
-## Internationalization (i18n)
+## 🌍 Internationalization (i18n)
 
 The application supports multiple languages. Current supported languages are:
 
-- English
-- Italian
-- German
-- French
-- Spanish
+- 🇬🇧 English
+- 🇮🇹 Italian
+- 🇩🇪 German
+- 🇫🇷 French
+- 🇪🇸 Spanish
