@@ -14,14 +14,20 @@ def create_app():
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key')
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'dev-jwt-secret-key')
     app.config['MOCK_DATA'] = os.getenv('MOCK_DATA', 'false').lower() == 'true'
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+    
+    database_url = os.getenv('DATABASE_URL')
+    if not app.config['MOCK_DATA'] and not database_url:
+        raise ValueError("DATABASE_URL must be set when MOCK_DATA is false")
+    
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///:memory:'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', 'uploads')
     app.config['MAX_CONTENT_LENGTH'] = int(os.getenv('MAX_CONTENT_LENGTH', 16 * 1024 * 1024))
     
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     
-    db.init_app(app)
+    if not app.config['MOCK_DATA']:
+        db.init_app(app)
     
     CORS(app, resources={r"/api/*": {"origins": "*"}})
     

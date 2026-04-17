@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, current_app
 from app import db
 from app.models import Campaign
 from app.auth import token_required
-from app.mock_data import get_mock_campaigns, get_mock_campaign
+from app.mock_data import MockDataProvider
 
 bp = Blueprint('campaigns', __name__, url_prefix='/api/campaigns')
 
@@ -11,7 +11,7 @@ bp = Blueprint('campaigns', __name__, url_prefix='/api/campaigns')
 def get_campaigns(current_user):
     if current_app.config['MOCK_DATA']:
         user_id = current_user if isinstance(current_user, int) else current_user.id
-        campaigns = get_mock_campaigns(user_id)
+        campaigns = MockDataProvider.get_campaigns(user_id)
         return jsonify(campaigns), 200
     
     campaigns = Campaign.query.filter_by(owner_id=current_user.id).all()
@@ -41,7 +41,7 @@ def create_campaign(current_user):
 def get_campaign(current_user, campaign_id):
     if current_app.config['MOCK_DATA']:
         user_id = current_user if isinstance(current_user, int) else current_user.id
-        campaign = get_mock_campaign(campaign_id)
+        campaign = MockDataProvider.get_campaign(campaign_id)
         
         if not campaign or campaign['owner_id'] != user_id:
             return jsonify({'error': 'Unauthorized'}), 403

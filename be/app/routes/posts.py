@@ -3,7 +3,7 @@ from werkzeug.utils import secure_filename
 from app import db
 from app.models import Post, Campaign, Image
 from app.auth import token_required
-from app.mock_data import get_mock_posts, get_mock_post, get_mock_campaign
+from app.mock_data import MockDataProvider
 import os
 import uuid
 
@@ -23,12 +23,12 @@ def get_posts(current_user, campaign_id):
     
     if current_app.config['MOCK_DATA']:
         user_id = current_user if isinstance(current_user, int) else current_user.id
-        campaign = get_mock_campaign(campaign_id)
+        campaign = MockDataProvider.get_campaign(campaign_id)
         
         if not campaign or campaign['owner_id'] != user_id:
             return jsonify({'error': 'Unauthorized'}), 403
         
-        result = get_mock_posts(campaign_id, page, per_page, sort_by)
+        result = MockDataProvider.get_posts(campaign_id, page, per_page, sort_by)
         return jsonify(result), 200
     
     campaign = Campaign.query.get_or_404(campaign_id)

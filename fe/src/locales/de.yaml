@@ -32,6 +32,8 @@ post:
   loadMore: "Mehr Laden"
   loading: "Beiträge werden geladen..."
   creating: "Wird erstellt..."
+  created: "Erstellt"
+  updated: "Aktualisiert"
   
 sort:
   byCreated: "Nach Erstellungsdatum"

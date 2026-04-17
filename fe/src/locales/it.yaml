@@ -32,6 +32,8 @@ post:
   loadMore: "Carica Altri"
   loading: "Caricamento post..."
   creating: "Creazione..."
+  created: "Creato"
+  updated: "Aggiornato"
   
 sort:
   byCreated: "Per Data di Creazione"

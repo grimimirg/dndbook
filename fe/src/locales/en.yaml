@@ -32,6 +32,8 @@ post:
   loadMore: "Load More"
   loading: "Loading posts..."
   creating: "Creating..."
+  created: "Created"
+  updated: "Updated"
   
 sort:
   byCreated: "By Creation Date"

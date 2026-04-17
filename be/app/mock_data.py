@@ -1,51 +1,57 @@
 from datetime import datetime, timedelta
 
-MOCK_USERS = [
-    {
-        'id': 1,
-        'username': 'dungeon_master',
-        'email': 'dm@example.com',
-        'created_at': (datetime.utcnow() - timedelta(days=30)).isoformat()
-    },
-    {
-        'id': 2,
-        'username': 'player_one',
-        'email': 'player1@example.com',
-        'created_at': (datetime.utcnow() - timedelta(days=20)).isoformat()
-    }
-]
 
-MOCK_CAMPAIGNS = [
-    {
-        'id': 1,
-        'name': 'The Lost Mines of Phandelver',
-        'description': 'A classic D&D adventure for new players',
-        'owner_id': 1,
-        'created_at': (datetime.utcnow() - timedelta(days=25)).isoformat(),
-        'updated_at': (datetime.utcnow() - timedelta(days=2)).isoformat(),
-        'post_count': 5
-    },
-    {
-        'id': 2,
-        'name': 'Curse of Strahd',
-        'description': 'A gothic horror adventure in Barovia',
-        'owner_id': 1,
-        'created_at': (datetime.utcnow() - timedelta(days=15)).isoformat(),
-        'updated_at': (datetime.utcnow() - timedelta(days=1)).isoformat(),
-        'post_count': 3
-    },
-    {
-        'id': 3,
-        'name': 'Waterdeep: Dragon Heist',
-        'description': 'Urban adventure in the City of Splendors',
-        'owner_id': 1,
-        'created_at': (datetime.utcnow() - timedelta(days=10)).isoformat(),
-        'updated_at': (datetime.utcnow() - timedelta(days=5)).isoformat(),
-        'post_count': 2
-    }
-]
+class MockDataProvider:
+    """
+    Provides hardcoded test data for development when MOCK_DATA=true
+    """
+    
+    USERS = [
+        {
+            'id': 1,
+            'username': 'dungeon_master',
+            'email': 'dm@example.com',
+            'created_at': (datetime.utcnow() - timedelta(days=30)).isoformat()
+        },
+        {
+            'id': 2,
+            'username': 'player_one',
+            'email': 'player1@example.com',
+            'created_at': (datetime.utcnow() - timedelta(days=20)).isoformat()
+        }
+    ]
 
-MOCK_POSTS = [
+    CAMPAIGNS = [
+        {
+            'id': 1,
+            'name': 'The Lost Mines of Phandelver',
+            'description': 'A classic D&D adventure for new players',
+            'owner_id': 1,
+            'created_at': (datetime.utcnow() - timedelta(days=25)).isoformat(),
+            'updated_at': (datetime.utcnow() - timedelta(days=2)).isoformat(),
+            'post_count': 5
+        },
+        {
+            'id': 2,
+            'name': 'Curse of Strahd',
+            'description': 'A gothic horror adventure in Barovia',
+            'owner_id': 1,
+            'created_at': (datetime.utcnow() - timedelta(days=15)).isoformat(),
+            'updated_at': (datetime.utcnow() - timedelta(days=1)).isoformat(),
+            'post_count': 3
+        },
+        {
+            'id': 3,
+            'name': 'Waterdeep: Dragon Heist',
+            'description': 'Urban adventure in the City of Splendors',
+            'owner_id': 1,
+            'created_at': (datetime.utcnow() - timedelta(days=10)).isoformat(),
+            'updated_at': (datetime.utcnow() - timedelta(days=5)).isoformat(),
+            'post_count': 2
+        }
+    ]
+
+    POSTS = [
     {
         'id': 1,
         'campaign_id': 1,
@@ -161,40 +167,91 @@ MOCK_POSTS = [
     }
 ]
 
-def get_mock_user(user_id):
-    return next((u for u in MOCK_USERS if u['id'] == user_id), None)
+    @classmethod
+    def get_user(cls, user_id):
+        """Get user by ID"""
+        return next((u for u in cls.USERS if u['id'] == user_id), None)
 
-def get_mock_user_by_username(username):
-    return next((u for u in MOCK_USERS if u['username'] == username), None)
+    @classmethod
+    def get_user_by_username(cls, username):
+        """Get user by username"""
+        return next((u for u in cls.USERS if u['username'] == username), None)
 
-def get_mock_campaigns(owner_id):
-    return [c for c in MOCK_CAMPAIGNS if c['owner_id'] == owner_id]
+    @classmethod
+    def get_campaigns(cls, owner_id):
+        """Get all campaigns for a user"""
+        return [c for c in cls.CAMPAIGNS if c['owner_id'] == owner_id]
 
-def get_mock_campaign(campaign_id):
-    return next((c for c in MOCK_CAMPAIGNS if c['id'] == campaign_id), None)
+    @classmethod
+    def get_campaign(cls, campaign_id):
+        """Get campaign by ID"""
+        return next((c for c in cls.CAMPAIGNS if c['id'] == campaign_id), None)
 
-def get_mock_posts(campaign_id, page=1, per_page=10, sort_by='created'):
-    campaign_posts = [p for p in MOCK_POSTS if p['campaign_id'] == campaign_id]
+    @classmethod
+    def get_posts(cls, campaign_id, page=1, per_page=10, sort_by='created'):
+        """Get paginated posts for a campaign"""
+        campaign_posts = [p for p in cls.POSTS if p['campaign_id'] == campaign_id]
+        
+        if sort_by == 'updated':
+            campaign_posts.sort(key=lambda x: x['updated_at'])
+        else:
+            campaign_posts.sort(key=lambda x: x['created_at'])
+        
+        start = (page - 1) * per_page
+        end = start + per_page
+        
+        total = len(campaign_posts)
+        posts = campaign_posts[start:end]
+        
+        return {
+            'posts': posts,
+            'total': total,
+            'page': page,
+            'pages': (total + per_page - 1) // per_page,
+            'has_next': end < total,
+            'has_prev': page > 1
+        }
+
+    @classmethod
+    def get_post(cls, post_id):
+        """Get post by ID"""
+        return next((p for p in cls.POSTS if p['id'] == post_id), None)
     
-    if sort_by == 'updated':
-        campaign_posts.sort(key=lambda x: x['updated_at'])
-    else:
-        campaign_posts.sort(key=lambda x: x['created_at'])
+    @classmethod
+    def create_campaign(cls, name, description, owner_id):
+        """Create a new mock campaign"""
+        new_id = max([c['id'] for c in cls.CAMPAIGNS]) + 1 if cls.CAMPAIGNS else 1
+        new_campaign = {
+            'id': new_id,
+            'name': name,
+            'description': description,
+            'owner_id': owner_id,
+            'created_at': datetime.utcnow().isoformat(),
+            'updated_at': datetime.utcnow().isoformat(),
+            'post_count': 0
+        }
+        cls.CAMPAIGNS.append(new_campaign)
+        return new_campaign
     
-    start = (page - 1) * per_page
-    end = start + per_page
-    
-    total = len(campaign_posts)
-    posts = campaign_posts[start:end]
-    
-    return {
-        'posts': posts,
-        'total': total,
-        'page': page,
-        'pages': (total + per_page - 1) // per_page,
-        'has_next': end < total,
-        'has_prev': page > 1
-    }
-
-def get_mock_post(post_id):
-    return next((p for p in MOCK_POSTS if p['id'] == post_id), None)
+    @classmethod
+    def create_post(cls, campaign_id, author_id, title, content):
+        """Create a new mock post"""
+        new_id = max([p['id'] for p in cls.POSTS]) + 1 if cls.POSTS else 1
+        new_post = {
+            'id': new_id,
+            'campaign_id': campaign_id,
+            'author_id': author_id,
+            'title': title,
+            'content': content,
+            'created_at': datetime.utcnow().isoformat(),
+            'updated_at': datetime.utcnow().isoformat(),
+            'images': []
+        }
+        cls.POSTS.append(new_post)
+        
+        campaign = cls.get_campaign(campaign_id)
+        if campaign:
+            campaign['post_count'] += 1
+            campaign['updated_at'] = datetime.utcnow().isoformat()
+        
+        return new_post
