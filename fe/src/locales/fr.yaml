@@ -36,6 +36,8 @@ post:
   updated: "Mis à jour"
   author: "Auteur"
   readMore: "Lire plus"
+  addImages: "Ajouter des Images"
+  removeImage: "Supprimer l'image"
 
 sort:
   label: "Trier par"
