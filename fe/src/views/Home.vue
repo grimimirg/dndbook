@@ -31,7 +31,7 @@
           </button>
         </div>
         
-        <PostCreator v-if="campaignsStore.currentCampaign" />
+        <PostCreator v-if="isCurrentCampaignOwned" />
         
         <div v-if="postsStore.loading && postsStore.posts.length === 0" class="loading">
           {{ t('post.loading') }}
@@ -65,7 +65,7 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
@@ -89,6 +89,13 @@ const postsStore = usePostsStore()
 const invitesStore = useInvitesStore()
 
 const postRefs = ref({})
+
+const isCurrentCampaignOwned = computed(() => {
+  if (!campaignsStore.currentCampaign) return false
+  return campaignsStore.ownedCampaigns.some(
+    campaign => campaign.id === campaignsStore.currentCampaign.id
+  )
+})
 
 function setPostRef(postId, el) {
   if (el) {
