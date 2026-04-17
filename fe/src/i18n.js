@@ -14,19 +14,14 @@ async function loadLocaleMessages() {
   return messages
 }
 
-const savedLocale = localStorage.getItem('locale') || 'en'
+export async function createI18nInstance() {
+  const messages = await loadLocaleMessages()
+  const savedLocale = localStorage.getItem('locale') || 'en'
 
-const i18n = createI18n({
-  legacy: false,
-  locale: savedLocale,
-  fallbackLocale: 'en',
-  messages: {}
-})
-
-loadLocaleMessages().then(messages => {
-  Object.keys(messages).forEach(locale => {
-    i18n.global.setLocaleMessage(locale, messages[locale])
+  return createI18n({
+    legacy: false,
+    locale: savedLocale,
+    fallbackLocale: 'en',
+    messages
   })
-})
-
-export default i18n
+}
