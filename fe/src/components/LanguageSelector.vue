@@ -28,19 +28,3 @@ function changeLocale() {
   localStorage.setItem('locale', currentLocale.value)
 }
 </script>
-
-<style scoped>
-.language-selector {
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  background: white;
-}
-
-.language-selector:focus {
-  outline: none;
-  border-color: #1877f2;
-}
-</style>

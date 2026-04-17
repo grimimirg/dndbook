@@ -2,6 +2,7 @@
   <div class="login-container">
     <div class="login-card">
       <div class="language-selector-container">
+        <ThemeToggle />
         <LanguageSelector />
       </div>
       
@@ -57,6 +58,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import LanguageSelector from '../components/LanguageSelector.vue'
+import ThemeToggle from '../components/ThemeToggle.vue'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -89,62 +91,3 @@ async function handleSubmit() {
   }
 }
 </script>
-
-<style scoped>
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #f0f2f5;
-}
-
-.login-card {
-  background: white;
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
-}
-
-.language-selector-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 20px;
-}
-
-h1 {
-  text-align: center;
-  margin-bottom: 30px;
-  color: #1877f2;
-}
-
-.form-group {
-  margin-bottom: 16px;
-}
-
-.error {
-  color: #d93025;
-  font-size: 14px;
-  margin-bottom: 16px;
-  padding: 8px;
-  background-color: #fce8e6;
-  border-radius: 4px;
-}
-
-button[type="submit"] {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-}
-
-.toggle {
-  margin-top: 16px;
-  text-align: center;
-}
-
-.toggle button {
-  width: 100%;
-}
-</style>

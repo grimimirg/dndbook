@@ -4,6 +4,7 @@
       <div class="header-content">
         <h1>{{ t('app.title') }}</h1>
         <div class="user-info">
+          <ThemeToggle />
           <LanguageSelector />
           <span>{{ authStore.user?.username }}</span>
           <button @click="handleLogout" class="secondary">{{ t('auth.logout') }}</button>
@@ -71,6 +72,7 @@ import Sidebar from '../components/Sidebar.vue'
 import PostCard from '../components/PostCard.vue'
 import PostCreator from '../components/PostCreator.vue'
 import LanguageSelector from '../components/LanguageSelector.vue'
+import ThemeToggle from '../components/ThemeToggle.vue'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -112,79 +114,3 @@ async function loadMore() {
   }
 }
 </script>
-
-<style scoped>
-.home {
-  min-height: 100vh;
-  background-color: #f0f2f5;
-}
-
-.header {
-  background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 16px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header h1 {
-  font-size: 24px;
-  color: #1877f2;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.main-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 20px;
-}
-
-.feed {
-  max-width: 680px;
-}
-
-.sort-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.sort-label {
-  font-weight: 600;
-  color: #050505;
-  font-size: 14px;
-}
-
-.loading, .empty-state {
-  text-align: center;
-  padding: 40px;
-  color: #65676b;
-}
-
-.load-more {
-  text-align: center;
-  margin-top: 16px;
-}
-
-.load-more button {
-  width: 100%;
-}
-</style>
