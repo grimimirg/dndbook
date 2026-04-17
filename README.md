@@ -120,10 +120,19 @@ VITE_MOCK_DATA=true
 ```
 
 ### Mock Credentials
-- **Username**: `dungeon_master`
+- **Username**: `admin`
 - **Password**: any (in mock mode)
 
 Mock mode includes:
 - 3 pre-configured campaigns
 - 10 sample posts with realistic data
 - No database connection required
+
+## Internationalization (i18n)
+
+The application supports multiple languages. Current supported languages are:
+- English
+- Italian
+- German
+- French
+- Spanish

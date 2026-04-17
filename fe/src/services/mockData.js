@@ -1,6 +1,6 @@
 const MOCK_USER = {
   id: 1,
-  username: 'dungeon_master',
+  username: 'admin',
   email: 'dm@example.com',
   created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
 }

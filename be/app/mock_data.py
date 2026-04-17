@@ -9,7 +9,7 @@ class MockDataProvider:
     USERS = [
         {
             'id': 1,
-            'username': 'dungeon_master',
+            'username': 'admin',
             'email': 'dm@example.com',
             'created_at': (datetime.utcnow() - timedelta(days=30)).isoformat()
         },

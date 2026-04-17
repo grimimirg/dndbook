@@ -2,11 +2,7 @@
   <div class="login-container">
     <div class="login-card">
       <div class="language-selector-container">
-        <select v-model="currentLocale" @change="changeLocale" class="language-selector">
-          <option value="en">English</option>
-          <option value="it">Italiano</option>
-          <option value="de">Deutsch</option>
-        </select>
+        <LanguageSelector />
       </div>
       
       <h1>{{ t('app.title') }}</h1>
@@ -60,9 +56,10 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
+import LanguageSelector from '../components/LanguageSelector.vue'
 
 const router = useRouter()
-const { locale, t } = useI18n()
+const { t } = useI18n()
 const authStore = useAuthStore()
 
 const username = ref('')
@@ -71,12 +68,6 @@ const password = ref('')
 const isRegister = ref(false)
 const loading = ref(false)
 const error = ref('')
-const currentLocale = ref(locale.value)
-
-function changeLocale() {
-  locale.value = currentLocale.value
-  localStorage.setItem('locale', currentLocale.value)
-}
 
 async function handleSubmit() {
   loading.value = true
@@ -121,20 +112,6 @@ async function handleSubmit() {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 20px;
-}
-
-.language-selector {
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  background: white;
-}
-
-.language-selector:focus {
-  outline: none;
-  border-color: #1877f2;
 }
 
 h1 {

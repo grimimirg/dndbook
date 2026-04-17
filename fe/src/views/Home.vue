@@ -4,11 +4,7 @@
       <div class="header-content">
         <h1>{{ t('app.title') }}</h1>
         <div class="user-info">
-          <select v-model="currentLocale" @change="changeLocale" class="language-selector">
-            <option value="en">English</option>
-            <option value="it">Italiano</option>
-            <option value="de">Deutsch</option>
-          </select>
+          <LanguageSelector />
           <span>{{ authStore.user?.username }}</span>
           <button @click="handleLogout" class="secondary">{{ t('auth.logout') }}</button>
         </div>
@@ -73,15 +69,15 @@ import { usePostsStore } from '../stores/posts'
 import Sidebar from '../components/Sidebar.vue'
 import PostCard from '../components/PostCard.vue'
 import PostCreator from '../components/PostCreator.vue'
+import LanguageSelector from '../components/LanguageSelector.vue'
 
 const router = useRouter()
-const { locale, t } = useI18n()
+const { t } = useI18n()
 const authStore = useAuthStore()
 const campaignsStore = useCampaignsStore()
 const postsStore = usePostsStore()
 
 const postRefs = ref({})
-const currentLocale = ref(locale.value)
 
 function setPostRef(postId, el) {
   if (el) {
@@ -96,11 +92,6 @@ onMounted(async () => {
 function handleLogout() {
   authStore.logout()
   router.push('/login')
-}
-
-function changeLocale() {
-  locale.value = currentLocale.value
-  localStorage.setItem('locale', currentLocale.value)
 }
 
 async function changeSortBy(sort) {
@@ -153,20 +144,6 @@ async function loadMore() {
   display: flex;
   align-items: center;
   gap: 16px;
-}
-
-.language-selector {
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  background: white;
-}
-
-.language-selector:focus {
-  outline: none;
-  border-color: #1877f2;
 }
 
 .main-content {

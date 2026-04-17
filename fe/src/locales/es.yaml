@@ -1,0 +1,45 @@
+app:
+  title: "D&D Book"
+  
+auth:
+  login: "Iniciar sesión"
+  register: "Registrarse"
+  logout: "Cerrar sesión"
+  username: "Nombre de usuario"
+  email: "Correo electrónico"
+  password: "Contraseña"
+  alreadyHaveAccount: "¿Ya tienes una cuenta? Inicia sesión"
+  needAccount: "¿Necesitas una cuenta? Regístrate"
+  loginSuccess: "Inicio de sesión exitoso"
+  registerSuccess: "Registro exitoso"
+  
+campaign:
+  campaigns: "Campañas"
+  new: "Nueva"
+  create: "Crear campaña"
+  name: "Nombre de la campaña"
+  description: "Descripción"
+  cancel: "Cancelar"
+  noCampaigns: "Aún no hay campañas"
+  selectCampaign: "Selecciona una campaña de la barra lateral para ver las publicaciones"
+  
+post:
+  posts: "Publicaciones"
+  createPost: "Crear publicación"
+  title: "Título de la publicación..."
+  content: "¿Qué está pasando en tu campaña?"
+  noPosts: "Aún no hay publicaciones. ¡Crea tu primera publicación!"
+  loadMore: "Cargar más"
+  loading: "Cargando publicaciones..."
+  creating: "Creando..."
+  created: "Creado"
+  updated: "Actualizado"
+  
+sort:
+  byCreated: "Por fecha de creación"
+  byUpdated: "Por última actualización"
+  
+common:
+  loading: "Cargando..."
+  error: "Error"
+  success: "Éxito"
