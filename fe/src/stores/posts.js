@@ -9,12 +9,13 @@ export const usePostsStore = defineStore('posts', () => {
   const totalPages = ref(1)
   const hasMore = ref(true)
   const sortBy = ref('created')
+  const postsPerPage = parseInt(import.meta.env.VITE_POSTS_PER_PAGE || '10')
 
   async function fetchPosts(campaignId, page = 1, append = false) {
     loading.value = true
     try {
       const response = await api.get(`/api/campaigns/${campaignId}/posts`, {
-        params: { page, per_page: 10, sort: sortBy.value }
+        params: { page, per_page: postsPerPage, sort: sortBy.value }
       })
       
       if (append) {

@@ -18,7 +18,7 @@ def allowed_file(filename):
 @token_required
 def get_posts(current_user, campaign_id):
     page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', 10, type=int)
+    per_page = request.args.get('per_page', current_app.config['POSTS_PER_PAGE'], type=int)
     sort_by = request.args.get('sort', 'created')
     
     if current_app.config['MOCK_DATA']:

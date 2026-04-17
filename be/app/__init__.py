@@ -23,6 +23,7 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', 'uploads')
     app.config['MAX_CONTENT_LENGTH'] = int(os.getenv('MAX_CONTENT_LENGTH', 16 * 1024 * 1024))
+    app.config['POSTS_PER_PAGE'] = int(os.getenv('POSTS_PER_PAGE', 10))
     
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     
