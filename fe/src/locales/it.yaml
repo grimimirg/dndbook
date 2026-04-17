@@ -1,0 +1,43 @@
+app:
+  title: "Gestore Campagne D&D"
+  
+auth:
+  login: "Accedi"
+  register: "Registrati"
+  logout: "Esci"
+  username: "Nome utente"
+  email: "Email"
+  password: "Password"
+  alreadyHaveAccount: "Hai già un account? Accedi"
+  needAccount: "Hai bisogno di un account? Registrati"
+  loginSuccess: "Accesso effettuato con successo"
+  registerSuccess: "Registrazione completata con successo"
+  
+campaign:
+  campaigns: "Campagne"
+  new: "Nuova"
+  create: "Crea Campagna"
+  name: "Nome Campagna"
+  description: "Descrizione"
+  cancel: "Annulla"
+  noCampaigns: "Nessuna campagna ancora"
+  selectCampaign: "Seleziona una campagna dalla barra laterale per visualizzare i post"
+  
+post:
+  posts: "Post"
+  createPost: "Crea Post"
+  title: "Titolo del post..."
+  content: "Cosa sta succedendo nella tua campagna?"
+  noPosts: "Nessun post ancora. Crea il tuo primo post!"
+  loadMore: "Carica Altri"
+  loading: "Caricamento post..."
+  creating: "Creazione..."
+  
+sort:
+  byCreated: "Per Data di Creazione"
+  byUpdated: "Per Ultimo Aggiornamento"
+  
+common:
+  loading: "Caricamento..."
+  error: "Errore"
+  success: "Successo"

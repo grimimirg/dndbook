@@ -1,0 +1,43 @@
+app:
+  title: "D&D Campaign Manager"
+  
+auth:
+  login: "Login"
+  register: "Register"
+  logout: "Logout"
+  username: "Username"
+  email: "Email"
+  password: "Password"
+  alreadyHaveAccount: "Already have an account? Login"
+  needAccount: "Need an account? Register"
+  loginSuccess: "Login successful"
+  registerSuccess: "Registration successful"
+  
+campaign:
+  campaigns: "Campaigns"
+  new: "New"
+  create: "Create Campaign"
+  name: "Campaign Name"
+  description: "Description"
+  cancel: "Cancel"
+  noCampaigns: "No campaigns yet"
+  selectCampaign: "Select a campaign from the sidebar to view posts"
+  
+post:
+  posts: "Posts"
+  createPost: "Create Post"
+  title: "Post title..."
+  content: "What's happening in your campaign?"
+  noPosts: "No posts yet. Create your first post!"
+  loadMore: "Load More"
+  loading: "Loading posts..."
+  creating: "Creating..."
+  
+sort:
+  byCreated: "By Creation Date"
+  byUpdated: "By Last Update"
+  
+common:
+  loading: "Loading..."
+  error: "Error"
+  success: "Success"

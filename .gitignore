@@ -1,0 +1,34 @@
+# FE
+
+fe/node_modules
+fe/dist
+fe/.DS_Store
+fe/*.local
+fe/.env
+
+#BE
+
+be/__pycache__/
+be/*.py[cod]
+be/*$py.class
+be/*.so
+be/.Python
+be/env/
+be/venv/
+be/.venv/
+be/.env
+be/*.db
+be/*.sqlite3
+be/uploads/
+be/instance/
+be/.pytest_cache/
+be/.coverage
+be/htmlcov/
+be/dist/
+be/build/
+be/*.egg-info/
+
+# Root
+.env
+*.log
+.DS_Store

@@ -1,0 +1,20 @@
+[project]
+name = "dndbook-backend"
+version = "0.1.0"
+description = "D&D Campaign Manager Backend API"
+requires-python = ">=3.11"
+dependencies = [
+    "flask>=3.0.0",
+    "flask-cors>=4.0.0",
+    "flask-sqlalchemy>=3.1.0",
+    "sqlalchemy>=2.0.0",
+    "pyodbc>=5.0.0",
+    "pyjwt>=2.8.0",
+    "python-dotenv>=1.0.0",
+    "werkzeug>=3.0.0",
+    "alembic>=1.13.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

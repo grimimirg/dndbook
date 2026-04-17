@@ -1,0 +1,24 @@
+services:
+  backend:
+    build: ./be
+    container_name: dndbook-backend
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./be/.env
+    environment:
+      - FLASK_ENV=production
+    volumes:
+      - ./be/uploads:/app/uploads
+    restart: unless-stopped
+
+  frontend:
+    build: ./fe
+    container_name: dndbook-frontend
+    ports:
+      - "80:80"
+    env_file:
+      - ./fe/.env
+    depends_on:
+      - backend
+    restart: unless-stopped

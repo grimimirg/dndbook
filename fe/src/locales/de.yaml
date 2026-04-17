@@ -1,0 +1,43 @@
+app:
+  title: "D&D Kampagnen-Manager"
+  
+auth:
+  login: "Anmelden"
+  register: "Registrieren"
+  logout: "Abmelden"
+  username: "Benutzername"
+  email: "E-Mail"
+  password: "Passwort"
+  alreadyHaveAccount: "Haben Sie bereits ein Konto? Anmelden"
+  needAccount: "Brauchen Sie ein Konto? Registrieren"
+  loginSuccess: "Anmeldung erfolgreich"
+  registerSuccess: "Registrierung erfolgreich"
+  
+campaign:
+  campaigns: "Kampagnen"
+  new: "Neu"
+  create: "Kampagne Erstellen"
+  name: "Kampagnenname"
+  description: "Beschreibung"
+  cancel: "Abbrechen"
+  noCampaigns: "Noch keine Kampagnen"
+  selectCampaign: "Wählen Sie eine Kampagne aus der Seitenleiste, um Beiträge anzuzeigen"
+  
+post:
+  posts: "Beiträge"
+  createPost: "Beitrag Erstellen"
+  title: "Beitragstitel..."
+  content: "Was passiert in Ihrer Kampagne?"
+  noPosts: "Noch keine Beiträge. Erstellen Sie Ihren ersten Beitrag!"
+  loadMore: "Mehr Laden"
+  loading: "Beiträge werden geladen..."
+  creating: "Wird erstellt..."
+  
+sort:
+  byCreated: "Nach Erstellungsdatum"
+  byUpdated: "Nach Letzter Aktualisierung"
+  
+common:
+  loading: "Wird geladen..."
+  error: "Fehler"
+  success: "Erfolg"
