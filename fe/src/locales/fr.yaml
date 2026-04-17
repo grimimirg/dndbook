@@ -1,6 +1,6 @@
 app:
   title: "D&D Book"
-  
+
 auth:
   login: "Connexion"
   register: "S'inscrire"
@@ -12,7 +12,7 @@ auth:
   needAccount: "Besoin d'un compte ? Inscrivez-vous"
   loginSuccess: "Connexion réussie"
   registerSuccess: "Inscription réussie"
-  
+
 campaign:
   campaigns: "Campagnes"
   new: "Nouveau"
@@ -22,7 +22,7 @@ campaign:
   cancel: "Annuler"
   noCampaigns: "Aucune campagne pour le moment"
   selectCampaign: "Sélectionnez une campagne dans la barre latérale pour voir les publications"
-  
+
 post:
   posts: "Publications"
   createPost: "Créer une publication"
@@ -34,11 +34,13 @@ post:
   creating: "Création..."
   created: "Créé"
   updated: "Mis à jour"
-  
+  author: "Auteur"
+
 sort:
-  byCreated: "Par date de création"
-  byUpdated: "Par dernière mise à jour"
-  
+  label: "Trier par"
+  byCreated: "Date de création"
+  byUpdated: "Dernière mise à jour"
+
 common:
   loading: "Chargement..."
   error: "Erreur"

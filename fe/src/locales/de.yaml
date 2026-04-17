@@ -25,19 +25,21 @@ campaign:
   
 post:
   posts: "Beiträge"
-  createPost: "Beitrag Erstellen"
+  createPost: "Beitrag erstellen"
   title: "Beitragstitel..."
-  content: "Was passiert in Ihrer Kampagne?"
-  noPosts: "Noch keine Beiträge. Erstellen Sie Ihren ersten Beitrag!"
-  loadMore: "Mehr Laden"
+  content: "Was passiert in deiner Kampagne?"
+  noPosts: "Noch keine Beiträge. Erstelle deinen ersten Beitrag!"
+  loadMore: "Mehr laden"
   loading: "Beiträge werden geladen..."
   creating: "Wird erstellt..."
   created: "Erstellt"
   updated: "Aktualisiert"
+  author: "Autor"
   
 sort:
-  byCreated: "Nach Erstellungsdatum"
-  byUpdated: "Nach Letzter Aktualisierung"
+  label: "Sortieren nach"
+  byCreated: "Erstellungsdatum"
+  byUpdated: "Letzter Aktualisierung"
   
 common:
   loading: "Wird geladen..."

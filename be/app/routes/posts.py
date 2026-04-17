@@ -62,6 +62,21 @@ def create_post(current_user):
     if not data or not data.get('campaign_id') or not data.get('title') or not data.get('content'):
         return jsonify({'error': 'Missing required fields'}), 400
     
+    if current_app.config['MOCK_DATA']:
+        user_id = current_user if isinstance(current_user, int) else current_user.id
+        campaign = MockDataProvider.get_campaign(data['campaign_id'])
+        
+        if not campaign or campaign['owner_id'] != user_id:
+            return jsonify({'error': 'Unauthorized'}), 403
+        
+        new_post = MockDataProvider.create_post(
+            data['campaign_id'],
+            user_id,
+            data['title'],
+            data['content']
+        )
+        return jsonify(new_post), 201
+    
     campaign = Campaign.query.get_or_404(data['campaign_id'])
     
     if campaign.owner_id != current_user.id:
@@ -76,6 +91,7 @@ def create_post(current_user):
     
     db.session.add(post)
     db.session.commit()
+    db.session.refresh(post)
     
     return jsonify(post.to_dict()), 201
 

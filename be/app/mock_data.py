@@ -190,7 +190,11 @@ class MockDataProvider:
     @classmethod
     def get_posts(cls, campaign_id, page=1, per_page=10, sort_by='created'):
         """Get paginated posts for a campaign"""
-        campaign_posts = [p for p in cls.POSTS if p['campaign_id'] == campaign_id]
+        campaign_posts = [p.copy() for p in cls.POSTS if p['campaign_id'] == campaign_id]
+        
+        for post in campaign_posts:
+            author = cls.get_user(post['author_id'])
+            post['author'] = author['username'] if author else None
         
         if sort_by == 'updated':
             campaign_posts.sort(key=lambda x: x['updated_at'])
@@ -237,10 +241,12 @@ class MockDataProvider:
     def create_post(cls, campaign_id, author_id, title, content):
         """Create a new mock post"""
         new_id = max([p['id'] for p in cls.POSTS]) + 1 if cls.POSTS else 1
+        author = cls.get_user(author_id)
         new_post = {
             'id': new_id,
             'campaign_id': campaign_id,
             'author_id': author_id,
+            'author': author['username'] if author else None,
             'title': title,
             'content': content,
             'created_at': datetime.utcnow().isoformat(),

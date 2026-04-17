@@ -14,6 +14,7 @@
     <div class="main-content">
       <div class="feed">
         <div class="sort-controls">
+          <span class="sort-label">{{ t('sort.label') }}:</span>
           <button 
             @click="changeSortBy('created')" 
             :class="{ primary: postsStore.sortBy === 'created', secondary: postsStore.sortBy !== 'created' }"
@@ -161,8 +162,15 @@ async function loadMore() {
 
 .sort-controls {
   display: flex;
+  align-items: center;
   gap: 8px;
   margin-bottom: 16px;
+}
+
+.sort-label {
+  font-weight: 600;
+  color: #050505;
+  font-size: 14px;
 }
 
 .loading, .empty-state {

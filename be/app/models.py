@@ -69,6 +69,7 @@ class Post(db.Model):
             'id': self.id,
             'campaign_id': self.campaign_id,
             'author_id': self.author_id,
+            'author': self.author.username if self.author else None,
             'title': self.title,
             'content': self.content,
             'created_at': self.created_at.isoformat(),

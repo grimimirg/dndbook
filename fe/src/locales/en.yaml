@@ -34,10 +34,12 @@ post:
   creating: "Creating..."
   created: "Created"
   updated: "Updated"
+  author: "Author"
   
 sort:
-  byCreated: "By Creation Date"
-  byUpdated: "By Last Update"
+  label: "Sort by"
+  byCreated: "Creation Date"
+  byUpdated: "Last Update"
   
 common:
   loading: "Loading..."

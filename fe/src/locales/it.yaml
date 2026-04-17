@@ -29,15 +29,17 @@ post:
   title: "Titolo del post..."
   content: "Cosa sta succedendo nella tua campagna?"
   noPosts: "Nessun post ancora. Crea il tuo primo post!"
-  loadMore: "Carica Altri"
+  loadMore: "Carica altri"
   loading: "Caricamento post..."
   creating: "Creazione..."
   created: "Creato"
   updated: "Aggiornato"
+  author: "Autore"
   
 sort:
-  byCreated: "Per Data di Creazione"
-  byUpdated: "Per Ultimo Aggiornamento"
+  label: "Ordina per"
+  byCreated: "Data di creazione"
+  byUpdated: "Ultimo aggiornamento"
   
 common:
   loading: "Caricamento..."
