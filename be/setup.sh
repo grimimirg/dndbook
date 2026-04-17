@@ -34,14 +34,21 @@ else
 fi
 
 echo ""
+echo "Creating uploads directory..."
+mkdir -p uploads
+chown -R $USER:$USER uploads
+chmod 755 uploads
+echo "Uploads directory created with correct permissions"
+
+echo ""
 echo "Database setup..."
 read -p "Do you want to initialize the database now? (y/n) " -n 1 -r
 echo ""
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     if grep -q "MOCK_DATA=true" .env; then
-        echo "ℹMock data mode is enabled, skipping database initialization"
+        echo "Mock data mode is enabled, skipping database initialization"
     else
-        flask --app run init-db
+        ./setup-postgres.sh
         echo "Database initialized"
     fi
 else

@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
@@ -23,7 +23,13 @@ def create_app():
     
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///:memory:'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', 'uploads')
+    
+    # Get upload folder path (relative to app root)
+    upload_folder = os.getenv('UPLOAD_FOLDER', 'uploads')
+    if not os.path.isabs(upload_folder):
+        upload_folder = os.path.join(os.path.dirname(os.path.dirname(__file__)), upload_folder)
+    app.config['UPLOAD_FOLDER'] = upload_folder
+    
     app.config['MAX_CONTENT_LENGTH'] = int(os.getenv('MAX_CONTENT_LENGTH', 16 * 1024 * 1024))
     app.config['POSTS_PER_PAGE'] = int(os.getenv('POSTS_PER_PAGE', 10))
     
@@ -33,7 +39,10 @@ def create_app():
     if not app.config['MOCK_DATA']:
         db.init_app(app)
     
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    CORS(app, resources={
+        r"/api/*": {"origins": "*"},
+        r"/uploads/*": {"origins": "*"}
+    })
     
     socketio.init_app(app)
     
@@ -42,5 +51,9 @@ def create_app():
     app.register_blueprint(campaigns.bp)
     app.register_blueprint(posts.bp)
     app.register_blueprint(invites.bp)
+    
+    @app.route('/uploads/<path:filename>')
+    def serve_upload(filename):
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
     
     return app
