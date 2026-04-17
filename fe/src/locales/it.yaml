@@ -15,6 +15,8 @@ auth:
   
 campaign:
   campaigns: "Campagne"
+  myCampaigns: "Le Mie Campagne"
+  sharedCampaigns: "Campagne Condivise"
   new: "Nuova"
   create: "Crea Campagna"
   name: "Nome Campagna"
@@ -22,6 +24,12 @@ campaign:
   cancel: "Annulla"
   noCampaigns: "Nessuna campagna ancora"
   selectCampaign: "Seleziona una campagna dalla barra laterale per visualizzare i post"
+  inviteUsers: "Invita Utenti"
+  inviteTooltip: "Invita utenti a questa campagna"
+  selectUsers: "Seleziona gli utenti da invitare"
+  sendInvites: "Invia Inviti"
+  invitesSent: "Inviti inviati con successo"
+  noUsersAvailable: "Nessun utente disponibile da invitare"
   
 post:
   posts: "Post"
@@ -52,6 +60,18 @@ sort:
   label: "Ordina per"
   byCreated: "Data di creazione"
   byUpdated: "Ultimo aggiornamento"
+  
+invite:
+  notifications: "Notifiche"
+  noNotifications: "Nessuna notifica"
+  invitedTo: "ti ha invitato a"
+  accept: "Accetta"
+  reject: "Rifiuta"
+  accepted: "Invito accettato"
+  rejected: "Invito rifiutato"
+  newInvite: "Nuovo Invito"
+  inviteMessage: "{inviter} ti ha invitato a {campaign}"
+  pending: "In attesa"
   
 common:
   loading: "Caricamento..."

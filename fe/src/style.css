@@ -1,6 +1,7 @@
 :root[data-theme="dark"] {
   --bg-gradient-1: #2a2a2a;
   --bg-gradient-2: #1a1a1a;
+  --bg-primary: #2a2a2a;
   --text-primary: #d4c5b9;
   --text-secondary: #9a8575;
   --text-heading: #e8d4a0;
@@ -8,6 +9,7 @@
   --card-bg-2: rgba(30, 30, 30, 0.95);
   --input-bg: rgba(30, 30, 30, 0.6);
   --input-border: #3a3a3a;
+  --border-color: #3a3a3a;
   --button-secondary-bg: rgba(60, 60, 60, 0.6);
   --button-secondary-border: #4a4a4a;
   --button-secondary-hover: rgba(80, 80, 80, 0.8);
@@ -18,6 +20,7 @@
 :root[data-theme="light"] {
   --bg-gradient-1: #f5ebe0;
   --bg-gradient-2: #e8dcc8;
+  --bg-primary: #f5ebe0;
   --text-primary: #3a2f26;
   --text-secondary: #6b5d4f;
   --text-heading: #8b6f47;
@@ -25,6 +28,7 @@
   --card-bg-2: rgba(250, 245, 235, 0.95);
   --input-bg: rgba(255, 255, 255, 0.8);
   --input-border: #d4c5b9;
+  --border-color: #d4c5b9;
   --button-secondary-bg: rgba(228, 218, 203, 0.8);
   --button-secondary-border: #c9b89a;
   --button-secondary-hover: rgba(212, 197, 185, 0.9);

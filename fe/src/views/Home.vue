@@ -5,6 +5,7 @@
         <h1>{{ t('app.title') }}</h1>
         <div class="user-info">
           <span>{{ authStore.user?.username }}</span>
+          <NotificationBell />
           <button @click="handleLogout" class="secondary">{{ t('auth.logout') }}</button>
           <LanguageSelector />
           <ThemeToggle />
@@ -58,27 +59,34 @@
       
       <Sidebar />
     </div>
+    
+    <InviteToast />
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { useCampaignsStore } from '../stores/campaigns'
 import { usePostsStore } from '../stores/posts'
+import { useInvitesStore } from '../stores/invites'
+import socketService from '../services/socket'
 import Sidebar from '../components/Sidebar.vue'
 import PostCard from '../components/PostCard.vue'
 import PostCreator from '../components/PostCreator.vue'
 import LanguageSelector from '../components/LanguageSelector.vue'
 import ThemeToggle from '../components/ThemeToggle.vue'
+import NotificationBell from '../components/NotificationBell.vue'
+import InviteToast from '../components/InviteToast.vue'
 
 const router = useRouter()
 const { t } = useI18n()
 const authStore = useAuthStore()
 const campaignsStore = useCampaignsStore()
 const postsStore = usePostsStore()
+const invitesStore = useInvitesStore()
 
 const postRefs = ref({})
 
@@ -90,6 +98,18 @@ function setPostRef(postId, el) {
 
 onMounted(async () => {
   await campaignsStore.fetchCampaigns()
+  await invitesStore.fetchInvites()
+  
+  // Initialize Socket.IO
+  const token = localStorage.getItem('token')
+  if (token) {
+    socketService.connect(token)
+    invitesStore.setupSocketListener()
+  }
+})
+
+onUnmounted(() => {
+  socketService.disconnect()
 })
 
 function handleLogout() {

@@ -61,7 +61,7 @@ The application will be available at:
 After starting the backend container, initialize the database:
 
 ```bash
-docker exec -it dndbook-backend flask --app run init-db
+docker exec -it dndbook-backend ./init-db.sh
 ```
 
 ## Local Development
@@ -106,13 +106,13 @@ uv pip install .
 7. Initialize database (if not using mock mode):
 
 ```bash
-flask --app run init-db
+./init-db.sh
 ```
 
 8. Run development server:
 
 ```bash
-python run.py
+python app.py
 ```
 
 Backend will be available at `http://localhost:5000`
@@ -144,6 +144,55 @@ npm run dev
 ```
 
 Frontend will be available at `http://localhost:5173`
+
+## PostgreSQL Setup with Docker
+
+For local development with a real database, you can use the provided setup script:
+
+### Prerequisites
+
+- Docker installed and running
+- Backend `.env` file configured (see Backend Setup step 3-4)
+
+### Setup
+
+1. Create the `.env` file first:
+
+```bash
+cd be
+cp .env.example .env
+cd ..
+```
+
+The default values in `.env.example` are already configured for the Docker PostgreSQL setup.
+
+2. Run the setup script:
+
+```bash
+./setup-postgres.sh
+```
+
+This script will:
+- Download PostgreSQL 16 Alpine image
+- Create and start a Docker container
+- Initialize the database tables
+- Test the connection
+
+3. Start the backend:
+
+```bash
+cd be
+source .venv/bin/activate
+python app.py
+```
+
+### Cleanup
+
+To remove the PostgreSQL container and data:
+
+```bash
+./cleanup-postgres.sh
+```
 
 ## Mock Data Mode
 

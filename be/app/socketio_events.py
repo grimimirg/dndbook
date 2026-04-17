@@ -1,0 +1,53 @@
+from flask_socketio import emit, join_room, leave_room
+from flask import current_app, request
+from app import socketio
+import jwt
+
+# Store user_id -> sid mapping
+user_sessions = {}
+
+@socketio.on('connect')
+def handle_connect(auth):
+    """Handle client connection"""
+    try:
+        # Verify JWT token from auth
+        if auth and 'token' in auth:
+            token = auth['token']
+            decoded = jwt.decode(
+                token, 
+                current_app.config['JWT_SECRET_KEY'], 
+                algorithms=['HS256']
+            )
+            user_id = decoded['user_id']
+            
+            # Store session
+            user_sessions[user_id] = request.sid
+            
+            # Join user's personal room
+            join_room(f'user_{user_id}')
+            
+            print(f'User {user_id} connected')
+            return True
+        else:
+            return False
+    except Exception as e:
+        print(f'Connection error: {e}')
+        return False
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    """Handle client disconnection"""
+    # Remove from user_sessions
+    for user_id, sid in list(user_sessions.items()):
+        if sid == request.sid:
+            del user_sessions[user_id]
+            print(f'User {user_id} disconnected')
+            break
+
+def send_invite_notification(user_id, invite_data):
+    """Send invite notification to a specific user"""
+    socketio.emit(
+        'new_invite',
+        invite_data,
+        room=f'user_{user_id}'
+    )

@@ -1,12 +1,14 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from flask_socketio import SocketIO
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 
 db = SQLAlchemy()
+socketio = SocketIO(cors_allowed_origins="*")
 
 def create_app():
     app = Flask(__name__)
@@ -32,9 +34,12 @@ def create_app():
     
     CORS(app, resources={r"/api/*": {"origins": "*"}})
     
-    from app.routes import auth, campaigns, posts
+    socketio.init_app(app)
+    
+    from app.routes import auth, campaigns, posts, invites
     app.register_blueprint(auth.bp)
     app.register_blueprint(campaigns.bp)
     app.register_blueprint(posts.bp)
+    app.register_blueprint(invites.bp)
     
     return app

@@ -14,8 +14,16 @@ def get_campaigns(current_user):
         campaigns = MockDataProvider.get_campaigns(user_id)
         return jsonify(campaigns), 200
     
-    campaigns = Campaign.query.filter_by(owner_id=current_user.id).all()
-    return jsonify([campaign.to_dict() for campaign in campaigns]), 200
+    # Get owned campaigns
+    owned_campaigns = Campaign.query.filter_by(owner_id=current_user.id).all()
+    
+    # Get member campaigns (campaigns where user is a member but not owner)
+    member_campaigns = [c for c in current_user.member_campaigns if c.owner_id != current_user.id]
+    
+    return jsonify({
+        'owned': [campaign.to_dict() for campaign in owned_campaigns],
+        'shared': [campaign.to_dict() for campaign in member_campaigns]
+    }), 200
 
 @bp.route('', methods=['POST'])
 @token_required
@@ -50,7 +58,9 @@ def get_campaign(current_user, campaign_id):
     
     campaign = Campaign.query.get_or_404(campaign_id)
     
-    if campaign.owner_id != current_user.id:
+    # Check if user is owner or member
+    is_member = campaign.members.filter_by(id=current_user.id).first() is not None
+    if campaign.owner_id != current_user.id and not is_member:
         return jsonify({'error': 'Unauthorized'}), 403
     
     return jsonify(campaign.to_dict()), 200

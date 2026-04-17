@@ -1,4 +1,22 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: dndbook-postgres
+    environment:
+      POSTGRES_USER: dndbook_user
+      POSTGRES_PASSWORD: dndbook_password
+      POSTGRES_DB: dndbook_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - dndbook-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dndbook_user"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
   backend:
     build: ./be
     container_name: dndbook-backend
@@ -8,8 +26,12 @@ services:
       - ./be/.env
     environment:
       - FLASK_ENV=production
+      - DATABASE_URL=postgresql://dndbook_user:dndbook_password@postgres:5432/dndbook_db
     volumes:
       - ./be/uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
 
   frontend:
@@ -22,3 +44,7 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
+
+# remove when using an external postgres instance
+volumes:
+  dndbook-postgres-data:

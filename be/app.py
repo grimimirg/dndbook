@@ -1,6 +1,9 @@
-from app import create_app, db
+from app import create_app, db, socketio
 
 app = create_app()
+
+# Import socketio events
+import app.socketio_events
 
 @app.cli.command()
 def init_db():
@@ -9,4 +12,4 @@ def init_db():
         print("Database tables created successfully!")
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True)

@@ -15,6 +15,8 @@ auth:
   
 campaign:
   campaigns: "Campaigns"
+  myCampaigns: "My Campaigns"
+  sharedCampaigns: "Shared Campaigns"
   new: "New"
   create: "Create Campaign"
   name: "Campaign Name"
@@ -22,6 +24,12 @@ campaign:
   cancel: "Cancel"
   noCampaigns: "No campaigns yet"
   selectCampaign: "Select a campaign from the sidebar to view posts"
+  inviteUsers: "Invite Users"
+  inviteTooltip: "Invite users to this campaign"
+  selectUsers: "Select users to invite"
+  sendInvites: "Send Invites"
+  invitesSent: "Invites sent successfully"
+  noUsersAvailable: "No users available to invite"
   
 post:
   posts: "Posts"
@@ -52,6 +60,18 @@ sort:
   label: "Sort by"
   byCreated: "Creation Date"
   byUpdated: "Last Update"
+  
+invite:
+  notifications: "Notifications"
+  noNotifications: "No notifications"
+  invitedTo: "invited you to"
+  accept: "Accept"
+  reject: "Reject"
+  accepted: "Invite accepted"
+  rejected: "Invite rejected"
+  newInvite: "New Invite"
+  inviteMessage: "{inviter} invited you to {campaign}"
+  pending: "Pending"
   
 common:
   loading: "Loading..."

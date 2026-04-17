@@ -8,28 +8,69 @@
     <div v-if="campaignsStore.loading" class="loading">{{ t('common.loading') }}</div>
     
     <div v-else class="campaigns-tree">
-      <div 
-        v-for="campaign in campaignsStore.campaigns" 
-        :key="campaign.id"
-        class="campaign-node"
-      >
+      <!-- Owned Campaigns -->
+      <div v-if="campaignsStore.ownedCampaigns.length > 0" class="campaign-group">
+        <h3 class="group-title">{{ t('campaign.myCampaigns') }}</h3>
         <div 
-          class="campaign-header"
-          :class="{ active: campaignsStore.currentCampaign?.id === campaign.id }"
-          @click="toggleCampaign(campaign)"
+          v-for="campaign in campaignsStore.ownedCampaigns" 
+          :key="campaign.id"
+          class="campaign-node"
         >
-          <span class="expand-icon">{{ expandedCampaigns[campaign.id] ? '▼' : '▶' }}</span>
-          <span class="campaign-name">{{ campaign.name }}</span>
-        </div>
-        
-        <div v-if="expandedCampaigns[campaign.id]" class="posts-list">
           <div 
-            v-for="post in getCampaignPosts(campaign.id)" 
-            :key="post.id"
-            class="post-item"
-            @click="scrollToPost(post.id)"
+            class="campaign-header"
+            :class="{ active: campaignsStore.currentCampaign?.id === campaign.id }"
+            @click="toggleCampaign(campaign)"
           >
-            {{ post.title }}
+            <span class="expand-icon">{{ expandedCampaigns[campaign.id] ? '▼' : '▶' }}</span>
+            <span class="campaign-name">{{ campaign.name }}</span>
+            <button 
+              @click.stop="openInviteModal(campaign.id)" 
+              class="invite-btn"
+              :title="t('campaign.inviteTooltip')"
+            >
+              +
+            </button>
+          </div>
+          
+          <div v-if="expandedCampaigns[campaign.id]" class="posts-list">
+            <div 
+              v-for="post in getCampaignPosts(campaign.id)" 
+              :key="post.id"
+              class="post-item"
+              @click="scrollToPost(post.id)"
+            >
+              {{ post.title }}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Shared Campaigns -->
+      <div v-if="campaignsStore.sharedCampaigns.length > 0" class="campaign-group">
+        <h3 class="group-title">{{ t('campaign.sharedCampaigns') }}</h3>
+        <div 
+          v-for="campaign in campaignsStore.sharedCampaigns" 
+          :key="campaign.id"
+          class="campaign-node"
+        >
+          <div 
+            class="campaign-header"
+            :class="{ active: campaignsStore.currentCampaign?.id === campaign.id }"
+            @click="toggleCampaign(campaign)"
+          >
+            <span class="expand-icon">{{ expandedCampaigns[campaign.id] ? '▼' : '▶' }}</span>
+            <span class="campaign-name">{{ campaign.name }}</span>
+          </div>
+          
+          <div v-if="expandedCampaigns[campaign.id]" class="posts-list">
+            <div 
+              v-for="post in getCampaignPosts(campaign.id)" 
+              :key="post.id"
+              class="post-item"
+              @click="scrollToPost(post.id)"
+            >
+              {{ post.title }}
+            </div>
           </div>
         </div>
       </div>
@@ -52,6 +93,13 @@
         </form>
       </div>
     </div>
+    
+    <InviteUsersModal 
+      :show="showInviteModal" 
+      :campaign-id="selectedCampaignId"
+      @close="showInviteModal = false"
+      @success="handleInviteSuccess"
+    />
   </div>
 </template>
 
@@ -60,6 +108,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useCampaignsStore } from '../stores/campaigns'
 import { usePostsStore } from '../stores/posts'
+import InviteUsersModal from './InviteUsersModal.vue'
 
 const { t } = useI18n()
 const campaignsStore = useCampaignsStore()
@@ -67,6 +116,8 @@ const postsStore = usePostsStore()
 
 const expandedCampaigns = ref({})
 const showCreateModal = ref(false)
+const showInviteModal = ref(false)
+const selectedCampaignId = ref(null)
 const newCampaignName = ref('')
 const newCampaignDescription = ref('')
 
@@ -105,4 +156,62 @@ async function handleCreateCampaign() {
     newCampaignDescription.value = ''
   }
 }
+
+function openInviteModal(campaignId) {
+  selectedCampaignId.value = campaignId
+  showInviteModal.value = true
+}
+
+function handleInviteSuccess() {
+  console.log('Invites sent successfully')
+}
 </script>
+
+<style scoped>
+.campaign-group {
+  margin-bottom: 1.5rem;
+}
+
+.group-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.75rem;
+  padding: 0 0.5rem;
+}
+
+.campaign-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.invite-btn {
+  margin-left: auto;
+  background-color: var(--accent-gold-2);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: bold;
+  transition: all 0.2s;
+  opacity: 0;
+}
+
+.campaign-header:hover .invite-btn {
+  opacity: 1;
+}
+
+.invite-btn:hover {
+  background-color: var(--accent-gold-3);
+  transform: scale(1.1);
+}
+</style>
