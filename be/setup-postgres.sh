@@ -91,10 +91,10 @@ fi
 
 echo ""
 echo "Checking .env file..."
-ENV_FILE="be/.env"
+ENV_FILE=".env"
 
 if [ ! -f "$ENV_FILE" ]; then
-    print_error ".env file not found in be/ directory"
+    print_error ".env file not found in directory"
     echo ""
     echo "Please create be/.env file with the following configuration:"
     echo ""
@@ -114,17 +114,26 @@ print_success ".env file found"
 
 echo ""
 echo "Initializing database..."
-cd be
 
 if [ ! -d ".venv" ]; then
-    print_warning "Virtual environment not found. Creating..."
-    python3 -m venv .venv
-    print_success "Virtual environment created"
+    print_error "Virtual environment not found"
+    echo ""
+    echo "Please create it first with:"
+    echo "  uv venv --python 3.14"
+    echo "  source .venv/bin/activate"
+    echo "  uv pip install ."
+    exit 1
 fi
 
-source .venv/bin/activate
-pip install -q --upgrade pip
-pip install -q -e .
+# Check if venv is already activated
+if [ -z "$VIRTUAL_ENV" ]; then
+    echo "Activating virtual environment..."
+    source .venv/bin/activate
+fi
+
+# Verify Python version
+PYTHON_VERSION=$(python --version 2>&1 | awk '{print $2}')
+echo "Using Python $PYTHON_VERSION"
 
 echo "Creating tables..."
 ./init-db.sh

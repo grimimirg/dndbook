@@ -26,18 +26,37 @@ if [ -z "$VIRTUAL_ENV" ]; then
     fi
 fi
 
-# Initialize database using Python
-python << 'EOF'
-from app import app, db
+# Create temporary Python script in the current directory
+cat > init_db_temp.py << 'EOF'
+import sys
+
+# Import from the app package
+from app import create_app, db
+
+# Create the Flask app
+flask_app = create_app()
 
 try:
-    with app.app_context():
+    with flask_app.app_context():
         db.create_all()
         print("\n[SUCCESS] Database tables created successfully!")
 except Exception as e:
     print(f"\n[ERROR] Failed to create database tables: {e}")
-    exit(1)
+    import traceback
+    traceback.print_exc()
+    sys.exit(1)
 EOF
 
-echo ""
-echo "Database initialization complete!"
+# Execute the temporary script
+python init_db_temp.py
+RESULT=$?
+
+# Clean up
+rm -f init_db_temp.py
+
+if [ $RESULT -eq 0 ]; then
+    echo ""
+    echo "Database initialization complete!"
+else
+    exit $RESULT
+fi

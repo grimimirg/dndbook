@@ -88,13 +88,19 @@ cp .env.example .env
 
 4. Update `.env` with your configuration
 
-5. Create virtual environment:
+5. Create virtual environment with Python 3.11+:
 
 ```bash
-uv venv
+# Recommended: use Python 3.14
+uv venv --python 3.14
+
+# Activate
 source .venv/bin/activate  # On Linux/macOS
 # or
 .venv\Scripts\activate  # On Windows
+
+# Verify Python version
+python --version  # Should show 3.11 or higher
 ```
 
 6. Install dependencies:
@@ -152,47 +158,73 @@ For local development with a real database, you can use the provided setup scrip
 ### Prerequisites
 
 - Docker installed and running
-- Backend `.env` file configured (see Backend Setup step 3-4)
+- `uv` installed (see Backend Setup step 1)
+- Python 3.11+ available
 
 ### Setup
 
-1. Create the `.env` file first:
+1. Create and configure the `.env` file:
 
 ```bash
 cd be
 cp .env.example .env
-cd ..
 ```
 
-The default values in `.env.example` are already configured for the Docker PostgreSQL setup.
+**Important**: Verify that `DATABASE_URL` in `.env` matches the Docker container configuration:
+```
+DATABASE_URL=postgresql://dndbook_user:dndbook_password@localhost:5432/dndbook_db
+```
 
-2. Run the setup script:
+2. Create virtual environment with the correct Python version:
 
 ```bash
+# Remove old venv if exists
+rm -rf .venv
+
+# Create venv with Python 3.11+ (recommended: 3.14)
+uv venv --python 3.14
+
+# Activate
+source .venv/bin/activate
+
+# Install dependencies
+uv pip install .
+```
+
+3. Run the setup script (with venv activated):
+
+```bash
+# Make sure you're in the be/ directory
 ./setup-postgres.sh
 ```
 
 This script will:
+- Check that Docker is installed
 - Download PostgreSQL 16 Alpine image
 - Create and start a Docker container
+- Verify `.env` file exists
 - Initialize the database tables
 - Test the connection
 
-3. Start the backend:
+4. Start the backend:
 
 ```bash
-cd be
-source .venv/bin/activate
+# From be/ directory
 python app.py
 ```
+
+Backend will be available at `http://localhost:5000`
 
 ### Cleanup
 
 To remove the PostgreSQL container and data:
 
 ```bash
+# From project root
 ./cleanup-postgres.sh
 ```
+
+Note: `cleanup-postgres.sh` is in the project root, while `setup-postgres.sh` is in `be/` directory.
 
 ## Mock Data Mode
 
