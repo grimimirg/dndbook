@@ -22,6 +22,15 @@
 - [🎭 Mock Data Mode](#-mock-data-mode)
   - [Mock Credentials](#mock-credentials)
 - [🌍 Internationalization (i18n)](#-internationalization-i18n)
+- [🏠 Homelab Integration (IaC)](#-homelab-integration-iac)
+  - [Template Files](#template-files)
+  - [Required Environment Variables](#required-environment-variables)
+  - [Architecture](#architecture)
+  - [Services](#services)
+  - [Domain Configuration](#domain-configuration)
+  - [Nginx Configuration](#nginx-configuration)
+  - [Setup Instructions](#setup-instructions)
+  - [Notes](#notes)
 
 ## ⚡ Quick Setup (Recommended)
 
@@ -370,3 +379,111 @@ The application supports multiple languages. Current supported languages are:
 - 🇩🇪 German
 - 🇫🇷 French
 - 🇪🇸 Spanish
+
+## 🏠 Homelab Integration (IaC)
+
+This application can be integrated into an Infrastructure-as-Code (IaC) homelab setup using template files.
+
+### Template Files
+
+The project includes two template files for homelab deployment:
+
+- **`docker-compose.yaml.template`**: Docker Compose configuration with environment variable placeholders
+- **`nginx.conf.template`**: Nginx reverse proxy configuration with environment variable placeholders
+
+### Required Environment Variables
+
+These variables should be defined in your homelab's `.env` file:
+
+| Variable | Description |
+|----------|-------------|
+| `SHARED_NETWORK` | Docker network shared across homelab services |
+| `HOST_UID` | User ID for container permissions |
+| `HOST_GID` | Group ID for container permissions |
+| `POSTGRES_USER` | PostgreSQL username (from existing homelab instance) |
+| `POSTGRES_PASSWORD` | PostgreSQL password (from existing homelab instance) |
+| `DOMAIN` | Your homelab domain | `example.com` |
+| `DOLLAR` | Dollar sign for nginx variable escaping |
+
+### Architecture
+
+The homelab setup assumes:
+
+- **External PostgreSQL**: Uses an existing `shared_postgres` container in your homelab
+- **Shared Network**: All services communicate through `${SHARED_NETWORK}`
+- **Nginx Reverse Proxy**: External nginx handles SSL termination and routing
+- **No Authelia**: Direct access without authentication layer
+
+### Services
+
+**Backend** (`dndbook_backend`):
+- Connects to `shared_postgres:5432`
+- Creates/uses database `dndbook_db`
+- Exposes port 5000 internally
+
+**Frontend** (`dndbook_frontend`):
+- Serves Vue.js application
+- Exposes port 80 internally
+
+### Domain Configuration
+
+The application will be accessible at:
+- `dnd.${DOMAIN}` (production with HTTPS)
+- `dnd.localhost` (local development)
+- `dnd.jarvis` (local network)
+
+### Nginx Configuration
+
+The nginx template provides:
+
+- **HTTP (port 80)**: Automatic redirect to HTTPS for production domain
+- **HTTPS (port 443)**: SSL-enabled access with Let's Encrypt certificates
+  - Frontend proxy: `http://dndbook_frontend:80`
+  - Backend API proxy: `http://dndbook_backend:5000/api`
+
+### Setup Instructions
+
+1. **Copy template files** to your homelab structure:
+   ```bash
+   # Copy to your homelab services directory
+   cp docker-compose.yaml.template /path/to/homelab/services/dndbook/
+   
+   # Copy to your homelab nginx configuration directory
+   cp nginx.conf.template /path/to/homelab/nginx/conf.d/dndbook.conf.template
+   ```
+
+2. **Create the database** (first time only):
+   ```bash
+   docker exec -it shared_postgres psql -U ${POSTGRES_USER} -c "CREATE DATABASE dndbook_db;"
+   ```
+
+3. **Create data directory**:
+   ```bash
+   mkdir -p /path/to/homelab/data/dndbook/uploads
+   chown ${HOST_UID}:${HOST_GID} /path/to/homelab/data/dndbook/uploads
+   ```
+
+4. **Process templates** using your homelab's template substitution mechanism to generate final `docker-compose.yaml` and `nginx.conf` files
+
+5. **Start services**:
+   ```bash
+   docker compose up -d dndbook_backend dndbook_frontend
+   ```
+
+6. **Initialize database** (first time only):
+   ```bash
+   docker exec -it dndbook_backend ./init-db.sh
+   ```
+
+7. **Reload nginx**:
+   ```bash
+   docker exec nginx nginx -t
+   docker exec nginx nginx -s reload
+   ```
+
+### Notes
+
+- The PostgreSQL service in `docker-compose.yml` is **not used** in homelab deployments
+- SSL certificates are expected at `/etc/letsencrypt/live/${DOMAIN}/`
+- Upload files are stored in `../data/dndbook/uploads` relative to the docker-compose location
+- The application runs without authentication (no Authelia integration)

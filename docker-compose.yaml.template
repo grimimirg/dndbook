@@ -1,0 +1,27 @@
+services:
+  dndbook_backend:
+    build: ./be
+    container_name: dndbook_backend
+    user: ${HOST_UID}:${HOST_GID}
+    restart: always
+    environment:
+      - FLASK_ENV=production
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@shared_postgres:5432/dndbook_db
+    volumes:
+      - ../data/dndbook/uploads:/app/uploads
+    networks:
+      - ${SHARED_NETWORK}
+
+  dndbook_frontend:
+    build: ./fe
+    container_name: dndbook_frontend
+    user: ${HOST_UID}:${HOST_GID}
+    restart: always
+    depends_on:
+      - dndbook_backend
+    networks:
+      - ${SHARED_NETWORK}
+
+networks:
+  ${SHARED_NETWORK}:
+    external: true
