@@ -101,6 +101,18 @@ export const usePostsStore = defineStore('posts', () => {
     }
   }
 
+  async function deleteImage(postId, imageId) {
+    try {
+      await api.delete(`/api/posts/${postId}/images/${imageId}`)
+      return { success: true }
+    } catch (error) {
+      return { 
+        success: false, 
+        error: error.response?.data?.error || 'Failed to delete image' 
+      }
+    }
+  }
+
   function setSortBy(sort) {
     sortBy.value = sort
   }
@@ -124,6 +136,7 @@ export const usePostsStore = defineStore('posts', () => {
     updatePost,
     deletePost,
     uploadImage,
+    deleteImage,
     setSortBy,
     clearPosts
   }

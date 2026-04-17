@@ -38,6 +38,15 @@ post:
   readMore: "Leggi tutto"
   addImages: "Aggiungi Immagini"
   removeImage: "Rimuovi immagine"
+  edit: "Modifica"
+  delete: "Elimina"
+  save: "Salva"
+  cancel: "Annulla"
+  editMode: "Modalità modifica"
+  confirmDelete: "Sei sicuro di voler eliminare questo post?"
+  deleteSuccess: "Post eliminato con successo"
+  updateSuccess: "Post aggiornato con successo"
+  uploadImage: "Carica immagine"
   
 sort:
   label: "Ordina per"

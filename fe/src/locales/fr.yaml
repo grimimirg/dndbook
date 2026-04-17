@@ -38,6 +38,15 @@ post:
   readMore: "Lire plus"
   addImages: "Ajouter des Images"
   removeImage: "Supprimer l'image"
+  edit: "Modifier"
+  delete: "Supprimer"
+  save: "Enregistrer"
+  cancel: "Annuler"
+  editMode: "Mode édition"
+  confirmDelete: "Êtes-vous sûr de vouloir supprimer cette publication ?"
+  deleteSuccess: "Publication supprimée avec succès"
+  updateSuccess: "Publication mise à jour avec succès"
+  uploadImage: "Télécharger une image"
 
 sort:
   label: "Trier par"

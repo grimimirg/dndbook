@@ -183,3 +183,24 @@ def upload_image(current_user, post_id):
     db.session.commit()
     
     return jsonify(image.to_dict()), 201
+
+@bp.route('/posts/<int:post_id>/images/<int:image_id>', methods=['DELETE'])
+@token_required
+def delete_image(current_user, post_id, image_id):
+    post = Post.query.get_or_404(post_id)
+    campaign = Campaign.query.get(post.campaign_id)
+    
+    if campaign.owner_id != current_user.id:
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    image = Image.query.filter_by(id=image_id, post_id=post_id).first_or_404()
+    
+    try:
+        os.remove(os.path.join(current_app.config['UPLOAD_FOLDER'], image.file_path))
+    except:
+        pass
+    
+    db.session.delete(image)
+    db.session.commit()
+    
+    return jsonify({'message': 'Image deleted successfully'}), 200
