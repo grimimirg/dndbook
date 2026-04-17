@@ -4,10 +4,10 @@
       <div class="header-content">
         <h1>{{ t('app.title') }}</h1>
         <div class="user-info">
-          <ThemeToggle />
-          <LanguageSelector />
           <span>{{ authStore.user?.username }}</span>
           <button @click="handleLogout" class="secondary">{{ t('auth.logout') }}</button>
+          <LanguageSelector />
+          <ThemeToggle />
         </div>
       </div>
     </header>
