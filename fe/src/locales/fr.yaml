@@ -35,6 +35,7 @@ post:
   created: "Créé"
   updated: "Mis à jour"
   author: "Auteur"
+  readMore: "Lire plus"
 
 sort:
   label: "Trier par"

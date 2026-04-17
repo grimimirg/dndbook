@@ -35,6 +35,7 @@ post:
   created: "Erstellt"
   updated: "Aktualisiert"
   author: "Autor"
+  readMore: "Mehr lesen"
   
 sort:
   label: "Sortieren nach"
