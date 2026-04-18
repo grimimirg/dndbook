@@ -12,7 +12,12 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
 COPY pyproject.toml .
 
-RUN uv pip install --system -r pyproject.toml
+RUN python -m venv .venv && \
+    .venv/bin/pip install --upgrade pip && \
+    uv pip install --python .venv/bin/python -r pyproject.toml
+
+ENV PATH="/app/.venv/bin:$PATH"
+ENV VIRTUAL_ENV="/app/.venv"
 
 COPY . .
 
