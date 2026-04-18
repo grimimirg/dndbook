@@ -195,7 +195,6 @@ input::placeholder, textarea::placeholder {
   margin: 0 auto;
   padding: 16px 20px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
 }
 
@@ -203,6 +202,7 @@ input::placeholder, textarea::placeholder {
   font-size: 28px;
   color: var(--text-heading);
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
 }
 
 .user-info {
@@ -210,6 +210,8 @@ input::placeholder, textarea::placeholder {
   align-items: center;
   gap: 16px;
   color: var(--text-primary);
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 .main-content {
@@ -883,6 +885,7 @@ input::placeholder, textarea::placeholder {
   color: var(--text-primary);
   font-family: 'Crimson Text', serif;
   transition: all 0.3s ease;
+  width: auto;
 }
 
 .language-selector:focus {
@@ -1327,7 +1330,7 @@ input::placeholder, textarea::placeholder {
   height: 18px;
 }
 
-.user-info {
+.user-item .user-info {
   flex: 1;
 }
 
