@@ -128,161 +128,161 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { usePostsStore } from '../stores/posts'
+import { ref, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { usePostsStore } from '../../stores/posts.store.js';
 
-const { t } = useI18n()
-const postsStore = usePostsStore()
+const { t } = useI18n();
+const postsStore = usePostsStore();
 
 const props = defineProps({
   post: {
     type: Object,
     required: true
   }
-})
+});
 
-const PREVIEW_CHAR_LIMIT = parseInt(import.meta.env.VITE_POST_PREVIEW_LIMIT || '200')
+const PREVIEW_CHAR_LIMIT = parseInt(import.meta.env.VITE_POST_PREVIEW_LIMIT || '200');
 
-const currentImageIndex = ref(0)
-const showModal = ref(false)
-const isEditing = ref(false)
-const editedTitle = ref('')
-const editedContent = ref('')
-const saving = ref(false)
-const fileInput = ref(null)
+const currentImageIndex = ref(0);
+const showModal = ref(false);
+const isEditing = ref(false);
+const editedTitle = ref('');
+const editedContent = ref('');
+const saving = ref(false);
+const fileInput = ref(null);
 
 const truncatedContent = computed(() => {
   if (props.post.content.length <= PREVIEW_CHAR_LIMIT) {
-    return props.post.content
+    return props.post.content;
   }
-  return props.post.content.substring(0, PREVIEW_CHAR_LIMIT) + '...'
-})
+  return props.post.content.substring(0, PREVIEW_CHAR_LIMIT) + '...';
+});
 
 const isContentTruncated = computed(() => {
-  return props.post.content.length > PREVIEW_CHAR_LIMIT
-})
+  return props.post.content.length > PREVIEW_CHAR_LIMIT;
+});
 
 function openModal() {
-  showModal.value = true
-  document.body.style.overflow = 'hidden'
+  showModal.value = true;
+  document.body.style.overflow = 'hidden';
 }
 
 function closeModal() {
-  showModal.value = false
-  document.body.style.overflow = ''
+  showModal.value = false;
+  document.body.style.overflow = '';
 }
 
 function formatDate(dateString) {
-  const date = new Date(dateString)
+  const date = new Date(dateString);
   return date.toLocaleDateString('en-US', { 
     year: 'numeric', 
     month: 'short', 
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit'
-  })
+  });
 }
 
 function getImageUrl(filePath) {
-  return `http://localhost:5000/uploads/${filePath}`
+  return `http://localhost:5000/uploads/${filePath}`;
 }
 
 function previousImage() {
   if (currentImageIndex.value > 0) {
-    currentImageIndex.value--
+    currentImageIndex.value--;
   } else {
-    currentImageIndex.value = props.post.images.length - 1
+    currentImageIndex.value = props.post.images.length - 1;
   }
 }
 
 function nextImage() {
   if (currentImageIndex.value < props.post.images.length - 1) {
-    currentImageIndex.value++
+    currentImageIndex.value++;
   } else {
-    currentImageIndex.value = 0
+    currentImageIndex.value = 0;
   }
 }
 
 function startEditing() {
-  isEditing.value = true
-  editedTitle.value = props.post.title
-  editedContent.value = props.post.content
+  isEditing.value = true;
+  editedTitle.value = props.post.title;
+  editedContent.value = props.post.content;
 }
 
 function cancelEditing() {
-  isEditing.value = false
-  editedTitle.value = ''
-  editedContent.value = ''
+  isEditing.value = false;
+  editedTitle.value = '';
+  editedContent.value = '';
 }
 
 async function saveChanges() {
   if (!editedTitle.value.trim() || !editedContent.value.trim()) {
-    alert(t('common.error'))
-    return
+    alert(t('common.error'));
+    return;
   }
   
-  saving.value = true
+  saving.value = true;
   const result = await postsStore.updatePost(props.post.id, {
     title: editedTitle.value,
     content: editedContent.value
-  })
+  });
   
-  saving.value = false
+  saving.value = false;
   
   if (result.success) {
-    isEditing.value = false
+    isEditing.value = false;
   } else {
-    alert(result.error || t('common.error'))
+    alert(result.error || t('common.error'));
   }
 }
 
 async function handleDelete() {
   if (!confirm(t('post.confirmDelete'))) {
-    return
+    return;
   }
   
-  const result = await postsStore.deletePost(props.post.id)
+  const result = await postsStore.deletePost(props.post.id);
   
   if (result.success) {
-    closeModal()
+    closeModal();
   } else {
-    alert(result.error || t('common.error'))
+    alert(result.error || t('common.error'));
   }
 }
 
 async function removeCurrentImage() {
-  if (!props.post.images || props.post.images.length === 0) return
+  if (!props.post.images || props.post.images.length === 0) return;
   
-  const imageToRemove = props.post.images[currentImageIndex.value]
-  const result = await postsStore.deleteImage(props.post.id, imageToRemove.id)
+  const imageToRemove = props.post.images[currentImageIndex.value];
+  const result = await postsStore.deleteImage(props.post.id, imageToRemove.id);
   
   if (result.success) {
-    props.post.images.splice(currentImageIndex.value, 1)
+    props.post.images.splice(currentImageIndex.value, 1);
     if (currentImageIndex.value >= props.post.images.length && currentImageIndex.value > 0) {
-      currentImageIndex.value--
+      currentImageIndex.value--;
     }
   } else {
-    alert(result.error || t('common.error'))
+    alert(result.error || t('common.error'));
   }
 }
 
 async function handleImageUpload(event) {
-  const file = event.target.files[0]
-  if (!file) return
+  const file = event.target.files[0];
+  if (!file) return;
   
-  const result = await postsStore.uploadImage(props.post.id, file)
+  const result = await postsStore.uploadImage(props.post.id, file);
   
   if (result.success) {
     if (!props.post.images) {
-      props.post.images = []
+      props.post.images = [];
     }
-    props.post.images.push(result.image)
-    currentImageIndex.value = props.post.images.length - 1
+    props.post.images.push(result.image);
+    currentImageIndex.value = props.post.images.length - 1;
   } else {
-    alert(result.error || t('common.error'))
+    alert(result.error || t('common.error'));
   }
   
-  event.target.value = ''
+  event.target.value = '';
 }
 </script>

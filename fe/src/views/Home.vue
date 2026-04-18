@@ -66,69 +66,69 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-import { useAuthStore } from '../stores/auth'
-import { useCampaignsStore } from '../stores/campaigns'
-import { usePostsStore } from '../stores/posts'
-import { useInvitesStore } from '../stores/invites'
-import socketService from '../services/socket'
-import Sidebar from '../components/Sidebar.vue'
-import PostCard from '../components/PostCard.vue'
-import PostCreator from '../components/PostCreator.vue'
-import LanguageSelector from '../components/LanguageSelector.vue'
-import ThemeToggle from '../components/ThemeToggle.vue'
-import NotificationBell from '../components/NotificationBell.vue'
-import InviteToast from '../components/InviteToast.vue'
+import { onMounted, onUnmounted, ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+import { useAuthStore } from '../stores/auth.store.js';
+import { useCampaignsStore } from '../stores/campaigns.store.js';
+import { usePostsStore } from '../stores/posts.store.js';
+import { useInvitesStore } from '../stores/invites.store.js';
+import socketService from '../services/socket.service.js';
+import Sidebar from './components/Sidebar.vue';
+import PostCard from './components/PostCard.vue';
+import PostCreator from './components/PostCreator.vue';
+import LanguageSelector from './components/LanguageSelector.vue';
+import ThemeToggle from './components/ThemeToggle.vue';
+import NotificationBell from './components/NotificationBell.vue';
+import InviteToast from './components/InviteToast.vue';
 
-const router = useRouter()
-const { t } = useI18n()
-const authStore = useAuthStore()
-const campaignsStore = useCampaignsStore()
-const postsStore = usePostsStore()
-const invitesStore = useInvitesStore()
+const router = useRouter();
+const { t } = useI18n();
+const authStore = useAuthStore();
+const campaignsStore = useCampaignsStore();
+const postsStore = usePostsStore();
+const invitesStore = useInvitesStore();
 
-const postRefs = ref({})
+const postRefs = ref({});
 
 const isCurrentCampaignOwned = computed(() => {
-  if (!campaignsStore.currentCampaign) return false
+  if (!campaignsStore.currentCampaign) return false;
   return campaignsStore.ownedCampaigns.some(
     campaign => campaign.id === campaignsStore.currentCampaign.id
-  )
-})
+  );
+});
 
 function setPostRef(postId, el) {
   if (el) {
-    postRefs.value[postId] = el
+    postRefs.value[postId] = el;
   }
 }
 
 onMounted(async () => {
-  await campaignsStore.fetchCampaigns()
-  await invitesStore.fetchInvites()
+  await campaignsStore.fetchCampaigns();
+  await invitesStore.fetchInvites();
   
   // Initialize Socket.IO
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem('token');
   if (token) {
-    socketService.connect(token)
-    invitesStore.setupSocketListener()
+    socketService.connect(token);
+    invitesStore.setupSocketListener();
   }
-})
+});
 
 onUnmounted(() => {
-  socketService.disconnect()
-})
+  socketService.disconnect();
+});
 
 function handleLogout() {
-  authStore.logout()
-  router.push('/login')
+  authStore.logout();
+  router.push('/login');
 }
 
 async function changeSortBy(sort) {
-  postsStore.setSortBy(sort)
+  postsStore.setSortBy(sort);
   if (campaignsStore.currentCampaign) {
-    await postsStore.fetchPosts(campaignsStore.currentCampaign.id)
+    await postsStore.fetchPosts(campaignsStore.currentCampaign.id);
   }
 }
 
@@ -138,7 +138,7 @@ async function loadMore() {
       campaignsStore.currentCampaign.id, 
       postsStore.currentPage + 1, 
       true
-    )
+    );
   }
 }
 </script>

@@ -41,45 +41,45 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useInvitesStore } from '../stores/invites'
-import { useCampaignsStore } from '../stores/campaigns'
+import { ref, onMounted, onUnmounted } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useInvitesStore } from '../../stores/invites.store.js';
+import { useCampaignsStore } from '../../stores/campaigns.store.js';
 
-const { t } = useI18n()
-const invitesStore = useInvitesStore()
-const campaignsStore = useCampaignsStore()
+const { t } = useI18n();
+const invitesStore = useInvitesStore();
+const campaignsStore = useCampaignsStore();
 
-const showDropdown = ref(false)
+const showDropdown = ref(false);
 
 function toggleDropdown() {
-  showDropdown.value = !showDropdown.value
+  showDropdown.value = !showDropdown.value;
 }
 
 async function handleAccept(inviteId) {
-  const result = await invitesStore.acceptInvite(inviteId)
+  const result = await invitesStore.acceptInvite(inviteId);
   if (result.success) {
     // Add campaign to shared campaigns
-    campaignsStore.addSharedCampaign(result.campaign)
+    campaignsStore.addSharedCampaign(result.campaign);
   }
 }
 
 async function handleReject(inviteId) {
-  await invitesStore.rejectInvite(inviteId)
+  await invitesStore.rejectInvite(inviteId);
 }
 
 function handleClickOutside(event) {
-  const dropdown = document.querySelector('.notification-bell')
+  const dropdown = document.querySelector('.notification-bell');
   if (dropdown && !dropdown.contains(event.target)) {
-    showDropdown.value = false
+    showDropdown.value = false;
   }
 }
 
 onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
-})
+  document.addEventListener('click', handleClickOutside);
+});
 
 onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
-})
+  document.removeEventListener('click', handleClickOutside);
+});
 </script>

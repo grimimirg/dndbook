@@ -55,41 +55,41 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-import { useAuthStore } from '../stores/auth'
-import LanguageSelector from '../components/LanguageSelector.vue'
-import ThemeToggle from '../components/ThemeToggle.vue'
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+import { useAuthStore } from '../stores/auth.store.js';
+import LanguageSelector from './components/LanguageSelector.vue';
+import ThemeToggle from './components/ThemeToggle.vue';
 
-const router = useRouter()
-const { t } = useI18n()
-const authStore = useAuthStore()
+const router = useRouter();
+const { t } = useI18n();
+const authStore = useAuthStore();
 
-const username = ref('')
-const email = ref('')
-const password = ref('')
-const isRegister = ref(false)
-const loading = ref(false)
-const error = ref('')
+const username = ref('');
+const email = ref('');
+const password = ref('');
+const isRegister = ref(false);
+const loading = ref(false);
+const error = ref('');
 
 async function handleSubmit() {
-  loading.value = true
-  error.value = ''
+  loading.value = true;
+  error.value = '';
   
-  let result
+  let result;
   if (isRegister.value) {
-    result = await authStore.register(username.value, email.value, password.value)
+    result = await authStore.register(username.value, email.value, password.value);
   } else {
-    result = await authStore.login(username.value, password.value)
+    result = await authStore.login(username.value, password.value);
   }
   
-  loading.value = false
+  loading.value = false;
   
   if (result.success) {
-    router.push('/')
+    router.push('/');
   } else {
-    error.value = result.error
+    error.value = result.error;
   }
 }
 </script>

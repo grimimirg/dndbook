@@ -111,43 +111,43 @@
 </template>
 
 <script setup>
-import {ref} from 'vue'
-import {useI18n} from 'vue-i18n'
-import {useCampaignsStore} from '../stores/campaigns'
-import {usePostsStore} from '../stores/posts'
-import InviteUsersModal from './InviteUsersModal.vue'
+import {ref} from 'vue';
+import {useI18n} from 'vue-i18n';
+import {useCampaignsStore} from '../../stores/campaigns.store.js';
+import {usePostsStore} from '../../stores/posts.store.js';
+import InviteUsersModal from './InviteUsersModal.vue';
 
-const {t} = useI18n()
-const campaignsStore = useCampaignsStore()
-const postsStore = usePostsStore()
+const {t} = useI18n();
+const campaignsStore = useCampaignsStore();
+const postsStore = usePostsStore();
 
-const expandedCampaignId = ref(null)
-const showCreateModal = ref(false)
-const showInviteModal = ref(false)
-const selectedCampaignId = ref(null)
-const newCampaignName = ref('')
-const newCampaignDescription = ref('')
+const expandedCampaignId = ref(null);
+const showCreateModal = ref(false);
+const showInviteModal = ref(false);
+const selectedCampaignId = ref(null);
+const newCampaignName = ref('');
+const newCampaignDescription = ref('');
 
 async function toggleCampaign(campaign) {
   if (expandedCampaignId.value !== campaign.id) {
-    expandedCampaignId.value = campaign.id
-    campaignsStore.setCurrentCampaign(campaign)
-    postsStore.resetSort()
-    await postsStore.fetchPosts(campaign.id)
+    expandedCampaignId.value = campaign.id;
+    campaignsStore.setCurrentCampaign(campaign);
+    postsStore.resetSort();
+    await postsStore.fetchPosts(campaign.id);
   }
 }
 
 function getCampaignPosts(campaignId) {
   if (campaignsStore.currentCampaign?.id === campaignId) {
-    return postsStore.posts
+    return postsStore.posts;
   }
-  return []
+  return [];
 }
 
 function scrollToPost(postId) {
-  const element = document.getElementById(`post-${postId}`)
+  const element = document.getElementById(`post-${postId}`);
   if (element) {
-    element.scrollIntoView({behavior: 'smooth', block: 'center'})
+    element.scrollIntoView({behavior: 'smooth', block: 'center'});
   }
 }
 
@@ -155,27 +155,27 @@ async function handleCreateCampaign() {
   const result = await campaignsStore.createCampaign(
       newCampaignName.value,
       newCampaignDescription.value
-  )
+  );
 
   if (result.success) {
-    showCreateModal.value = false
-    newCampaignName.value = ''
-    newCampaignDescription.value = ''
+    showCreateModal.value = false;
+    newCampaignName.value = '';
+    newCampaignDescription.value = '';
   }
 }
 
 function openInviteModal(campaignId) {
-  selectedCampaignId.value = campaignId
-  showInviteModal.value = true
+  selectedCampaignId.value = campaignId;
+  showInviteModal.value = true;
 }
 
 function handleInviteSuccess() {
-  console.log('Invites sent successfully')
+  console.log('Invites sent successfully');
 }
 
 async function deleteCampaign(campaignId) {
   if (confirm(t('campaign.confirmDelete'))) {
-    await campaignsStore.deleteCampaign(campaignId)
+    await campaignsStore.deleteCampaign(campaignId);
   }
 }
 </script>

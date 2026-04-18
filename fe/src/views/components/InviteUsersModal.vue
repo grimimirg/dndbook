@@ -50,62 +50,62 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useInvitesStore } from '../stores/invites'
+import { ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useInvitesStore } from '../../stores/invites.store.js';
 
 const props = defineProps({
   show: Boolean,
   campaignId: Number
-})
+});
 
-const emit = defineEmits(['close', 'success'])
+const emit = defineEmits(['close', 'success']);
 
-const { t } = useI18n()
-const invitesStore = useInvitesStore()
+const { t } = useI18n();
+const invitesStore = useInvitesStore();
 
-const availableUsers = ref([])
-const selectedUsers = ref([])
-const loading = ref(false)
-const sending = ref(false)
+const availableUsers = ref([]);
+const selectedUsers = ref([]);
+const loading = ref(false);
+const sending = ref(false);
 
 watch(() => props.show, async (newValue) => {
   if (newValue && props.campaignId) {
-    await loadAvailableUsers()
+    await loadAvailableUsers();
   } else {
-    selectedUsers.value = []
+    selectedUsers.value = [];
   }
-})
+});
 
 async function loadAvailableUsers() {
-  loading.value = true
-  const result = await invitesStore.getAvailableUsers(props.campaignId)
+  loading.value = true;
+  const result = await invitesStore.getAvailableUsers(props.campaignId);
   if (result.success) {
-    availableUsers.value = result.users
+    availableUsers.value = result.users;
   }
-  loading.value = false
+  loading.value = false;
 }
 
 function toggleUser(userId) {
-  const index = selectedUsers.value.indexOf(userId)
+  const index = selectedUsers.value.indexOf(userId);
   if (index > -1) {
-    selectedUsers.value.splice(index, 1)
+    selectedUsers.value.splice(index, 1);
   } else {
-    selectedUsers.value.push(userId)
+    selectedUsers.value.push(userId);
   }
 }
 
 async function handleSendInvites() {
-  if (selectedUsers.value.length === 0) return
+  if (selectedUsers.value.length === 0) return;
   
-  sending.value = true
-  const result = await invitesStore.inviteUsers(props.campaignId, selectedUsers.value)
-  sending.value = false
+  sending.value = true;
+  const result = await invitesStore.inviteUsers(props.campaignId, selectedUsers.value);
+  sending.value = false;
   
   if (result.success) {
-    emit('success')
-    emit('close')
-    selectedUsers.value = []
+    emit('success');
+    emit('close');
+    selectedUsers.value = [];
   }
 }
 </script>

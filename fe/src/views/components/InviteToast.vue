@@ -21,9 +21,9 @@
 </template>
 
 <script setup>
-import { useI18n } from 'vue-i18n'
-import { useInvitesStore } from '../stores/invites'
+import { useI18n } from 'vue-i18n';
+import { useInvitesStore } from '../../stores/invites.store.js';
 
-const { t } = useI18n()
-const invitesStore = useInvitesStore()
+const { t } = useI18n();
+const invitesStore = useInvitesStore();
 </script>

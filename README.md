@@ -476,7 +476,7 @@ The nginx template provides:
 - **HTTP (port 80)**: Automatic redirect to HTTPS for production domain
 - **HTTPS (port 443)**: SSL-enabled access with Let's Encrypt certificates
   - Frontend proxy: `http://dndbook_frontend:80`
-  - Backend API proxy: `http://dndbook_backend:5000/api`
+  - Backend API proxy: `http://dndbook_backend:5000/apiService`
 
 ### Setup Instructions
 

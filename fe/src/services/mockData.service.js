@@ -3,7 +3,7 @@ const MOCK_USER = {
   username: 'admin',
   email: 'dm@example.com',
   created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-}
+};
 
 const MOCK_CAMPAIGNS = [
   {
@@ -33,7 +33,7 @@ const MOCK_CAMPAIGNS = [
     updated_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     post_count: 2
   }
-]
+];
 
 const MOCK_POSTS = [
   {
@@ -146,11 +146,11 @@ const MOCK_POSTS = [
     updated_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     images: []
   }
-]
+];
 
 export const mockApi = {
   async login(username, password) {
-    await new Promise(resolve => setTimeout(resolve, 500))
+    await new Promise(resolve => setTimeout(resolve, 500));
     
     if (username === MOCK_USER.username) {
       return {
@@ -159,21 +159,21 @@ export const mockApi = {
           token: 'mock-jwt-token-' + Date.now(),
           user: MOCK_USER
         }
-      }
+      };
     }
     
-    throw { response: { data: { error: 'Invalid credentials' }, status: 401 } }
+    throw { response: { data: { error: 'Invalid credentials' }, status: 401 } };
   },
 
   async register(username, email, password) {
-    await new Promise(resolve => setTimeout(resolve, 500))
+    await new Promise(resolve => setTimeout(resolve, 500));
     
     const newUser = {
       id: 2,
       username,
       email,
       created_at: new Date().toISOString()
-    }
+    };
     
     return {
       data: {
@@ -181,16 +181,16 @@ export const mockApi = {
         token: 'mock-jwt-token-' + Date.now(),
         user: newUser
       }
-    }
+    };
   },
 
   async getCampaigns() {
-    await new Promise(resolve => setTimeout(resolve, 300))
-    return { data: MOCK_CAMPAIGNS }
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return { data: MOCK_CAMPAIGNS };
   },
 
   async createCampaign(data) {
-    await new Promise(resolve => setTimeout(resolve, 300))
+    await new Promise(resolve => setTimeout(resolve, 300));
     
     const newCampaign = {
       id: MOCK_CAMPAIGNS.length + 1,
@@ -200,27 +200,27 @@ export const mockApi = {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       post_count: 0
-    }
+    };
     
-    MOCK_CAMPAIGNS.push(newCampaign)
-    return { data: newCampaign }
+    MOCK_CAMPAIGNS.push(newCampaign);
+    return { data: newCampaign };
   },
 
   async getCampaignPosts(campaignId, params) {
-    await new Promise(resolve => setTimeout(resolve, 300))
+    await new Promise(resolve => setTimeout(resolve, 300));
     
-    let posts = MOCK_POSTS.filter(p => p.campaign_id === campaignId)
+    let posts = MOCK_POSTS.filter(p => p.campaign_id === campaignId);
     
     if (params.sort === 'updated') {
-      posts.sort((a, b) => new Date(a.updated_at) - new Date(b.updated_at))
+      posts.sort((a, b) => new Date(a.updated_at) - new Date(b.updated_at));
     } else {
-      posts.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+      posts.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
     }
     
-    const page = params.page || 1
-    const perPage = params.per_page || 10
-    const start = (page - 1) * perPage
-    const end = start + perPage
+    const page = params.page || 1;
+    const perPage = params.per_page || 10;
+    const start = (page - 1) * perPage;
+    const end = start + perPage;
     
     return {
       data: {
@@ -231,11 +231,11 @@ export const mockApi = {
         has_next: end < posts.length,
         has_prev: page > 1
       }
-    }
+    };
   },
 
   async createPost(data) {
-    await new Promise(resolve => setTimeout(resolve, 300))
+    await new Promise(resolve => setTimeout(resolve, 300));
     
     const newPost = {
       id: MOCK_POSTS.length + 1,
@@ -247,29 +247,29 @@ export const mockApi = {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       images: []
-    }
+    };
     
-    MOCK_POSTS.unshift(newPost)
-    return { data: newPost }
+    MOCK_POSTS.unshift(newPost);
+    return { data: newPost };
   },
 
   async uploadImage(postId, formData) {
-    await new Promise(resolve => setTimeout(resolve, 300))
+    await new Promise(resolve => setTimeout(resolve, 300));
     
-    const post = MOCK_POSTS.find(p => p.id === postId)
+    const post = MOCK_POSTS.find(p => p.id === postId);
     if (!post) {
-      throw { response: { data: { error: 'Post not found' }, status: 404 } }
+      throw { response: { data: { error: 'Post not found' }, status: 404 } };
     }
     
-    const file = formData.get('file')
+    const file = formData.get('file');
     const mockImage = {
       id: Date.now(),
       post_id: postId,
       file_path: `mock_${file.name}`,
       order_index: post.images.length
-    }
+    };
     
-    post.images.push(mockImage)
-    return { data: mockImage }
+    post.images.push(mockImage);
+    return { data: mockImage };
   }
-}
+};

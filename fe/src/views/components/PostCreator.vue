@@ -44,71 +44,71 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useCampaignsStore } from '../stores/campaigns'
-import { usePostsStore } from '../stores/posts'
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useCampaignsStore } from '../../stores/campaigns.store.js';
+import { usePostsStore } from '../../stores/posts.store.js';
 
-const { t } = useI18n()
-const campaignsStore = useCampaignsStore()
-const postsStore = usePostsStore()
+const { t } = useI18n();
+const campaignsStore = useCampaignsStore();
+const postsStore = usePostsStore();
 
-const title = ref('')
-const content = ref('')
-const loading = ref(false)
-const selectedImages = ref([])
-const fileInput = ref(null)
+const title = ref('');
+const content = ref('');
+const loading = ref(false);
+const selectedImages = ref([]);
+const fileInput = ref(null);
 
 function handleImageSelect(event) {
-  const files = Array.from(event.target.files)
+  const files = Array.from(event.target.files);
   
   files.forEach(file => {
     if (file.type.startsWith('image/')) {
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onload = (e) => {
         selectedImages.value.push({
           file: file,
           preview: e.target.result
-        })
-      }
-      reader.readAsDataURL(file)
+        });
+      };
+      reader.readAsDataURL(file);
     }
-  })
+  });
   
   if (fileInput.value) {
-    fileInput.value.value = ''
+    fileInput.value.value = '';
   }
 }
 
 function removeImage(index) {
-  selectedImages.value.splice(index, 1)
+  selectedImages.value.splice(index, 1);
 }
 
 async function handleCreatePost() {
-  if (!campaignsStore.currentCampaign) return
+  if (!campaignsStore.currentCampaign) return;
   
-  loading.value = true
+  loading.value = true;
   
   const result = await postsStore.createPost(
     campaignsStore.currentCampaign.id,
     title.value,
     content.value
-  )
+  );
   
   if (result.success && result.post) {
-    const postId = result.post.id
+    const postId = result.post.id;
     
     for (const image of selectedImages.value) {
-      await postsStore.uploadImage(postId, image.file)
+      await postsStore.uploadImage(postId, image.file);
     }
     
-    await postsStore.fetchPosts(campaignsStore.currentCampaign.id)
+    await postsStore.fetchPosts(campaignsStore.currentCampaign.id);
     
-    title.value = ''
-    content.value = ''
-    selectedImages.value = []
+    title.value = '';
+    content.value = '';
+    selectedImages.value = [];
   }
   
-  loading.value = false
+  loading.value = false;
 }
 </script>
