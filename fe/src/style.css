@@ -841,14 +841,6 @@ input::placeholder, textarea::placeholder {
   transition: background 0.3s ease;
 }
 
-.language-selector-container {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
 .login-card h1 {
   text-align: center;
   margin-bottom: 30px;

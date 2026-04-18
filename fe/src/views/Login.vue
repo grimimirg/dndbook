@@ -1,14 +1,15 @@
 <template>
   <div class="login-container">
-    <div class="login-card">
-      <div class="language-selector-container">
-        <ThemeToggle />
-        <LanguageSelector />
-      </div>
-      
+    <div class="top-controls">
+      <LanguageSelector />
+      <ThemeToggle />
+    </div>
+    
+    <div class="login-wrapper">
       <h1>{{ t('app.title') }}</h1>
       
-      <form @submit.prevent="handleSubmit">
+      <div class="login-card">
+        <form @submit.prevent="handleSubmit">
         <div class="form-group">
           <input 
             v-model="username" 
@@ -47,6 +48,7 @@
         <button @click="isRegister = !isRegister" class="secondary">
           {{ isRegister ? t('auth.alreadyHaveAccount') : t('auth.needAccount') }}
         </button>
+      </div>
       </div>
     </div>
   </div>
@@ -91,3 +93,52 @@ async function handleSubmit() {
   }
 }
 </script>
+
+<style scoped>
+.top-controls {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 12px;
+  z-index: 10;
+}
+
+.login-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.login-wrapper h1 {
+  text-align: center;
+  color: var(--text-heading);
+  font-size: 32px;
+  margin: 0;
+}
+
+.toggle {
+  margin-top: 50px;
+}
+
+.toggle button {
+  font-size: 10.5px;
+  padding: 6px 12px;
+}
+
+.login-card input {
+  background: rgba(30, 30, 30, 0.8);
+  color: #ffffff;
+  border-color: rgba(139, 111, 71, 0.4);
+}
+
+.login-card input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.login-card input:focus {
+  background: rgba(30, 30, 30, 0.9);
+  color: #ffffff;
+}
+</style>
