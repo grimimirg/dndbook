@@ -14,6 +14,13 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+def can_access_campaign(campaign, user):
+    """Check if user can access campaign (owner or member)"""
+    if campaign.owner_id == user.id:
+        return True
+    is_member = campaign.members.filter_by(id=user.id).first() is not None
+    return is_member
+
 @bp.route('/campaigns/<int:campaign_id>/posts', methods=['GET'])
 @token_required
 def get_posts(current_user, campaign_id):
@@ -33,7 +40,7 @@ def get_posts(current_user, campaign_id):
     
     campaign = Campaign.query.get_or_404(campaign_id)
     
-    if campaign.owner_id != current_user.id:
+    if not can_access_campaign(campaign, current_user):
         return jsonify({'error': 'Unauthorized'}), 403
     
     query = Post.query.filter_by(campaign_id=campaign_id)
@@ -79,7 +86,7 @@ def create_post(current_user):
     
     campaign = Campaign.query.get_or_404(data['campaign_id'])
     
-    if campaign.owner_id != current_user.id:
+    if not can_access_campaign(campaign, current_user):
         return jsonify({'error': 'Unauthorized'}), 403
     
     post = Post(
@@ -101,7 +108,7 @@ def get_post(current_user, post_id):
     post = Post.query.get_or_404(post_id)
     campaign = Campaign.query.get(post.campaign_id)
     
-    if campaign.owner_id != current_user.id:
+    if not can_access_campaign(campaign, current_user):
         return jsonify({'error': 'Unauthorized'}), 403
     
     return jsonify(post.to_dict()), 200
@@ -112,7 +119,7 @@ def update_post(current_user, post_id):
     post = Post.query.get_or_404(post_id)
     campaign = Campaign.query.get(post.campaign_id)
     
-    if campaign.owner_id != current_user.id:
+    if not can_access_campaign(campaign, current_user):
         return jsonify({'error': 'Unauthorized'}), 403
     
     data = request.get_json()
@@ -132,7 +139,7 @@ def delete_post(current_user, post_id):
     post = Post.query.get_or_404(post_id)
     campaign = Campaign.query.get(post.campaign_id)
     
-    if campaign.owner_id != current_user.id:
+    if not can_access_campaign(campaign, current_user):
         return jsonify({'error': 'Unauthorized'}), 403
     
     for image in post.images:
@@ -152,7 +159,7 @@ def upload_image(current_user, post_id):
     post = Post.query.get_or_404(post_id)
     campaign = Campaign.query.get(post.campaign_id)
     
-    if campaign.owner_id != current_user.id:
+    if not can_access_campaign(campaign, current_user):
         return jsonify({'error': 'Unauthorized'}), 403
     
     if 'file' not in request.files:
@@ -195,7 +202,7 @@ def delete_image(current_user, post_id, image_id):
     post = Post.query.get_or_404(post_id)
     campaign = Campaign.query.get(post.campaign_id)
     
-    if campaign.owner_id != current_user.id:
+    if not can_access_campaign(campaign, current_user):
         return jsonify({'error': 'Unauthorized'}), 403
     
     image = Image.query.filter_by(id=image_id, post_id=post_id).first_or_404()
