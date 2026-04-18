@@ -26,8 +26,8 @@ if [ -z "$VIRTUAL_ENV" ]; then
     fi
 fi
 
-# Create temporary Python script in the current directory
-cat > init_db_temp.py << 'EOF'
+# Execute Python code inline without creating temporary files
+python << 'EOF'
 import sys
 import os
 
@@ -71,13 +71,7 @@ except Exception as e:
     traceback.print_exc()
     sys.exit(1)
 EOF
-
-# Execute the temporary script
-python init_db_temp.py
 RESULT=$?
-
-# Clean up
-rm -f init_db_temp.py
 
 if [ $RESULT -eq 0 ]; then
     echo ""
