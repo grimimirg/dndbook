@@ -280,9 +280,9 @@ input::placeholder, textarea::placeholder {
   position: absolute;
   top: 0;
   right: 0;
-  background: rgba(139, 69, 69, 0.7);
+  background: transparent;
   color: #f5e6d3;
-  border: 2px solid rgba(139, 69, 69, 0.9);
+  border: none;
   border-radius: 50%;
   width: 32px;
   height: 32px;
@@ -298,8 +298,8 @@ input::placeholder, textarea::placeholder {
 }
 
 .delete-button:hover {
-  background: rgba(139, 69, 69, 0.9);
-  border-color: rgba(180, 90, 90, 1);
+  background: transparent;
+  border: none;
   transform: scale(1.1);
 }
 

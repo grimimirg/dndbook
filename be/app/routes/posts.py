@@ -36,7 +36,7 @@ def get_posts(current_user, campaign_id):
         if not campaign or campaign['owner_id'] != user_id:
             return jsonify({'error': 'Unauthorized'}), 403
         
-        result = MockDataProvider.get_posts(campaign_id, page, per_page, sort_by)
+        result = MockDataProvider.get_posts(campaign_id, page, per_page, sort_by, order)
         return jsonify(result), 200
     
     campaign = Campaign.query.get_or_404(campaign_id)

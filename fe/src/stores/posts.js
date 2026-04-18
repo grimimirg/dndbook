@@ -115,7 +115,10 @@ export const usePostsStore = defineStore('posts', () => {
   }
 
   function setSortBy(sort) {
-    if (sortBy.value === sort) {
+    if (sort === 'updated') {
+      sortBy.value = 'updated'
+      sortDirection.value = 'desc'
+    } else if (sortBy.value === sort) {
       sortDirection.value = sortDirection.value === 'desc' ? 'asc' : 'desc'
     } else {
       sortBy.value = sort

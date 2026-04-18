@@ -188,7 +188,7 @@ class MockDataProvider:
         return next((c for c in cls.CAMPAIGNS if c['id'] == campaign_id), None)
 
     @classmethod
-    def get_posts(cls, campaign_id, page=1, per_page=10, sort_by='created'):
+    def get_posts(cls, campaign_id, page=1, per_page=10, sort_by='created', order='desc'):
         """Get paginated posts for a campaign"""
         campaign_posts = [p.copy() for p in cls.POSTS if p['campaign_id'] == campaign_id]
         
@@ -196,10 +196,11 @@ class MockDataProvider:
             author = cls.get_user(post['author_id'])
             post['author'] = author['username'] if author else None
         
-        if sort_by == 'updated':
-            campaign_posts.sort(key=lambda x: x['updated_at'])
-        else:
-            campaign_posts.sort(key=lambda x: x['created_at'])
+        # Determina il campo di ordinamento
+        sort_key = 'updated_at' if sort_by == 'updated' else 'created_at'
+        
+        # Applica l'ordinamento con la direzione specificata
+        campaign_posts.sort(key=lambda x: x[sort_key], reverse=(order == 'desc'))
         
         start = (page - 1) * per_page
         end = start + per_page
