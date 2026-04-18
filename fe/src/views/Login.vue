@@ -6,7 +6,7 @@
     </div>
     
     <div class="login-wrapper">
-      <h1>{{ t('app.title') }}</h1>
+      <img src="/images/dnd-book-logo.png" alt="D&D Book" class="logo" />
       
       <div class="login-card">
         <form @submit.prevent="handleSubmit">
@@ -93,52 +93,3 @@ async function handleSubmit() {
   }
 }
 </script>
-
-<style scoped>
-.top-controls {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  display: flex;
-  gap: 12px;
-  z-index: 10;
-}
-
-.login-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
-
-.login-wrapper h1 {
-  text-align: center;
-  color: var(--text-heading);
-  font-size: 32px;
-  margin: 0;
-}
-
-.toggle {
-  margin-top: 50px;
-}
-
-.toggle button {
-  font-size: 10.5px;
-  padding: 6px 12px;
-}
-
-.login-card input {
-  background: rgba(30, 30, 30, 0.8);
-  color: #ffffff;
-  border-color: rgba(139, 111, 71, 0.4);
-}
-
-.login-card input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.login-card input:focus {
-  background: rgba(30, 30, 30, 0.9);
-  color: #ffffff;
-}
-</style>
