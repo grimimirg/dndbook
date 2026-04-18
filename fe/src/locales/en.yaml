@@ -15,8 +15,8 @@ auth:
   
 campaign:
   campaigns: "Campaigns"
-  myCampaigns: "My Campaigns"
-  sharedCampaigns: "Shared Campaigns"
+  myCampaigns: "Created by me"
+  sharedCampaigns: "Where I participate"
   new: "New"
   create: "Create Campaign"
   name: "Campaign Name"
@@ -25,7 +25,8 @@ campaign:
   noCampaigns: "No campaigns yet"
   selectCampaign: "Select a campaign from the sidebar to view posts"
   inviteUsers: "Invite Users"
-  inviteTooltip: "Invite users to this campaign"
+  inviteTooltip: "Invite players..."
+  deleteTooltip: "Delete this campaign"
   selectUsers: "Select users to invite"
   sendInvites: "Send Invites"
   invitesSent: "Invites sent successfully"

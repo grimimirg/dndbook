@@ -15,8 +15,8 @@ auth:
 
 campaign:
   campaigns: "Campagnes"
-  myCampaigns: "Mes Campagnes"
-  sharedCampaigns: "Campagnes Partagées"
+  myCampaigns: "Créées par moi"
+  sharedCampaigns: "Auxquelles je participe"
   new: "Nouveau"
   create: "Créer une campagne"
   name: "Nom de la campagne"
@@ -25,7 +25,8 @@ campaign:
   noCampaigns: "Aucune campagne pour le moment"
   selectCampaign: "Sélectionnez une campagne dans la barre latérale pour voir les publications"
   inviteUsers: "Inviter des Utilisateurs"
-  inviteTooltip: "Inviter des utilisateurs à cette campagne"
+  inviteTooltip: "Inviter des joueurs..."
+  deleteTooltip: "Supprimer cette campagne"
   selectUsers: "Sélectionnez les utilisateurs à inviter"
   sendInvites: "Envoyer les Invitations"
   invitesSent: "Invitations envoyées avec succès"
