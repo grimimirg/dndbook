@@ -26,7 +26,8 @@ def can_access_campaign(campaign, user):
 def get_posts(current_user, campaign_id):
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', current_app.config['POSTS_PER_PAGE'], type=int)
-    sort_by = request.args.get('sort', 'created')
+    sort_by = request.args.get('sort', 'updated')
+    order = request.args.get('order', 'desc')
     
     if current_app.config['MOCK_DATA']:
         user_id = current_user if isinstance(current_user, int) else current_user.id
@@ -45,10 +46,14 @@ def get_posts(current_user, campaign_id):
     
     query = Post.query.filter_by(campaign_id=campaign_id)
     
-    if sort_by == 'updated':
-        query = query.order_by(Post.updated_at.asc())
+    # Determina il campo di ordinamento
+    order_field = Post.updated_at if sort_by == 'updated' else Post.created_at
+    
+    # Applica la direzione di ordinamento
+    if order == 'asc':
+        query = query.order_by(order_field.asc())
     else:
-        query = query.order_by(Post.created_at.asc())
+        query = query.order_by(order_field.desc())
     
     pagination = query.paginate(page=page, per_page=per_page, error_out=False)
     

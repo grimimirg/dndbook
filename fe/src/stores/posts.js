@@ -7,15 +7,16 @@ export const usePostsStore = defineStore('posts', () => {
   const loading = ref(false)
   const currentPage = ref(1)
   const totalPages = ref(1)
-  const hasMore = ref(true)
-  const sortBy = ref('created')
+  const hasMore = ref(false)
+  const sortBy = ref('updated')
+  const sortDirection = ref('desc')
   const postsPerPage = parseInt(import.meta.env.VITE_POSTS_PER_PAGE || '10')
 
   async function fetchPosts(campaignId, page = 1, append = false) {
     loading.value = true
     try {
       const response = await api.get(`/api/campaigns/${campaignId}/posts`, {
-        params: { page, per_page: postsPerPage, sort: sortBy.value }
+        params: { page, per_page: postsPerPage, sort: sortBy.value, order: sortDirection.value }
       })
       
       if (append) {
@@ -114,7 +115,12 @@ export const usePostsStore = defineStore('posts', () => {
   }
 
   function setSortBy(sort) {
-    sortBy.value = sort
+    if (sortBy.value === sort) {
+      sortDirection.value = sortDirection.value === 'desc' ? 'asc' : 'desc'
+    } else {
+      sortBy.value = sort
+      sortDirection.value = 'desc'
+    }
   }
 
   function clearPosts() {
@@ -124,6 +130,11 @@ export const usePostsStore = defineStore('posts', () => {
     hasMore.value = true
   }
 
+  function resetSort() {
+    sortBy.value = 'updated'
+    sortDirection.value = 'desc'
+  }
+
   return {
     posts,
     loading,
@@ -131,6 +142,7 @@ export const usePostsStore = defineStore('posts', () => {
     totalPages,
     hasMore,
     sortBy,
+    sortDirection,
     fetchPosts,
     createPost,
     updatePost,
@@ -138,6 +150,7 @@ export const usePostsStore = defineStore('posts', () => {
     uploadImage,
     deleteImage,
     setSortBy,
+    resetSort,
     clearPosts
   }
 })

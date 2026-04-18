@@ -132,6 +132,7 @@ async function toggleCampaign(campaign) {
   if (expandedCampaignId.value !== campaign.id) {
     expandedCampaignId.value = campaign.id
     campaignsStore.setCurrentCampaign(campaign)
+    postsStore.resetSort()
     await postsStore.fetchPosts(campaign.id)
   }
 }
