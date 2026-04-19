@@ -59,6 +59,18 @@ post:
   deleteSuccess: "Post eliminato con successo"
   updateSuccess: "Post aggiornato con successo"
   uploadImage: "Carica immagine"
+
+comment:
+  comments: "Commenti"
+  addComment: "Aggiungi un commento..."
+  writeComment: "Scrivi un commento..."
+  post: "Pubblica"
+  edit: "Modifica"
+  delete: "Elimina"
+  save: "Salva"
+  cancel: "Annulla"
+  noComments: "Nessun commento"
+  confirmDelete: "Sei sicuro di voler eliminare questo commento?"
   
 sort:
   label: "Ordina per"

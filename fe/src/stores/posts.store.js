@@ -138,6 +138,60 @@ export const usePostsStore = defineStore('posts', () => {
     sortDirection.value = 'desc';
   }
 
+  async function createComment(postId, content) {
+    try {
+      const response = await api.post(`/api/posts/${postId}/comments`, { content });
+      const post = posts.value.find(p => p.id === postId);
+      if (post) {
+        if (!post.comments) {
+          post.comments = [];
+        }
+        post.comments.push(response.data);
+      }
+      return { success: true, comment: response.data };
+    } catch (error) {
+      return { 
+        success: false, 
+        error: error.response?.data?.error || 'Failed to create comment' 
+      };
+    }
+  }
+
+  async function updateComment(postId, commentId, content) {
+    try {
+      const response = await api.put(`/api/posts/${postId}/comments/${commentId}`, { content });
+      const post = posts.value.find(p => p.id === postId);
+      if (post && post.comments) {
+        const index = post.comments.findIndex(c => c.id === commentId);
+        if (index !== -1) {
+          post.comments[index] = response.data;
+        }
+      }
+      return { success: true };
+    } catch (error) {
+      return { 
+        success: false, 
+        error: error.response?.data?.error || 'Failed to update comment' 
+      };
+    }
+  }
+
+  async function deleteComment(postId, commentId) {
+    try {
+      await api.delete(`/api/posts/${postId}/comments/${commentId}`);
+      const post = posts.value.find(p => p.id === postId);
+      if (post && post.comments) {
+        post.comments = post.comments.filter(c => c.id !== commentId);
+      }
+      return { success: true };
+    } catch (error) {
+      return { 
+        success: false, 
+        error: error.response?.data?.error || 'Failed to delete comment' 
+      };
+    }
+  }
+
   return {
     posts,
     loading,
@@ -152,6 +206,9 @@ export const usePostsStore = defineStore('posts', () => {
     deletePost,
     uploadImage,
     deleteImage,
+    createComment,
+    updateComment,
+    deleteComment,
     setSortBy,
     resetSort,
     clearPosts

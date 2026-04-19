@@ -21,6 +21,7 @@ class User(db.Model):
     owned_campaigns = db.relationship('Campaign', backref='owner', lazy=True, cascade='all, delete-orphan', foreign_keys='Campaign.owner_id')
     member_campaigns = db.relationship('Campaign', secondary=campaign_members, backref=db.backref('members', lazy='dynamic'))
     posts = db.relationship('Post', backref='author', lazy=True, cascade='all, delete-orphan')
+    comments = db.relationship('Comment', backref='author', lazy=True, cascade='all, delete-orphan')
     sent_invites = db.relationship('CampaignInvite', foreign_keys='CampaignInvite.inviter_id', backref='inviter', lazy=True, cascade='all, delete-orphan')
     received_invites = db.relationship('CampaignInvite', foreign_keys='CampaignInvite.invitee_id', backref='invitee', lazy=True, cascade='all, delete-orphan')
     
@@ -77,8 +78,9 @@ class Post(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     images = db.relationship('Image', backref='post', lazy=True, cascade='all, delete-orphan', order_by='Image.order_index')
+    comments = db.relationship('Comment', backref='post', lazy=True, cascade='all, delete-orphan', order_by='Comment.created_at')
     
-    def to_dict(self, include_images=True):
+    def to_dict(self, include_images=True, include_comments=True):
         result = {
             'id': self.id,
             'campaign_id': self.campaign_id,
@@ -91,6 +93,8 @@ class Post(db.Model):
         }
         if include_images:
             result['images'] = [img.to_dict() for img in self.images]
+        if include_comments:
+            result['comments'] = [comment.to_dict() for comment in self.comments]
         return result
 
 class Image(db.Model):
@@ -108,6 +112,27 @@ class Image(db.Model):
             'post_id': self.post_id,
             'file_path': self.file_path,
             'order_index': self.order_index
+        }
+
+class Comment(db.Model):
+    __tablename__ = 'comments'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'post_id': self.post_id,
+            'author_id': self.author_id,
+            'author': self.author.username if self.author else None,
+            'content': self.content,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat()
         }
 
 class CampaignInvite(db.Model):

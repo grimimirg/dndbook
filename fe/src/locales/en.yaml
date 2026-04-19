@@ -59,6 +59,18 @@ post:
   deleteSuccess: "Post deleted successfully"
   updateSuccess: "Post updated successfully"
   uploadImage: "Upload image"
+
+comment:
+  comments: "Comments"
+  addComment: "Add a comment..."
+  writeComment: "Write a comment..."
+  post: "Post"
+  edit: "Edit"
+  delete: "Delete"
+  save: "Save"
+  cancel: "Cancel"
+  noComments: "No comments"
+  confirmDelete: "Are you sure you want to delete this comment?"
   
 sort:
   label: "Sort by"

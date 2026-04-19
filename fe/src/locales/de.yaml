@@ -59,6 +59,18 @@ post:
   deleteSuccess: "Beitrag erfolgreich gelöscht"
   updateSuccess: "Beitrag erfolgreich aktualisiert"
   uploadImage: "Bild hochladen"
+
+comment:
+  comments: "Kommentare"
+  addComment: "Kommentar hinzufügen..."
+  writeComment: "Schreibe einen Kommentar..."
+  post: "Posten"
+  edit: "Bearbeiten"
+  delete: "Löschen"
+  save: "Speichern"
+  cancel: "Abbrechen"
+  noComments: "Keine Kommentare"
+  confirmDelete: "Sind Sie sicher, dass Sie diesen Kommentar löschen möchten?"
   
 sort:
   label: "Sortieren nach"

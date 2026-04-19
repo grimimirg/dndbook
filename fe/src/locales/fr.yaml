@@ -60,6 +60,18 @@ post:
   updateSuccess: "Publication mise à jour avec succès"
   uploadImage: "Télécharger une image"
 
+comment:
+  comments: "Commentaires"
+  addComment: "Ajouter un commentaire..."
+  writeComment: "Écrire un commentaire..."
+  post: "Publier"
+  edit: "Modifier"
+  delete: "Supprimer"
+  save: "Enregistrer"
+  cancel: "Annuler"
+  noComments: "Aucun commentaire"
+  confirmDelete: "Êtes-vous sûr de vouloir supprimer ce commentaire ?"
+
 sort:
   label: "Trier par"
   byCreated: "Date de création"

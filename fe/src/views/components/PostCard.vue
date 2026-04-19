@@ -13,11 +13,11 @@
         </span>
       </div>
     </div>
-    
+
     <div v-if="post.images && post.images.length > 0" class="post-images">
       <div class="image-container">
-        <img :src="getImageUrl(post.images[currentImageIndex].file_path)" alt="Post image" />
-        
+        <img :src="getImageUrl(post.images[currentImageIndex].file_path)" alt="Post image"/>
+
         <div v-if="post.images.length > 1" class="image-controls">
           <button @click="previousImage" class="nav-button">‹</button>
           <span class="image-counter">{{ currentImageIndex + 1 }} / {{ post.images.length }}</span>
@@ -25,12 +25,97 @@
         </div>
       </div>
     </div>
-    
+
     <div class="post-content">
       {{ truncatedContent }}
       <span v-if="isContentTruncated" class="read-more" @click="openModal">
         {{ t('post.readMore') }}
       </span>
+    </div>
+
+    <div class="comments-section">
+      <div class="comments-header">
+        <h4>{{ t('comment.comments') }} ({{ post.comments?.length || 0 }})</h4>
+      </div>
+
+      <div v-if="post.comments && post.comments.length > 0" class="comments-list">
+        <div
+            v-for="comment in post.comments"
+            :key="comment.id"
+            class="comment-item"
+            @mouseenter="hoveredCommentId = comment.id"
+            @mouseleave="hoveredCommentId = null"
+        >
+          <div class="comment-content">
+            <div class="comment-header">
+              <div class="comment-info">
+                <span class="comment-author">{{ comment.author }}</span>
+                <span class="comment-date">{{ formatDate(comment.created_at) }}</span>
+              </div>
+
+              <div v-if="comment.author_id === currentUserId" class="comment-actions" :class="{ 'visible': hoveredCommentId === comment.id }">
+                <button
+                    v-if="editingCommentId !== comment.id"
+                    @click="startEditComment(comment)"
+                    class="comment-action-btn edit-btn"
+                    :title="t('comment.edit')"
+                >
+                  ✎
+                </button>
+                <button
+                    v-if="editingCommentId === comment.id"
+                    @click="saveEditComment(comment.id)"
+                    class="comment-action-btn save-btn"
+                    :title="t('comment.save')"
+                >
+                  ✓
+                </button>
+                <button
+                    v-if="editingCommentId === comment.id"
+                    @click="cancelEditComment"
+                    class="comment-action-btn cancel-btn"
+                    :title="t('comment.cancel')"
+                >
+                  ✕
+                </button>
+                <button
+                    v-if="editingCommentId !== comment.id"
+                    @click="handleDeleteComment(comment.id)"
+                    class="comment-action-btn delete-btn"
+                    :title="t('comment.delete')"
+                >
+                  🗑
+                </button>
+              </div>
+
+            </div>
+            <p v-if="editingCommentId !== comment.id" class="comment-text">{{ comment.content }}</p>
+            <textarea
+                v-else
+                v-model="editedCommentContent"
+                class="comment-edit-input"
+                @keydown.esc="cancelEditComment"
+            />
+          </div>
+
+        </div>
+      </div>
+
+      <div class="comment-input-container">
+        <textarea
+            v-model="newCommentContent"
+            :placeholder="t('comment.writeComment')"
+            class="comment-input"
+        />
+        <span
+            @click="handleAddComment"
+            class="comment-post-btn"
+            :class="{ 'disabled': !newCommentContent.trim() }"
+            :title="t('comment.post')"
+        >
+          🪶
+        </span>
+      </div>
     </div>
 
     <Teleport to="body">
@@ -45,19 +130,19 @@
               {{ t('post.delete') }}
             </button>
           </div>
-          
+
           <div v-if="isEditing" class="edit-mode-indicator">
             {{ t('post.editMode') }}
           </div>
-          
+
           <h2 v-if="!isEditing">{{ post.title }}</h2>
-          <textarea 
-            v-else 
-            v-model="editedTitle" 
-            class="edit-title"
-            :placeholder="t('post.title')"
+          <textarea
+              v-else
+              v-model="editedTitle"
+              class="edit-title"
+              :placeholder="t('post.title')"
           />
-          
+
           <div class="modal-meta">
             <span v-if="post.author">{{ t('post.author') }}: {{ post.author }}</span>
             <span>{{ t('post.created') }}: {{ formatDate(post.created_at) }}</span>
@@ -65,54 +150,54 @@
               {{ t('post.updated') }}: {{ formatDate(post.updated_at) }}
             </span>
           </div>
-          
+
           <div v-if="(post.images && post.images.length > 0) || isEditing" class="modal-images">
             <div class="image-container">
-              <img 
-                v-if="post.images && post.images.length > 0"
-                :src="getImageUrl(post.images[currentImageIndex].file_path)" 
-                alt="Post image" 
+              <img
+                  v-if="post.images && post.images.length > 0"
+                  :src="getImageUrl(post.images[currentImageIndex].file_path)"
+                  alt="Post image"
               />
-              
+
               <div v-if="post.images && post.images.length > 1" class="image-controls">
                 <button @click="previousImage" class="nav-button">‹</button>
                 <span class="image-counter">{{ currentImageIndex + 1 }} / {{ post.images.length }}</span>
                 <button @click="nextImage" class="nav-button">›</button>
               </div>
-              
-              <button 
-                v-if="isEditing && post.images && post.images.length > 0" 
-                class="remove-image-button"
-                @click="removeCurrentImage"
+
+              <button
+                  v-if="isEditing && post.images && post.images.length > 0"
+                  class="remove-image-button"
+                  @click="removeCurrentImage"
               >
                 {{ t('post.removeImage') }}
               </button>
             </div>
-            
+
             <div v-if="isEditing" class="image-upload">
-              <input 
-                type="file" 
-                ref="fileInput"
-                @change="handleImageUpload"
-                accept="image/*"
-                style="display: none"
+              <input
+                  type="file"
+                  ref="fileInput"
+                  @change="handleImageUpload"
+                  accept="image/*"
+                  style="display: none"
               />
               <button class="upload-button" @click="$refs.fileInput.click()">
                 {{ t('post.uploadImage') }}
               </button>
             </div>
           </div>
-          
+
           <div class="modal-body">
             <p v-if="!isEditing">{{ post.content }}</p>
-            <textarea 
-              v-else 
-              v-model="editedContent" 
-              class="edit-content"
-              :placeholder="t('post.content')"
+            <textarea
+                v-else
+                v-model="editedContent"
+                class="edit-content"
+                :placeholder="t('post.content')"
             />
           </div>
-          
+
           <div v-if="isEditing" class="edit-actions">
             <button class="save-button" @click="saveChanges" :disabled="saving">
               {{ saving ? t('common.loading') : t('post.save') }}
@@ -128,12 +213,14 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { usePostsStore } from '../../stores/posts.store.js';
+import {computed, ref} from 'vue';
+import {useI18n} from 'vue-i18n';
+import {usePostsStore} from '../../stores/posts.store.js';
+import {useAuthStore} from '../../stores/auth.store.js';
 
-const { t } = useI18n();
+const {t} = useI18n();
 const postsStore = usePostsStore();
+const authStore = useAuthStore();
 
 const props = defineProps({
   post: {
@@ -151,6 +238,10 @@ const editedTitle = ref('');
 const editedContent = ref('');
 const saving = ref(false);
 const fileInput = ref(null);
+const newCommentContent = ref('');
+const editingCommentId = ref(null);
+const editedCommentContent = ref('');
+const hoveredCommentId = ref(null);
 
 const truncatedContent = computed(() => {
   if (props.post.content.length <= PREVIEW_CHAR_LIMIT) {
@@ -175,9 +266,9 @@ function closeModal() {
 
 function formatDate(dateString) {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { 
-    year: 'numeric', 
-    month: 'short', 
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit'
@@ -221,15 +312,15 @@ async function saveChanges() {
     alert(t('common.error'));
     return;
   }
-  
+
   saving.value = true;
   const result = await postsStore.updatePost(props.post.id, {
     title: editedTitle.value,
     content: editedContent.value
   });
-  
+
   saving.value = false;
-  
+
   if (result.success) {
     isEditing.value = false;
   } else {
@@ -241,9 +332,9 @@ async function handleDelete() {
   if (!confirm(t('post.confirmDelete'))) {
     return;
   }
-  
+
   const result = await postsStore.deletePost(props.post.id);
-  
+
   if (result.success) {
     closeModal();
   } else {
@@ -253,10 +344,10 @@ async function handleDelete() {
 
 async function removeCurrentImage() {
   if (!props.post.images || props.post.images.length === 0) return;
-  
+
   const imageToRemove = props.post.images[currentImageIndex.value];
   const result = await postsStore.deleteImage(props.post.id, imageToRemove.id);
-  
+
   if (result.success) {
     props.post.images.splice(currentImageIndex.value, 1);
     if (currentImageIndex.value >= props.post.images.length && currentImageIndex.value > 0) {
@@ -270,9 +361,9 @@ async function removeCurrentImage() {
 async function handleImageUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
-  
+
   const result = await postsStore.uploadImage(props.post.id, file);
-  
+
   if (result.success) {
     if (!props.post.images) {
       props.post.images = [];
@@ -282,7 +373,59 @@ async function handleImageUpload(event) {
   } else {
     alert(result.error || t('common.error'));
   }
-  
+
   event.target.value = '';
+}
+
+const currentUserId = computed(() => authStore.user?.id);
+
+async function handleAddComment() {
+  if (!newCommentContent.value.trim()) return;
+
+  const result = await postsStore.createComment(props.post.id, newCommentContent.value);
+
+  if (result.success) {
+    newCommentContent.value = '';
+  } else {
+    alert(result.error || t('common.error'));
+  }
+}
+
+function startEditComment(comment) {
+  editingCommentId.value = comment.id;
+  editedCommentContent.value = comment.content;
+}
+
+function cancelEditComment() {
+  editingCommentId.value = null;
+  editedCommentContent.value = '';
+}
+
+async function saveEditComment(commentId) {
+  if (!editedCommentContent.value.trim()) {
+    alert(t('common.error'));
+    return;
+  }
+
+  const result = await postsStore.updateComment(props.post.id, commentId, editedCommentContent.value);
+
+  if (result.success) {
+    editingCommentId.value = null;
+    editedCommentContent.value = '';
+  } else {
+    alert(result.error || t('common.error'));
+  }
+}
+
+async function handleDeleteComment(commentId) {
+  if (!confirm(t('comment.confirmDelete'))) {
+    return;
+  }
+
+  const result = await postsStore.deleteComment(props.post.id, commentId);
+
+  if (!result.success) {
+    alert(result.error || t('common.error'));
+  }
 }
 </script>

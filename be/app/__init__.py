@@ -40,7 +40,11 @@ def create_app():
         db.init_app(app)
     
     CORS(app, resources={
-        r"/api/*": {"origins": "*"},
+        r"/api/*": {
+            "origins": "*",
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"]
+        },
         r"/uploads/*": {"origins": "*"}
     })
     

@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, current_app
 from werkzeug.utils import secure_filename
 from app import db
-from app.models import Post, Campaign, Image
+from app.models import Post, Campaign, Image, Comment
 from app.auth import token_required
 from app.mock_data import MockDataProvider
 import os
@@ -221,3 +221,60 @@ def delete_image(current_user, post_id, image_id):
     db.session.commit()
     
     return jsonify({'message': 'Image deleted successfully'}), 200
+
+@bp.route('/posts/<int:post_id>/comments', methods=['POST'])
+@token_required
+def create_comment(current_user, post_id):
+    post = Post.query.get_or_404(post_id)
+    campaign = Campaign.query.get(post.campaign_id)
+    
+    if not can_access_campaign(campaign, current_user):
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    data = request.get_json()
+    
+    if not data or not data.get('content'):
+        return jsonify({'error': 'Missing content'}), 400
+    
+    comment = Comment(
+        post_id=post_id,
+        author_id=current_user.id,
+        content=data['content']
+    )
+    
+    db.session.add(comment)
+    db.session.commit()
+    db.session.refresh(comment)
+    
+    return jsonify(comment.to_dict()), 201
+
+@bp.route('/posts/<int:post_id>/comments/<int:comment_id>', methods=['PUT'])
+@token_required
+def update_comment(current_user, post_id, comment_id):
+    comment = Comment.query.filter_by(id=comment_id, post_id=post_id).first_or_404()
+    
+    if comment.author_id != current_user.id:
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    data = request.get_json()
+    
+    if not data or not data.get('content'):
+        return jsonify({'error': 'Missing content'}), 400
+    
+    comment.content = data['content']
+    db.session.commit()
+    
+    return jsonify(comment.to_dict()), 200
+
+@bp.route('/posts/<int:post_id>/comments/<int:comment_id>', methods=['DELETE'])
+@token_required
+def delete_comment(current_user, post_id, comment_id):
+    comment = Comment.query.filter_by(id=comment_id, post_id=post_id).first_or_404()
+    
+    if comment.author_id != current_user.id:
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    db.session.delete(comment)
+    db.session.commit()
+    
+    return jsonify({'message': 'Comment deleted successfully'}), 200
