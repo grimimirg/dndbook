@@ -1,6 +1,6 @@
 <template>
   <div class="campaign-players-panel card flex-col">
-    <div v-if="campaignsStore.currentCampaign && isCurrentCampaignOwned">
+    <div v-if="campaignsStore.currentCampaign">
 
       <div class="panel-content">
         <div v-if="loading" class="loading flex-center">
@@ -17,6 +17,7 @@
               <div v-for="member in members" :key="member.id" class="player-item flex-between">
                 <span class="player-name">{{ member.username }}</span>
                 <button
+                    v-if="isCurrentCampaignOwned"
                     @click="handleRemoveMember(member)"
                     class="remove-btn btn-circle btn-circle-sm"
                     :title="t('campaign.removePlayer')"
@@ -27,7 +28,7 @@
             </div>
           </div>
 
-          <div class="invites-section">
+          <div v-if="isCurrentCampaignOwned" class="invites-section">
             <h4 class="section-label">{{ t('campaign.invitedPlayers') }}</h4>
             <div v-if="pendingInvites.length === 0" class="empty-message">
               {{ t('campaign.noInvitedPlayers') }}
@@ -74,7 +75,7 @@ const isCurrentCampaignOwned = computed(() => {
 });
 
 async function fetchMembers() {
-  if (!campaignsStore.currentCampaign || !isCurrentCampaignOwned.value) {
+  if (!campaignsStore.currentCampaign) {
     members.value = [];
     pendingInvites.value = [];
     return;
