@@ -122,6 +122,12 @@ export const useInvitesStore = defineStore('invites', () => {
     });
   }
 
+  function $reset() {
+    invites.value = [];
+    loading.value = false;
+    toastQueue.value = [];
+  }
+
   return {
     invites,
     loading,
@@ -134,6 +140,7 @@ export const useInvitesStore = defineStore('invites', () => {
     addInvite,
     showToast,
     removeToast,
-    setupSocketListener
+    setupSocketListener,
+    $reset
   };
 });

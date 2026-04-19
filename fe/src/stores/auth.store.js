@@ -1,6 +1,9 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import api from '../services/api.service.js';
+import { useCampaignsStore } from './campaigns.store.js';
+import { useInvitesStore } from './invites.store.js';
+import { usePostsStore } from './posts.store.js';
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref(localStorage.getItem('token') || null);
@@ -49,6 +52,14 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null;
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    
+    const campaignsStore = useCampaignsStore();
+    const invitesStore = useInvitesStore();
+    const postsStore = usePostsStore();
+    
+    campaignsStore.$reset();
+    invitesStore.$reset();
+    postsStore.$reset();
   }
 
   return {

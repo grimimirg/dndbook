@@ -3,7 +3,7 @@ from datetime import datetime
 from app import db
 from app.models import CampaignInvite, Campaign, User, campaign_members
 from app.auth import token_required
-from app.socketio_events import send_invite_notification
+from app.socketio_events import send_invite_notification, send_player_joined_notification
 from sqlalchemy import and_, or_
 
 bp = Blueprint('invites', __name__, url_prefix='/api/invites')
@@ -54,6 +54,14 @@ def accept_invite(current_user, invite_id):
     # Delete the invite
     db.session.delete(invite)
     db.session.commit()
+    
+    # Send Socket.IO notification to campaign owner
+    send_player_joined_notification(campaign.owner_id, {
+        'campaign_id': campaign.id,
+        'campaign_name': campaign.name,
+        'player_id': current_user.id,
+        'player_username': current_user.username
+    })
     
     return jsonify({
         'message': 'Invite accepted',

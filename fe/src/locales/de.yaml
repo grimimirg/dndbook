@@ -34,6 +34,16 @@ campaign:
   descriptionPanel: "Chronik"
   noDescription: "Keine Beschreibung für diese Kampagne verfügbar."
   confirmDelete: "Sind Sie sicher, dass Sie diese Kampagne löschen möchten?"
+  players: "Spieler"
+  invitedPlayers: "Eingeladen"
+  noPlayers: "Keine Spieler in der Kampagne"
+  noInvitedPlayers: "Keine ausstehenden Einladungen"
+  removePlayer: "Spieler entfernen"
+  cancelInvite: "Einladung abbrechen"
+  confirmRemovePlayer: "Sind Sie sicher, dass Sie diesen Spieler aus der Kampagne entfernen möchten?"
+  confirmCancelInvite: "Sind Sie sicher, dass Sie diese Einladung abbrechen möchten?"
+  playerJoined: "{player} ist der Kampagne {campaign} beigetreten"
+  editDescription: "Beschreibung bearbeiten"
   
 post:
   posts: "Beiträge"

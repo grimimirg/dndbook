@@ -169,8 +169,11 @@ function openInviteModal(campaignId) {
   showInviteModal.value = true;
 }
 
+const emit = defineEmits(['invites-sent']);
+
 function handleInviteSuccess() {
   console.log('Invites sent successfully');
+  emit('invites-sent');
 }
 
 async function deleteCampaign(campaignId) {

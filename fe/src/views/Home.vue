@@ -14,7 +14,10 @@
     </header>
 
     <div class="main-content">
-      <CampaignDescriptionPanel/>
+      <div class="campaign-info-column">
+        <CampaignDescriptionPanel/>
+        <CampaignPlayersPanel ref="playersPanel"/>
+      </div>
 
       <div class="feed">
         <div class="sort-controls">
@@ -60,7 +63,7 @@
         </div>
       </div>
 
-      <Sidebar/>
+      <Sidebar @invites-sent="handleInvitesSent"/>
     </div>
 
     <InviteToast/>
@@ -84,6 +87,7 @@ import ThemeToggle from './components/ThemeToggle.vue';
 import NotificationBell from './components/NotificationBell.vue';
 import InviteToast from './components/InviteToast.vue';
 import CampaignDescriptionPanel from './components/CampaignDescriptionPanel.vue';
+import CampaignPlayersPanel from './components/CampaignPlayersPanel.vue';
 
 const router = useRouter();
 const {t} = useI18n();
@@ -93,6 +97,7 @@ const postsStore = usePostsStore();
 const invitesStore = useInvitesStore();
 
 const postRefs = ref({});
+const playersPanel = ref(null);
 
 const isCurrentCampaignOwned = computed(() => {
   if (!campaignsStore.currentCampaign) return false;
@@ -107,6 +112,34 @@ function setPostRef(postId, el) {
   }
 }
 
+function setupPlayerJoinedListener() {
+  socketService.on('player_joined', (data) => {
+    const message = t('campaign.playerJoined', {
+      player: data.player_username,
+      campaign: data.campaign_name
+    });
+    
+    if (Notification.permission === 'granted') {
+      new Notification(t('campaign.players'), {
+        body: message,
+        icon: '/images/dnd-book-logo.png'
+      });
+    }
+    
+    alert(message);
+    
+    if (playersPanel.value && campaignsStore.currentCampaign?.id === data.campaign_id) {
+      playersPanel.value.fetchMembers();
+    }
+  });
+}
+
+function handleInvitesSent() {
+  if (playersPanel.value) {
+    playersPanel.value.fetchMembers();
+  }
+}
+
 onMounted(async () => {
   await campaignsStore.fetchCampaigns();
   await invitesStore.fetchInvites();
@@ -116,6 +149,7 @@ onMounted(async () => {
   if (token) {
     socketService.connect(token);
     invitesStore.setupSocketListener();
+    setupPlayerJoinedListener();
   }
 });
 

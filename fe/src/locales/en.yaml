@@ -34,6 +34,16 @@ campaign:
   descriptionPanel: "Chronicle"
   noDescription: "No description available for this campaign."
   confirmDelete: "Are you sure you want to delete this campaign?"
+  players: "Players"
+  invitedPlayers: "Invited"
+  noPlayers: "No players in the campaign"
+  noInvitedPlayers: "No pending invites"
+  removePlayer: "Remove player"
+  cancelInvite: "Cancel invite"
+  confirmRemovePlayer: "Are you sure you want to remove this player from the campaign?"
+  confirmCancelInvite: "Are you sure you want to cancel this invite?"
+  playerJoined: "{player} joined the campaign {campaign}"
+  editDescription: "Edit description"
   
 post:
   posts: "Posts"

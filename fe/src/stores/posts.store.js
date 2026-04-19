@@ -192,6 +192,16 @@ export const usePostsStore = defineStore('posts', () => {
     }
   }
 
+  function $reset() {
+    posts.value = [];
+    loading.value = false;
+    currentPage.value = 1;
+    totalPages.value = 1;
+    hasMore.value = false;
+    sortBy.value = 'updated';
+    sortDirection.value = 'desc';
+  }
+
   return {
     posts,
     loading,
@@ -211,6 +221,7 @@ export const usePostsStore = defineStore('posts', () => {
     deleteComment,
     setSortBy,
     resetSort,
-    clearPosts
+    clearPosts,
+    $reset
   };
 });

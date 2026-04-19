@@ -223,6 +223,12 @@ input::placeholder, textarea::placeholder {
     gap: 20px;
 }
 
+.campaign-info-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
 .feed {
     max-width: 680px;
     min-width: 0;

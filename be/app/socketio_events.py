@@ -51,3 +51,11 @@ def send_invite_notification(user_id, invite_data):
         invite_data,
         room=f'user_{user_id}'
     )
+
+def send_player_joined_notification(owner_id, player_data):
+    """Send notification to campaign owner when a player accepts invite"""
+    socketio.emit(
+        'player_joined',
+        player_data,
+        room=f'user_{owner_id}'
+    )

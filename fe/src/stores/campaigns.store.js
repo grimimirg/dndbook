@@ -87,6 +87,13 @@ export const useCampaignsStore = defineStore('campaigns', () => {
     }
   }
 
+  function $reset() {
+    ownedCampaigns.value = [];
+    sharedCampaigns.value = [];
+    currentCampaign.value = null;
+    loading.value = false;
+  }
+
   return {
     ownedCampaigns,
     sharedCampaigns,
@@ -97,6 +104,7 @@ export const useCampaignsStore = defineStore('campaigns', () => {
     updateCampaign,
     deleteCampaign,
     setCurrentCampaign,
-    addSharedCampaign
+    addSharedCampaign,
+    $reset
   };
 });
