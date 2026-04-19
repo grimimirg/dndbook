@@ -31,8 +31,7 @@ campaign:
   sendInvites: "Envoyer les Invitations"
   invitesSent: "Invitations envoyées avec succès"
   noUsersAvailable: "Aucun utilisateur disponible à inviter"
-  descriptionPanel: "Description de la Campagne"
-  editDescription: "Modifier la Description"
+  descriptionPanel: "Chronique"
   noDescription: "Aucune description disponible pour cette campagne."
   confirmDelete: "Êtes-vous sûr de vouloir supprimer cette campagne ?"
 

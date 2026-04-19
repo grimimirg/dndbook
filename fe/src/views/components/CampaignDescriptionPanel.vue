@@ -3,15 +3,16 @@
     <div v-if="campaignsStore.currentCampaign">
       <div class="panel-header">
         <h3>{{ t('campaign.descriptionPanel') }}</h3>
-        <button 
-          v-if="isCurrentCampaignOwned" 
-          @click="openEditModal" 
-          class="edit-description-btn primary"
+        <span
+            v-if="isCurrentCampaignOwned"
+            @click="openEditModal"
+            class="edit-description-btn"
+            :title="t('campaign.editDescription')"
         >
-          {{ t('campaign.editDescription') }}
-        </button>
+          🪶
+        </span>
       </div>
-      
+
       <div class="panel-content">
         <p v-if="campaignsStore.currentCampaign.description" class="description-text">
           {{ campaignsStore.currentCampaign.description }}
@@ -21,7 +22,7 @@
         </p>
       </div>
     </div>
-    
+
     <div v-else class="no-campaign-selected">
       <p class="no-description">{{ t('campaign.selectCampaign') }}</p>
     </div>
@@ -30,20 +31,19 @@
       <div v-if="showEditModal" class="modal-overlay" @click="closeEditModal">
         <div class="modal-content" @click.stop>
           <button class="modal-close" @click="closeEditModal">×</button>
-          
-          <h2>{{ t('campaign.editDescription') }}</h2>
-          
+          <br>
+          <br>
           <div class="modal-body">
             <div class="form-group">
-              <textarea 
-                v-model="editedDescription" 
-                class="edit-description-textarea"
-                :placeholder="t('campaign.description')"
-                rows="10"
+              <textarea
+                  v-model="editedDescription"
+                  class="edit-description-textarea"
+                  :placeholder="t('campaign.description')"
+                  rows="10"
               />
             </div>
           </div>
-          
+
           <div class="edit-actions">
             <button class="save-button" @click="saveDescription" :disabled="saving">
               {{ saving ? t('common.loading') : t('post.save') }}
@@ -59,12 +59,12 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useCampaignsStore } from '../../stores/campaigns.store.js';
-import { useAuthStore } from '../../stores/auth.store.js';
+import {computed, ref} from 'vue';
+import {useI18n} from 'vue-i18n';
+import {useCampaignsStore} from '../../stores/campaigns.store.js';
+import {useAuthStore} from '../../stores/auth.store.js';
 
-const { t } = useI18n();
+const {t} = useI18n();
 const campaignsStore = useCampaignsStore();
 const authStore = useAuthStore();
 
@@ -75,7 +75,7 @@ const saving = ref(false);
 const isCurrentCampaignOwned = computed(() => {
   if (!campaignsStore.currentCampaign) return false;
   return campaignsStore.ownedCampaigns.some(
-    campaign => campaign.id === campaignsStore.currentCampaign.id
+      campaign => campaign.id === campaignsStore.currentCampaign.id
   );
 });
 
@@ -93,14 +93,14 @@ function closeEditModal() {
 
 async function saveDescription() {
   saving.value = true;
-  
+
   const result = await campaignsStore.updateCampaign(
-    campaignsStore.currentCampaign.id,
-    { description: editedDescription.value }
+      campaignsStore.currentCampaign.id,
+      {description: editedDescription.value}
   );
-  
+
   saving.value = false;
-  
+
   if (result.success) {
     closeEditModal();
   } else {
@@ -108,3 +108,14 @@ async function saveDescription() {
   }
 }
 </script>
+
+<style scoped>
+.edit-description-btn {
+  cursor: pointer;
+  font-size: 1.2em;
+}
+
+.edit-description-btn:hover {
+  opacity: 0.7;
+}
+</style>

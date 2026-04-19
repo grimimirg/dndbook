@@ -215,11 +215,11 @@ input::placeholder, textarea::placeholder {
 }
 
 .main-content {
-  max-width: 1400px;
+  max-width: 1500px;
   margin: 0 auto;
   padding: 20px;
   display: grid;
-  grid-template-columns: 280px 1fr 300px;
+  grid-template-columns: 380px 1fr 300px;
   gap: 20px;
 }
 
@@ -1396,8 +1396,8 @@ input::placeholder, textarea::placeholder {
   max-height: calc(100vh - 100px);
   display: flex;
   flex-direction: column;
-  width: 280px;
-  min-width: 280px;
+  width: 380px;
+  min-width: 380px;
 }
 
 .campaign-description-panel .panel-header {
