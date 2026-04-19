@@ -1,9 +1,9 @@
 <template>
   <div v-if="show" class="modal" @click.self="$emit('close')">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header flex-between">
         <h3>{{ t('campaign.inviteUsers') }}</h3>
-        <button @click="$emit('close')" class="close-btn">×</button>
+        <button @click="$emit('close')" class="close-btn btn-circle btn-circle-md">×</button>
       </div>
       
       <div class="modal-body">
@@ -13,12 +13,12 @@
           {{ t('campaign.noUsersAvailable') }}
         </div>
         
-        <div v-else class="users-list">
+        <div v-else class="users-list flex-col">
           <p class="instruction">{{ t('campaign.selectUsers') }}</p>
           <div 
             v-for="user in availableUsers" 
             :key="user.id" 
-            class="user-item"
+            class="user-item flex-align-center"
             :class="{ selected: selectedUsers.includes(user.id) }"
             @click="toggleUser(user.id)"
           >
@@ -35,7 +35,7 @@
         </div>
       </div>
       
-      <div class="modal-footer">
+      <div class="modal-footer flex-end">
         <button @click="$emit('close')" class="secondary">{{ t('campaign.cancel') }}</button>
         <button 
           @click="handleSendInvites" 

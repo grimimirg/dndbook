@@ -6,9 +6,9 @@
     </button>
     
     <div v-if="showDropdown" class="dropdown" @click.stop>
-      <div class="dropdown-header">
+      <div class="dropdown-header flex-between">
         <h3>{{ t('invite.notifications') }}</h3>
-        <button @click="showDropdown = false" class="close-btn">×</button>
+        <button @click="showDropdown = false" class="close-btn btn-circle btn-circle-md">×</button>
       </div>
       
       <div v-if="invitesStore.loading" class="loading">
@@ -26,7 +26,7 @@
             {{ t('invite.invitedTo') }}
             <strong>{{ invite.campaign_name }}</strong>
           </div>
-          <div class="invite-actions">
+          <div class="invite-actions flex-align-center">
             <button @click="handleAccept(invite.id)" class="accept-btn">
               {{ t('invite.accept') }}
             </button>

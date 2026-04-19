@@ -1,11 +1,11 @@
 <template>
-  <div class="login-container">
-    <div class="top-controls">
+  <div class="login-container flex-center">
+    <div class="top-controls flex-align-center">
       <LanguageSelector />
       <ThemeToggle />
     </div>
     
-    <div class="login-wrapper">
+    <div class="login-wrapper flex-col flex-center">
       <img src="/images/dnd-book-logo.png" alt="D&D Book" class="logo" />
       
       <div class="login-card">

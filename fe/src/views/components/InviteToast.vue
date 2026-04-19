@@ -1,10 +1,10 @@
 <template>
-  <div class="toast-container">
+  <div class="toast-container flex-col">
     <transition-group name="toast">
       <div 
         v-for="toast in invitesStore.toastQueue" 
         :key="toast.id" 
-        class="toast"
+        class="toast flex-align-center"
         @click="invitesStore.removeToast(toast.id)"
       >
         <div class="toast-icon">🔔</div>
@@ -14,7 +14,7 @@
             {{ t('invite.inviteMessage', { inviter: toast.inviter, campaign: toast.campaign }) }}
           </div>
         </div>
-        <button @click.stop="invitesStore.removeToast(toast.id)" class="toast-close">×</button>
+        <button @click.stop="invitesStore.removeToast(toast.id)" class="toast-close btn-circle btn-circle-sm">×</button>
       </div>
     </transition-group>
   </div>

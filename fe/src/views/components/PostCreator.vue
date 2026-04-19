@@ -16,14 +16,12 @@
       <div v-if="selectedImages.length > 0" class="image-previews">
         <div v-for="(image, index) in selectedImages" :key="index" class="image-preview">
           <img :src="image.preview" :alt="`Preview ${index + 1}`" />
-          <button type="button" class="remove-image" @click="removeImage(index)" :title="t('post.removeImage')">
-            ×
-          </button>
+          <button @click="removeImage(index)" class="remove-image btn-circle btn-circle-sm">×</button>
         </div>
       </div>
       
-      <div class="actions">
-        <label class="image-upload-btn">
+      <div class="actions flex-between">
+        <label class="image-upload-btn flex-align-center">
           <input 
             type="file" 
             ref="fileInput"

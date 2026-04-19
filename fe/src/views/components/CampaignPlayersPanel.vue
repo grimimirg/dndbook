@@ -1,9 +1,9 @@
 <template>
-  <div class="campaign-players-panel card">
+  <div class="campaign-players-panel card flex-col">
     <div v-if="campaignsStore.currentCampaign && isCurrentCampaignOwned">
 
       <div class="panel-content">
-        <div v-if="loading" class="loading">
+        <div v-if="loading" class="loading flex-center">
           {{ t('common.loading') }}
         </div>
 
@@ -13,12 +13,12 @@
             <div v-if="members.length === 0" class="empty-message">
               {{ t('campaign.noPlayers') }}
             </div>
-            <div v-else class="players-list">
-              <div v-for="member in members" :key="member.id" class="player-item">
+            <div v-else class="players-list flex-col">
+              <div v-for="member in members" :key="member.id" class="player-item flex-between">
                 <span class="player-name">{{ member.username }}</span>
                 <button
                     @click="handleRemoveMember(member)"
-                    class="remove-btn"
+                    class="remove-btn btn-circle btn-circle-sm"
                     :title="t('campaign.removePlayer')"
                 >
                   ×
@@ -32,12 +32,12 @@
             <div v-if="pendingInvites.length === 0" class="empty-message">
               {{ t('campaign.noInvitedPlayers') }}
             </div>
-            <div v-else class="players-list">
-              <div v-for="invite in pendingInvites" :key="invite.id" class="player-item pending">
+            <div v-else class="players-list flex-col">
+              <div v-for="invite in pendingInvites" :key="invite.id" class="player-item pending flex-between">
                 <span class="player-name">{{ invite.invitee_username }}</span>
                 <button
                     @click="handleCancelInvite(invite)"
-                    class="remove-btn"
+                    class="remove-btn btn-circle btn-circle-sm"
                     :title="t('campaign.cancelInvite')"
                 >
                   ×

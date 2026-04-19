@@ -5,8 +5,8 @@
       <button class="delete-button" @click.stop="handleDelete" :title="t('post.delete')">
         ×
       </button>
-      <div class="post-meta">
-        <span v-if="post.author">{{ t('post.author') }}: {{ post.author }}</span>
+      <div class="post-meta flex-align-center">
+        <span>{{ t('post.by') }}: {{ post.author }}</span>
         <span>{{ t('post.created') }}: {{ formatDate(post.created_at) }}</span>
         <span v-if="post.updated_at !== post.created_at">
           {{ t('post.updated') }}: {{ formatDate(post.updated_at) }}
@@ -18,8 +18,8 @@
       <div class="image-container">
         <img :src="getImageUrl(post.images[currentImageIndex].file_path)" alt="Post image"/>
 
-        <div v-if="post.images.length > 1" class="image-controls">
-          <button @click="previousImage" class="nav-button">‹</button>
+        <div v-if="post.images.length > 1" class="image-controls flex-align-center">
+          <button @click="previousImage" class="nav-button" :disabled="currentImageIndex === 0">‹</button>
           <span class="image-counter">{{ currentImageIndex + 1 }} / {{ post.images.length }}</span>
           <button @click="nextImage" class="nav-button">›</button>
         </div>
@@ -34,7 +34,7 @@
     </div>
 
     <div class="comments-section">
-      <div class="comments-header" @click="toggleComments">
+      <div class="comments-header flex-between" @click="toggleComments">
         <h4>{{ t('comment.comments') }} ({{ post.comments?.length || 0 }})</h4>
       </div>
 
@@ -42,18 +42,18 @@
         <div
             v-for="comment in post.comments"
             :key="comment.id"
-            class="comment-item"
+            class="comment-item flex-between"
             @mouseenter="hoveredCommentId = comment.id"
             @mouseleave="hoveredCommentId = null"
         >
           <div class="comment-content">
-            <div class="comment-header">
-              <div class="comment-info">
+            <div class="comment-header flex-between">
+              <div class="comment-info flex-align-baseline">
                 <span class="comment-author">{{ comment.author }}</span>
                 <span class="comment-date">{{ formatDate(comment.created_at) }}</span>
               </div>
 
-              <div v-if="comment.author_id === currentUserId" class="comment-actions" :class="{ 'visible': hoveredCommentId === comment.id }">
+              <div v-if="comment.author_id === currentUserId" class="comment-actions flex-align-center" :class="{ 'visible': hoveredCommentId === comment.id }">
                 <button
                     v-if="editingCommentId !== comment.id"
                     @click="startEditComment(comment)"
@@ -101,7 +101,7 @@
         </div>
       </div>
 
-      <div v-show="showComments" class="comment-input-container">
+      <div v-show="showComments" class="comment-input-container flex-align-center">
         <textarea
             v-model="newCommentContent"
             :placeholder="t('comment.writeComment')"
@@ -122,7 +122,7 @@
       <div v-if="showModal" class="modal-overlay" @click="closeModal">
         <div class="modal-content" @click.stop>
           <button class="modal-close" @click="closeModal">×</button>
-          <div class="modal-actions">
+          <div v-if="!isEditing" class="modal-actions flex-end">
             <button v-if="!isEditing" class="edit-button" @click="startEditing">
               {{ t('post.edit') }}
             </button>
@@ -143,8 +143,8 @@
               :placeholder="t('post.title')"
           />
 
-          <div class="modal-meta">
-            <span v-if="post.author">{{ t('post.author') }}: {{ post.author }}</span>
+          <div class="modal-meta flex-align-center">
+            <span>{{ t('post.by') }}: {{ post.author }}</span>
             <span>{{ t('post.created') }}: {{ formatDate(post.created_at) }}</span>
             <span v-if="post.updated_at !== post.created_at">
               {{ t('post.updated') }}: {{ formatDate(post.updated_at) }}
@@ -159,8 +159,8 @@
                   alt="Post image"
               />
 
-              <div v-if="post.images && post.images.length > 1" class="image-controls">
-                <button @click="previousImage" class="nav-button">‹</button>
+              <div v-if="post.images && post.images.length > 1" class="image-controls flex-align-center">
+                <button @click="previousImage" class="nav-button" :disabled="currentImageIndex === 0">‹</button>
                 <span class="image-counter">{{ currentImageIndex + 1 }} / {{ post.images.length }}</span>
                 <button @click="nextImage" class="nav-button">›</button>
               </div>
@@ -198,7 +198,7 @@
             />
           </div>
 
-          <div v-if="isEditing" class="edit-actions">
+          <div v-if="isEditing" class="edit-actions flex-end">
             <button class="save-button" @click="saveChanges" :disabled="saving">
               {{ saving ? t('common.loading') : t('post.save') }}
             </button>

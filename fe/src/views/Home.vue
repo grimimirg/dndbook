@@ -1,9 +1,9 @@
 <template>
   <div class="home">
     <header class="header">
-      <div class="header-content">
+      <div class="header-content flex-align-center">
         <h1>{{ t('app.title') }}</h1>
-        <div class="user-info">
+        <div class="user-info flex-align-center">
           <span>{{ authStore.user?.username }}</span>
           <NotificationBell/>
           <button @click="handleLogout" class="secondary">{{ t('auth.logout') }}</button>
@@ -14,13 +14,13 @@
     </header>
 
     <div class="main-content">
-      <div class="campaign-info-column">
+      <div class="campaign-info-column flex-col">
         <CampaignDescriptionPanel/>
         <CampaignPlayersPanel ref="playersPanel"/>
       </div>
 
       <div class="feed">
-        <div class="sort-controls">
+        <div class="sort-controls flex-align-center">
           <span class="sort-label">{{ t('sort.label') }}:</span>
           <button
               @click="changeSortBy('created')"

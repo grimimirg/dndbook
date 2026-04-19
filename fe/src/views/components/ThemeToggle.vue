@@ -1,5 +1,5 @@
 <template>
-  <button @click="toggleTheme" class="theme-toggle" :title="currentTheme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'">
+  <button @click="toggleTheme" class="theme-toggle btn-circle btn-circle-lg" :title="currentTheme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'">
     <span v-if="currentTheme === 'dark'">☀️</span>
     <span v-else>🌙</span>
   </button>

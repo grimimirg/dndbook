@@ -1,7 +1,7 @@
 <template>
-  <div class="campaign-description-panel card">
+  <div class="campaign-description-panel card flex-col">
     <div v-if="campaignsStore.currentCampaign">
-      <div class="panel-header">
+      <div class="panel-header flex-between">
         <h3>{{ t('campaign.descriptionPanel') }}</h3>
         <span
             v-if="isCurrentCampaignOwned"
@@ -30,7 +30,7 @@
     <Teleport to="body">
       <div v-if="showEditModal" class="modal-overlay" @click="closeEditModal">
         <div class="modal-content" @click.stop>
-          <button class="modal-close" @click="closeEditModal">×</button>
+          <button class="modal-close btn-circle flex-center" @click="closeEditModal">×</button>
           <br>
           <br>
           <div class="modal-body">
@@ -44,7 +44,7 @@
             </div>
           </div>
 
-          <div class="edit-actions">
+          <div class="edit-actions flex-end">
             <button class="save-button" @click="saveDescription" :disabled="saving">
               {{ saving ? t('common.loading') : t('post.save') }}
             </button>

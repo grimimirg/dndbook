@@ -1,6 +1,6 @@
 <template>
   <div class="sidebar">
-    <div class="sidebar-header">
+    <div class="sidebar-header flex-between">
       <h2>{{ t('campaign.campaigns') }}</h2>
       <button @click="showCreateModal = true" class="primary">+ {{ t('campaign.new') }}</button>
     </div>
@@ -17,7 +17,7 @@
             class="campaign-node"
         >
           <div
-              class="campaign-header"
+              class="campaign-header flex-align-center"
               :class="{ active: campaignsStore.currentCampaign?.id === campaign.id }"
               @click="toggleCampaign(campaign)"
           >
@@ -25,14 +25,14 @@
             <span class="campaign-name">{{ campaign.name }}</span>
             <button
                 @click.stop="openInviteModal(campaign.id)"
-                class="invite-btn"
+                class="invite-btn btn-circle btn-circle-sm"
                 :title="t('campaign.inviteTooltip')"
             >
               +
             </button>
             <button
                 @click.stop="deleteCampaign(campaign.id)"
-                class="delete-btn"
+                class="delete-btn btn-circle btn-circle-sm"
                 :title="t('campaign.deleteTooltip')"
             >
               -
@@ -61,7 +61,7 @@
             class="campaign-node"
         >
           <div
-              class="campaign-header"
+              class="campaign-header flex-align-center"
               :class="{ active: campaignsStore.currentCampaign?.id === campaign.id }"
               @click="toggleCampaign(campaign)"
           >
