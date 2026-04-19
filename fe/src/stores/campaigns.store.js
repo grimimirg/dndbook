@@ -45,6 +45,11 @@ export const useCampaignsStore = defineStore('campaigns', () => {
       } else if (sharedIndex !== -1) {
         sharedCampaigns.value[sharedIndex] = response.data;
       }
+      
+      if (currentCampaign.value?.id === id) {
+        currentCampaign.value = response.data;
+      }
+      
       return { success: true };
     } catch (error) {
       return { 

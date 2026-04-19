@@ -215,16 +215,17 @@ input::placeholder, textarea::placeholder {
 }
 
 .main-content {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 20px;
   display: grid;
-  grid-template-columns: 1fr 300px;
+  grid-template-columns: 280px 1fr 300px;
   gap: 20px;
 }
 
 .feed {
   max-width: 680px;
+  min-width: 0;
 }
 
 .sort-controls {
@@ -579,6 +580,8 @@ input::placeholder, textarea::placeholder {
   top: 80px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   transition: background 0.3s ease;
+  width: 300px;
+  min-width: 300px;
 }
 
 .sidebar-header {
@@ -1383,4 +1386,109 @@ input::placeholder, textarea::placeholder {
 
 .modal-footer .secondary:hover {
   background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* CampaignDescriptionPanel.vue styles */
+.campaign-description-panel {
+  position: sticky;
+  top: 80px;
+  height: fit-content;
+  max-height: calc(100vh - 100px);
+  display: flex;
+  flex-direction: column;
+  width: 280px;
+  min-width: 280px;
+}
+
+.campaign-description-panel .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(139, 111, 71, 0.3);
+}
+
+.campaign-description-panel .panel-header h3 {
+  font-size: 16px;
+  color: var(--text-heading);
+  margin: 0;
+}
+
+.campaign-description-panel .edit-description-btn {
+  font-size: 12px;
+  padding: 6px 12px;
+}
+
+.campaign-description-panel .panel-content {
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+  padding-right: 8px;
+}
+
+.campaign-description-panel .panel-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.campaign-description-panel .panel-content::-webkit-scrollbar-track {
+  background: var(--input-bg);
+  border-radius: 4px;
+}
+
+.campaign-description-panel .panel-content::-webkit-scrollbar-thumb {
+  background: rgba(139, 111, 71, 0.5);
+  border-radius: 4px;
+}
+
+.campaign-description-panel .panel-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 111, 71, 0.7);
+}
+
+.campaign-description-panel .description-text {
+  white-space: pre-wrap;
+  line-height: 1.6;
+  color: var(--text-primary);
+  font-size: 14px;
+  margin: 0;
+}
+
+.campaign-description-panel .no-description {
+  color: var(--text-secondary);
+  font-style: italic;
+  font-size: 14px;
+  margin: 0;
+}
+
+.campaign-description-panel .edit-description-textarea {
+  width: 100%;
+  min-height: 300px;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: vertical;
+  font-family: 'Crimson Text', serif;
+}
+
+.campaign-description-panel .no-campaign-selected {
+  padding: 20px 0;
+  text-align: center;
+}
+
+@media (max-width: 1200px) {
+  .main-content {
+    grid-template-columns: 1fr 300px;
+  }
+  
+  .campaign-description-panel {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar {
+    position: static;
+  }
 }
