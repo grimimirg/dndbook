@@ -39,14 +39,20 @@ def create_app():
     if not app.config['MOCK_DATA']:
         db.init_app(app)
     
-    CORS(app, resources={
-        r"/api/*": {
-            "origins": "*",
-            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-            "allow_headers": ["Content-Type", "Authorization"]
-        },
-        r"/uploads/*": {"origins": "*"}
-    })
+    CORS(app, 
+         resources={
+             r"/api/*": {
+                 "origins": "*",
+                 "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+                 "allow_headers": ["Content-Type", "Authorization"],
+                 "expose_headers": ["Content-Type", "Authorization"],
+                 "supports_credentials": False,
+                 "max_age": 3600
+             },
+             r"/uploads/*": {"origins": "*"}
+         },
+         automatic_options=True,  # Handle OPTIONS automatically
+         intercept_exceptions=False)
     
     socketio.init_app(app)
     

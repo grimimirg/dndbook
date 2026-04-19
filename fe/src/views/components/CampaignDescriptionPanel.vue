@@ -108,14 +108,3 @@ async function saveDescription() {
   }
 }
 </script>
-
-<style scoped>
-.edit-description-btn {
-  cursor: pointer;
-  font-size: 1.2em;
-}
-
-.edit-description-btn:hover {
-  opacity: 0.7;
-}
-</style>

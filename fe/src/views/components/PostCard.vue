@@ -180,7 +180,7 @@
                   ref="fileInput"
                   @change="handleImageUpload"
                   accept="image/*"
-                  style="display: none"
+                  class="hidden-file-input"
               />
               <button class="upload-button" @click="$refs.fileInput.click()">
                 {{ t('post.uploadImage') }}

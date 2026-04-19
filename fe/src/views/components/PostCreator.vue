@@ -30,7 +30,7 @@
             @change="handleImageSelect" 
             accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
             multiple
-            style="display: none;"
+            class="hidden-file-input"
           />
           <span class="upload-icon">📷</span>
           <span>{{ t('post.addImages') }}</span>
