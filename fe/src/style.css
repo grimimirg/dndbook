@@ -1495,11 +1495,35 @@ input::placeholder, textarea::placeholder {
     border-top: 1px solid var(--border-color);
 }
 
+.comments-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 1rem;
+}
+
+.comments-header:hover h4 {
+    color: var(--accent-gold-1);
+}
+
 .comments-header h4 {
-    margin: 0 0 1rem 0;
+    margin: 0;
     font-size: 1rem;
     color: var(--text-heading);
     font-weight: 600;
+    transition: color 0.2s;
+}
+
+.toggle-icon {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    transition: color 0.2s;
+}
+
+.comments-header:hover .toggle-icon {
+    color: var(--accent-gold-1);
 }
 
 .comments-list {

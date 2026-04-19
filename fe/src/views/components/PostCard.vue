@@ -34,11 +34,11 @@
     </div>
 
     <div class="comments-section">
-      <div class="comments-header">
+      <div class="comments-header" @click="toggleComments">
         <h4>{{ t('comment.comments') }} ({{ post.comments?.length || 0 }})</h4>
       </div>
 
-      <div v-if="post.comments && post.comments.length > 0" class="comments-list">
+      <div v-show="showComments" v-if="post.comments && post.comments.length > 0" class="comments-list">
         <div
             v-for="comment in post.comments"
             :key="comment.id"
@@ -101,7 +101,7 @@
         </div>
       </div>
 
-      <div class="comment-input-container">
+      <div v-show="showComments" class="comment-input-container">
         <textarea
             v-model="newCommentContent"
             :placeholder="t('comment.writeComment')"
@@ -242,6 +242,7 @@ const newCommentContent = ref('');
 const editingCommentId = ref(null);
 const editedCommentContent = ref('');
 const hoveredCommentId = ref(null);
+const showComments = ref(false);
 
 const truncatedContent = computed(() => {
   if (props.post.content.length <= PREVIEW_CHAR_LIMIT) {
@@ -427,5 +428,9 @@ async function handleDeleteComment(commentId) {
   if (!result.success) {
     alert(result.error || t('common.error'));
   }
+}
+
+function toggleComments() {
+  showComments.value = !showComments.value;
 }
 </script>
