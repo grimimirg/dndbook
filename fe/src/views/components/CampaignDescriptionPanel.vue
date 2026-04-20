@@ -31,7 +31,7 @@
     </div>
 
     <div v-else class="no-campaign-selected">
-      <p class="no-description">{{ t('campaign.selectCampaign') }}</p>
+      <p class="no-description">{{ t('campaign.selectCampaignChronicle') }}</p>
     </div>
 
     <Teleport to="body">

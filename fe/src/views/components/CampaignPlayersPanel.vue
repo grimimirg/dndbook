@@ -11,7 +11,8 @@
           <div class="players-section">
             <h4 class="section-label">{{ t('campaign.players') }}</h4>
             <div v-if="members.length === 0" class="empty-message">
-              {{ t('campaign.noPlayers') }}
+              <p>{{ t('campaign.noPlayers') }}</p><br>
+              <p class="hint">{{ t('campaign.noPlayersHint') }}</p>
             </div>
             <div v-else class="players-list flex-col">
               <div v-for="member in members" :key="member.id" class="player-item flex-between">

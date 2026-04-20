@@ -1,6 +1,6 @@
 app:
   title: "D&D Book"
-  
+
 auth:
   login: "Anmelden"
   register: "Registrieren"
@@ -12,7 +12,7 @@ auth:
   needAccount: "Brauchen Sie ein Konto? Registrieren"
   loginSuccess: "Anmeldung erfolgreich"
   registerSuccess: "Registrierung erfolgreich"
-  
+
 campaign:
   campaigns: "Kampagnen"
   myCampaigns: "Von mir erstellt"
@@ -22,10 +22,11 @@ campaign:
   create: "Neue Kampagne"
   createButton: "Zum Abenteuer...!"
   name: "Name des Abenteuers"
-  description: "Kampagnenchronik"
+  description: "Erzähle deine Geschichte..."
   cancel: "Abbrechen"
   noCampaigns: "Noch keine Kampagnen"
-  selectCampaign: "Wählen Sie eine Kampagne aus der Seitenleiste, um Beiträge anzuzeigen"
+  selectCampaign: "Wählen Sie eine Kampagne aus dem \"Kampagnen\"-Baum rechts, um deren Inhalt anzuzeigen"
+  selectCampaignChronicle: "Wählen Sie eine Kampagne aus dem \"Kampagnen\"-Baum rechts, um deren Chronik anzuzeigen"
   inviteUsers: "Spieler Einladen"
   inviteTooltip: "Spieler einladen..."
   deleteTooltip: "Diese Kampagne löschen"
@@ -40,6 +41,7 @@ campaign:
   players: "Spieler"
   invitedPlayers: "Eingeladen"
   noPlayers: "Keine Spieler in der Kampagne"
+  noPlayersHint: "💡 Fahren Sie mit der Maus über den Kampagnennamen und klicken Sie auf das +, um Spieler einzuladen"
   noInvitedPlayers: "Keine ausstehenden Einladungen"
   removePlayer: "Spieler entfernen"
   removePlayerTitle: "Spieler Entfernen"
@@ -49,7 +51,7 @@ campaign:
   confirmCancelInvite: "Sind Sie sicher, dass Sie diese Einladung abbrechen möchten?"
   playerJoined: "{player} ist der Kampagne {campaign} beigetreten"
   editDescription: "Kampagnenbeschreibung bearbeiten"
-  
+
 post:
   posts: "Beiträge"
   createPost: "Beitrag erstellen"
@@ -89,12 +91,12 @@ comment:
   cancel: "Abbrechen"
   noComments: "Keine Kommentare"
   confirmDelete: "Sind Sie sicher, dass Sie diesen Kommentar löschen möchten?"
-  
+
 sort:
   label: "Sortieren nach"
   byCreated: "Erstellungsdatum"
   byUpdated: "Letzter Aktualisierung"
-  
+
 invite:
   notifications: "Benachrichtigungen"
   noNotifications: "Keine Benachrichtigungen"
@@ -106,7 +108,7 @@ invite:
   newInvite: "Neue Einladung"
   inviteMessage: "{inviter} hat Sie zu {campaign} eingeladen"
   pending: "Ausstehend"
-  
+
 common:
   loading: "Wird geladen..."
   error: "Fehler"

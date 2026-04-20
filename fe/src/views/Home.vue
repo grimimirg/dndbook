@@ -16,11 +16,11 @@
     <div class="main-content">
       <div class="campaign-info-column flex-col">
         <CampaignDescriptionPanel/>
-        <CampaignPlayersPanel ref="playersPanel"/>
+        <CampaignPlayersPanel v-if="campaignsStore.currentCampaign" ref="playersPanel"/>
       </div>
 
       <div class="feed">
-        <div class="sort-controls flex-align-center">
+        <div v-if="campaignsStore.currentCampaign" class="sort-controls flex-align-center">
           <span class="sort-label">{{ t('sort.label') }}:</span>
           <button
               @click="changeSortBy('created')"
