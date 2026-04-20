@@ -3,15 +3,16 @@
     <div v-if="campaignsStore.currentCampaign">
       <div class="panel-header flex-between">
         <h3>{{ t('character.characters') }}</h3>
-        <button
+        <span
             v-if="isCurrentCampaignOwned"
             @click="openCreateModal"
             class="btn-circle"
             :title="t('character.createTooltip')"
         >
           +
-        </button>
+        </span>
       </div>
+      <br>
 
       <div class="panel-content">
         <div v-if="charactersStore.loading" class="loading flex-center">
@@ -45,24 +46,20 @@
               <span class="character-class">{{ character.character_class }}</span>
             </div>
 
-            <div class="character-description-preview">
-              {{ getDescriptionPreview(character.description) }}
-            </div>
-
             <div v-if="isCurrentCampaignOwned" class="character-actions flex-align-center" @click.stop>
               <button
                   @click="openEditModal(character)"
                   class="edit-btn"
                   :title="t('character.edit')"
               >
-                ✏️
+                🪶
               </button>
               <button
                   @click="handleDeleteCharacter(character)"
                   class="delete-btn"
                   :title="t('character.delete')"
               >
-                🗑️
+                💀
               </button>
             </div>
           </div>
@@ -227,6 +224,7 @@ watch(() => campaignsStore.currentCampaign, (newCampaign) => {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: top;
 }
 
 .character-portrait .no-image {
@@ -258,6 +256,7 @@ watch(() => campaignsStore.currentCampaign, (newCampaign) => {
 
 .character-description-preview {
   flex: 1;
+  min-width: 80px;
   font-size: 13px;
   color: var(--text-secondary);
   overflow: hidden;
@@ -267,6 +266,7 @@ watch(() => campaignsStore.currentCampaign, (newCampaign) => {
 
 .character-actions {
   gap: 8px;
+  flex-shrink: 0;
   margin-left: auto;
 }
 

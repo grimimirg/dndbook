@@ -2,7 +2,6 @@
   <Teleport to="body">
     <div v-if="show" class="modal-overlay" @click="handleClose">
       <div class="modal-content character-modal" @click.stop>
-        <button class="modal-close btn-circle flex-center" @click="handleClose">×</button>
         <h3>{{ isEditing ? t('character.editCharacter') : t('character.createCharacter') }}</h3>
         <br>
 

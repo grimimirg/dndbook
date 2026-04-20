@@ -20,7 +20,7 @@
         </div>
       </div>
 
-      <div class="panel-content">
+      <div class="panel-content" :class="{ 'scrollable': isDescriptionLong }">
         <p v-if="campaignsStore.currentCampaign.description" class="description-text">
           {{ campaignsStore.currentCampaign.description }}
         </p>
@@ -37,8 +37,7 @@
     <Teleport to="body">
       <div v-if="showEditModal" class="modal-overlay" @click="closeEditModal">
         <div class="modal-content" @click.stop>
-          <button class="modal-close btn-circle flex-center" @click="closeEditModal">×</button>
-          <br>
+          <h3>{{ t('campaign.editChronicle') }}</h3>
           <br>
           <div class="modal-body">
             <div class="form-group">
@@ -52,11 +51,11 @@
           </div>
 
           <div class="edit-actions flex-end">
-            <button class="save-button" @click="saveDescription" :disabled="saving">
-              {{ saving ? t('common.loading') : t('post.save') }}
-            </button>
             <button class="cancel-button" @click="closeEditModal">
               {{ t('post.cancel') }}
+            </button>
+            <button class="save-button" @click="saveDescription" :disabled="saving">
+              {{ saving ? t('common.loading') : t('post.save') }}
             </button>
           </div>
         </div>
@@ -64,11 +63,11 @@
     </Teleport>
 
     <ConfirmModal
-      :show="showDeleteConfirm"
-      :title="t('campaign.deleteTitle')"
-      :message="t('campaign.confirmDelete')"
-      @confirm="confirmDelete"
-      @cancel="showDeleteConfirm = false"
+        :show="showDeleteConfirm"
+        :title="t('campaign.deleteTitle')"
+        :message="t('campaign.confirmDelete')"
+        @confirm="confirmDelete"
+        @cancel="showDeleteConfirm = false"
     />
   </div>
 </template>
@@ -94,6 +93,11 @@ const isCurrentCampaignOwned = computed(() => {
   return campaignsStore.ownedCampaigns.some(
       campaign => campaign.id === campaignsStore.currentCampaign.id
   );
+});
+
+const isDescriptionLong = computed(() => {
+  if (!campaignsStore.currentCampaign?.description) return false;
+  return campaignsStore.currentCampaign.description.length > 1000;
 });
 
 function openEditModal() {
@@ -147,5 +151,10 @@ async function confirmDelete() {
 
 .panel-header .delete-btn:hover {
   transform: scale(1.1);
+}
+
+.panel-content.scrollable {
+  max-height: 400px;
+  overflow-y: auto;
 }
 </style>

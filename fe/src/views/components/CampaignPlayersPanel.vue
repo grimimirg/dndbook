@@ -1,8 +1,15 @@
 <template>
   <div class="campaign-players-panel card flex-col">
     <div v-if="campaignsStore.currentCampaign">
+      <div class="panel-header flex-between" @click="toggleCollapse">
+        <h3>{{ t('campaign.players') }}</h3>
+        <span class="toggle-icon" :class="{ collapsed: isCollapsed }">
+          {{ isCollapsed ? '▶' : '▼' }}
+        </span>
+      </div>
 
-      <div class="panel-content">
+      <transition name="collapse">
+        <div v-show="!isCollapsed" class="panel-content">
         <div v-if="loading" class="loading flex-center">
           {{ t('common.loading') }}
         </div>
@@ -48,7 +55,8 @@
             </div>
           </div>
         </div>
-      </div>
+        </div>
+      </transition>
     </div>
 
     <ConfirmModal
@@ -88,6 +96,7 @@ const showRemoveMemberConfirm = ref(false);
 const showCancelInviteConfirm = ref(false);
 const memberToRemove = ref(null);
 const inviteToCancel = ref(null);
+const isCollapsed = ref(true);
 
 const isCurrentCampaignOwned = computed(() => {
   if (!campaignsStore.currentCampaign) return false;
@@ -157,6 +166,10 @@ function cancelCancelInvite() {
   inviteToCancel.value = null;
 }
 
+function toggleCollapse() {
+  isCollapsed.value = !isCollapsed.value;
+}
+
 watch(() => campaignsStore.currentCampaign, () => {
   fetchMembers();
 }, {immediate: true});
@@ -169,3 +182,57 @@ defineExpose({
   fetchMembers
 });
 </script>
+
+<style scoped>
+.panel-header {
+  padding: 12px 16px;
+  margin-bottom: 0;
+  border-bottom: 1px solid rgba(139, 111, 71, 0.3);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+}
+
+.panel-header:hover {
+  background: var(--hover-bg);
+}
+
+.panel-header:hover h3 {
+  color: var(--accent-gold-1);
+}
+
+.panel-header h3 {
+  font-size: 16px;
+  color: var(--text-heading);
+  margin: 0;
+  transition: color 0.2s;
+}
+
+.toggle-icon {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  transition: color 0.2s, transform 0.2s;
+}
+
+.panel-header:hover .toggle-icon {
+  color: var(--accent-gold-1);
+}
+
+.collapse-enter-active,
+.collapse-leave-active {
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.collapse-enter-from,
+.collapse-leave-to {
+  opacity: 0;
+  max-height: 0;
+}
+
+.collapse-enter-to,
+.collapse-leave-from {
+  opacity: 1;
+  max-height: 1000px;
+}
+</style>

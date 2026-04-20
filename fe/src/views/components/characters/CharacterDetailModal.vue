@@ -2,7 +2,7 @@
   <Teleport to="body">
     <div v-if="show && character" class="modal-overlay" @click="handleClose">
       <div class="modal-content character-detail-modal" @click.stop>
-        <button class="modal-close btn-circle flex-center" @click="handleClose">×</button>
+        <button class="close-btn btn-circle btn-circle-md" @click="handleClose">×</button>
 
         <div class="character-detail-content">
           <div class="character-header">
@@ -16,24 +16,17 @@
                 <span class="separator">•</span>
                 <span class="class">{{ character.character_class }}</span>
               </div>
+              <br>
+              <div v-if="character.description" class="character-description">
+                <p>{{ character.description }}</p>
+              </div>
+              <div v-else class="no-description">
+                {{ t('character.noDescription') }}
+              </div>
             </div>
           </div>
-
-          <div v-if="character.description" class="character-description">
-            <h4>{{ t('character.description') }}</h4>
-            <p>{{ character.description }}</p>
-          </div>
-
-          <div v-else class="no-description">
-            {{ t('character.noDescription') }}
-          </div>
         </div>
 
-        <div class="modal-actions">
-          <button @click="handleClose" class="primary">
-            {{ t('common.close') }}
-          </button>
-        </div>
       </div>
     </div>
   </Teleport>
@@ -92,8 +85,8 @@ watch(() => props.show, (newVal) => {
 
 .character-image {
   flex-shrink: 0;
-  width: 150px;
-  height: 150px;
+  width: 200px;
+  height: 300px;
   border-radius: 8px;
   overflow: hidden;
   border: 3px solid var(--border-color);
@@ -102,7 +95,8 @@ watch(() => props.show, (newVal) => {
 .character-image img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  background-color: var(--secondary-bg);
 }
 
 .character-title {
@@ -138,6 +132,9 @@ watch(() => props.show, (newVal) => {
   line-height: 1.6;
   color: var(--text-secondary);
   white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-all;
 }
 
 .no-description {
@@ -147,11 +144,4 @@ watch(() => props.show, (newVal) => {
   font-style: italic;
 }
 
-.modal-actions {
-  display: flex;
-  justify-content: center;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--border-color);
-}
 </style>

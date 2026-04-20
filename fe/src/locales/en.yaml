@@ -51,6 +51,7 @@ campaign:
   confirmCancelInvite: "Are you sure you want to cancel this invite?"
   playerJoined: "{player} joined the campaign {campaign}"
   editDescription: "Edit campaign description"
+  editChronicle: "Edit Chronicle"
   
 post:
   posts: "Posts"

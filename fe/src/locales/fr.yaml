@@ -51,6 +51,7 @@ campaign:
   confirmCancelInvite: "Êtes-vous sûr de vouloir annuler cette invitation ?"
   playerJoined: "{player} a rejoint la campagne {campaign}"
   editDescription: "Modifier la description de la campagne"
+  editChronicle: "Modifier la Chronique"
 
 post:
   posts: "Publications"

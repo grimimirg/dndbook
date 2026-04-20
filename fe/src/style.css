@@ -474,7 +474,7 @@ input::placeholder, textarea::placeholder {
 .modal-close {
     position: absolute;
     top: 16px;
-    left: 16px;
+    right: 16px;
     background: var(--button-secondary-bg);
     border: 2px solid var(--button-secondary-border);
     width: 36px;
@@ -1361,10 +1361,7 @@ input::placeholder, textarea::placeholder {
 
 /* CampaignDescriptionPanel.vue styles */
 .campaign-description-panel {
-    position: sticky;
-    top: 80px;
     height: fit-content;
-    max-height: calc(100vh - 100px);
     width: 380px;
     min-width: 380px;
 }
@@ -1387,8 +1384,6 @@ input::placeholder, textarea::placeholder {
 }
 
 .campaign-description-panel .panel-content {
-    overflow-y: auto;
-    max-height: calc(100vh - 200px);
     padding-right: 8px;
 }
 
