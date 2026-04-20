@@ -23,20 +23,13 @@
           >
             <span class="expand-icon">{{ expandedCampaignId === campaign.id ? '▼' : '▶' }}</span>
             <span class="campaign-name">{{ campaign.name }}</span>
-            <button
+            <span
                 @click.stop="openInviteModal(campaign.id)"
                 class="invite-btn btn-circle btn-circle-sm"
                 :title="t('campaign.inviteTooltip')"
             >
               +
-            </button>
-            <button
-                @click.stop="deleteCampaign(campaign.id)"
-                class="delete-btn btn-circle btn-circle-sm"
-                :title="t('campaign.deleteTooltip')"
-            >
-              -
-            </button>
+            </span>
           </div>
 
           <div v-if="expandedCampaignId === campaign.id" class="posts-list">
@@ -115,7 +108,7 @@ import {ref} from 'vue';
 import {useI18n} from 'vue-i18n';
 import {useCampaignsStore} from '../../stores/campaigns.store.js';
 import {usePostsStore} from '../../stores/posts.store.js';
-import InviteUsersModal from './InviteUsersModal.vue';
+import InviteUsersModal from './modals/InviteUsersModal.vue';
 
 const {t} = useI18n();
 const campaignsStore = useCampaignsStore();
@@ -174,11 +167,5 @@ const emit = defineEmits(['invites-sent']);
 function handleInviteSuccess() {
   console.log('Invites sent successfully');
   emit('invites-sent');
-}
-
-async function deleteCampaign(campaignId) {
-  if (confirm(t('campaign.confirmDelete'))) {
-    await campaignsStore.deleteCampaign(campaignId);
-  }
 }
 </script>

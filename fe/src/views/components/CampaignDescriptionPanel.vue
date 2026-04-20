@@ -3,14 +3,21 @@
     <div v-if="campaignsStore.currentCampaign">
       <div class="panel-header flex-between">
         <h3>{{ t('campaign.descriptionPanel') }}</h3>
-        <span
-            v-if="isCurrentCampaignOwned"
-            @click="openEditModal"
-            class="edit-description-btn"
-            :title="t('campaign.editDescription')"
-        >
-          🪶
-        </span>
+        <div v-if="isCurrentCampaignOwned" class="flex-align-center">
+          <span
+              @click="openEditModal"
+              class="edit-description-btn"
+              :title="t('campaign.editDescription')"
+          >
+            🪶
+          </span>
+          <span
+              @click="deleteCampaign"
+              :title="t('campaign.deleteTooltip')"
+          >
+            💀
+          </span>
+        </div>
       </div>
 
       <div class="panel-content">
@@ -55,6 +62,14 @@
         </div>
       </div>
     </Teleport>
+
+    <ConfirmModal
+      :show="showDeleteConfirm"
+      :title="t('campaign.deleteTitle')"
+      :message="t('campaign.confirmDelete')"
+      @confirm="confirmDelete"
+      @cancel="showDeleteConfirm = false"
+    />
   </div>
 </template>
 
@@ -63,6 +78,7 @@ import {computed, ref} from 'vue';
 import {useI18n} from 'vue-i18n';
 import {useCampaignsStore} from '../../stores/campaigns.store.js';
 import {useAuthStore} from '../../stores/auth.store.js';
+import ConfirmModal from './modals/ConfirmModal.vue';
 
 const {t} = useI18n();
 const campaignsStore = useCampaignsStore();
@@ -71,6 +87,7 @@ const authStore = useAuthStore();
 const showEditModal = ref(false);
 const editedDescription = ref('');
 const saving = ref(false);
+const showDeleteConfirm = ref(false);
 
 const isCurrentCampaignOwned = computed(() => {
   if (!campaignsStore.currentCampaign) return false;
@@ -107,4 +124,28 @@ async function saveDescription() {
     alert(result.error || t('common.error'));
   }
 }
+
+function deleteCampaign() {
+  showDeleteConfirm.value = true;
+}
+
+async function confirmDelete() {
+  showDeleteConfirm.value = false;
+  await campaignsStore.deleteCampaign(campaignsStore.currentCampaign.id);
+}
 </script>
+
+<style scoped>
+.panel-header span[title] {
+  cursor: pointer;
+}
+
+.panel-header .delete-btn {
+  opacity: 1;
+  margin-left: 8px;
+}
+
+.panel-header .delete-btn:hover {
+  transform: scale(1.1);
+}
+</style>

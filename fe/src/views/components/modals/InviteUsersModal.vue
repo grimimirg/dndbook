@@ -52,7 +52,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useInvitesStore } from '../../stores/invites.store.js';
+import { useInvitesStore } from '../../../stores/invites.store.js';
 
 const props = defineProps({
   show: Boolean,

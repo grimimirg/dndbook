@@ -49,6 +49,22 @@
         </div>
       </div>
     </div>
+
+    <ConfirmModal
+      :show="showRemoveMemberConfirm"
+      :title="t('campaign.removePlayerTitle')"
+      :message="t('campaign.confirmRemovePlayer')"
+      @confirm="confirmRemoveMember"
+      @cancel="cancelRemoveMember"
+    />
+
+    <ConfirmModal
+      :show="showCancelInviteConfirm"
+      :title="t('campaign.cancelInviteTitle')"
+      :message="t('campaign.confirmCancelInvite')"
+      @confirm="confirmCancelInvite"
+      @cancel="cancelCancelInvite"
+    />
   </div>
 </template>
 
@@ -58,6 +74,7 @@ import {useI18n} from 'vue-i18n';
 import {useCampaignsStore} from '../../stores/campaigns.store.js';
 import {useAuthStore} from '../../stores/auth.store.js';
 import api from '../../services/api.service.js';
+import ConfirmModal from './modals/ConfirmModal.vue';
 
 const {t} = useI18n();
 const campaignsStore = useCampaignsStore();
@@ -66,6 +83,10 @@ const authStore = useAuthStore();
 const members = ref([]);
 const pendingInvites = ref([]);
 const loading = ref(false);
+const showRemoveMemberConfirm = ref(false);
+const showCancelInviteConfirm = ref(false);
+const memberToRemove = ref(null);
+const inviteToCancel = ref(null);
 
 const isCurrentCampaignOwned = computed(() => {
   if (!campaignsStore.currentCampaign) return false;
@@ -93,30 +114,46 @@ async function fetchMembers() {
   }
 }
 
-async function handleRemoveMember(member) {
-  if (!confirm(t('campaign.confirmRemovePlayer'))) {
-    return;
-  }
-
-  try {
-    await api.delete(`/api/campaigns/${campaignsStore.currentCampaign.id}/members/${member.id}`);
-    await fetchMembers();
-  } catch (error) {
-    alert(error.response?.data?.error || t('common.error'));
-  }
+function handleRemoveMember(member) {
+  memberToRemove.value = member;
+  showRemoveMemberConfirm.value = true;
 }
 
-async function handleCancelInvite(invite) {
-  if (!confirm(t('campaign.confirmCancelInvite'))) {
-    return;
-  }
-
+async function confirmRemoveMember() {
+  showRemoveMemberConfirm.value = false;
   try {
-    await api.delete(`/api/campaigns/${campaignsStore.currentCampaign.id}/invites/${invite.id}`);
+    await api.delete(`/api/campaigns/${campaignsStore.currentCampaign.id}/members/${memberToRemove.value.id}`);
     await fetchMembers();
   } catch (error) {
     alert(error.response?.data?.error || t('common.error'));
   }
+  memberToRemove.value = null;
+}
+
+function cancelRemoveMember() {
+  showRemoveMemberConfirm.value = false;
+  memberToRemove.value = null;
+}
+
+function handleCancelInvite(invite) {
+  inviteToCancel.value = invite;
+  showCancelInviteConfirm.value = true;
+}
+
+async function confirmCancelInvite() {
+  showCancelInviteConfirm.value = false;
+  try {
+    await api.delete(`/api/campaigns/${campaignsStore.currentCampaign.id}/invites/${inviteToCancel.value.id}`);
+    await fetchMembers();
+  } catch (error) {
+    alert(error.response?.data?.error || t('common.error'));
+  }
+  inviteToCancel.value = null;
+}
+
+function cancelCancelInvite() {
+  showCancelInviteConfirm.value = false;
+  inviteToCancel.value = null;
 }
 
 watch(() => campaignsStore.currentCampaign, () => {
