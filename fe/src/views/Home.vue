@@ -16,6 +16,7 @@
     <div class="main-content">
       <div class="campaign-info-column flex-col">
         <CampaignDescriptionPanel/>
+        <CampaignCharactersPanel v-if="campaignsStore.currentCampaign"/>
         <CampaignPlayersPanel v-if="campaignsStore.currentCampaign" ref="playersPanel"/>
       </div>
 
@@ -87,6 +88,7 @@ import ThemeToggle from './components/ThemeToggle.vue';
 import NotificationBell from './components/NotificationBell.vue';
 import InviteToast from './components/InviteToast.vue';
 import CampaignDescriptionPanel from './components/CampaignDescriptionPanel.vue';
+import CampaignCharactersPanel from './components/characters/CampaignCharactersPanel.vue';
 import CampaignPlayersPanel from './components/CampaignPlayersPanel.vue';
 
 const router = useRouter();

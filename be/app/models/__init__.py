@@ -5,6 +5,7 @@ from app.models.post import Post
 from app.models.image import Image
 from app.models.comment import Comment
 from app.models.campaign_invite import CampaignInvite
+from app.models.character import Character
 
 __all__ = [
     'campaign_members',
@@ -13,5 +14,6 @@ __all__ = [
     'Post',
     'Image',
     'Comment',
-    'CampaignInvite'
+    'CampaignInvite',
+    'Character'
 ]

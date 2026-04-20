@@ -86,11 +86,13 @@ def create_app():
     from app.controllers import campaigns_controller as campaigns
     from app.controllers import posts_controller as posts
     from app.controllers import invites_controller as invites
+    from app.controllers import characters_controller as characters
 
     app.register_blueprint(auth.bp)
     app.register_blueprint(campaigns.bp)
     app.register_blueprint(posts.bp)
     app.register_blueprint(invites.bp)
+    app.register_blueprint(characters.bp)
 
     @app.route('/uploads/<path:filename>')
     def serve_upload(filename):

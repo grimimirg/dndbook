@@ -19,6 +19,7 @@ class Campaign(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     posts = db.relationship('Post', backref='campaign', lazy=True, cascade='all, delete-orphan')
+    characters = db.relationship('Character', backref='campaign', lazy=True, cascade='all, delete-orphan')
 
     def to_dict(self, include_members=False):
         """
