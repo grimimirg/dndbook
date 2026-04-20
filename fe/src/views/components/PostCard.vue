@@ -53,7 +53,8 @@
                 <span class="comment-date">{{ formatDate(comment.created_at) }}</span>
               </div>
 
-              <div v-if="comment.author_id === currentUserId" class="comment-actions flex-align-center" :class="{ 'visible': hoveredCommentId === comment.id }">
+              <div v-if="comment.author_id === currentUserId" class="comment-actions flex-align-center"
+                   :class="{ 'visible': hoveredCommentId === comment.id }">
                 <button
                     v-if="editingCommentId !== comment.id"
                     @click="startEditComment(comment)"
@@ -61,6 +62,14 @@
                     :title="t('comment.edit')"
                 >
                   ✎
+                </button>
+                <button
+                    v-if="editingCommentId !== comment.id"
+                    @click="handleDeleteComment(comment.id)"
+                    class="comment-action-btn edit-btn"
+                    :title="t('comment.delete')"
+                >
+                  ✕
                 </button>
                 <button
                     v-if="editingCommentId === comment.id"
@@ -73,18 +82,10 @@
                 <button
                     v-if="editingCommentId === comment.id"
                     @click="cancelEditComment"
-                    class="comment-action-btn cancel-btn"
+                    class="comment-action-btn edit-btn"
                     :title="t('comment.cancel')"
                 >
                   ✕
-                </button>
-                <button
-                    v-if="editingCommentId !== comment.id"
-                    @click="handleDeleteComment(comment.id)"
-                    class="comment-action-btn delete-btn"
-                    :title="t('comment.delete')"
-                >
-                  🗑
                 </button>
               </div>
 
@@ -119,26 +120,26 @@
     </div>
 
     <PostDetailModal
-      :show="showModal"
-      :post="post"
-      @close="closeModal"
-      @delete="showDeletePostConfirm = true"
+        :show="showModal"
+        :post="post"
+        @close="closeModal"
+        @delete="showDeletePostConfirm = true"
     />
 
     <ConfirmModal
-      :show="showDeletePostConfirm"
-      :title="t('post.deleteTitle')"
-      :message="t('post.confirmDelete')"
-      @confirm="confirmDeletePost"
-      @cancel="showDeletePostConfirm = false"
+        :show="showDeletePostConfirm"
+        :title="t('post.deleteTitle')"
+        :message="t('post.confirmDelete')"
+        @confirm="confirmDeletePost"
+        @cancel="showDeletePostConfirm = false"
     />
 
     <ConfirmModal
-      :show="showDeleteCommentConfirm"
-      :title="t('comment.deleteTitle')"
-      :message="t('comment.confirmDelete')"
-      @confirm="confirmDeleteComment"
-      @cancel="cancelDeleteComment"
+        :show="showDeleteCommentConfirm"
+        :title="t('comment.deleteTitle')"
+        :message="t('comment.confirmDelete')"
+        @confirm="confirmDeleteComment"
+        @cancel="cancelDeleteComment"
     />
   </div>
 </template>

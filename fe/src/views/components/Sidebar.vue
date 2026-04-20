@@ -2,13 +2,12 @@
   <div class="sidebar">
     <div class="sidebar-header flex-between">
       <h2>{{ t('campaign.campaigns') }}</h2>
-      <button @click="showCreateModal = true" class="primary">+ {{ t('campaign.new') }}</button>
+      <button @click="showCreateModal = true" class="primary" :title="t('campaign.newTooltip')">+ {{ t('campaign.new') }}</button>
     </div>
 
     <div v-if="campaignsStore.loading" class="loading">{{ t('common.loading') }}</div>
 
     <div v-else class="campaigns-tree">
-      <!-- Owned Campaigns -->
       <div v-if="campaignsStore.ownedCampaigns.length > 0" class="campaign-group">
         <h3 class="group-title">{{ t('campaign.myCampaigns') }}</h3>
         <div
@@ -78,7 +77,7 @@
 
     <div v-if="showCreateModal" class="modal" @click.self="showCreateModal = false">
       <div class="modal-content">
-        <h3>{{ t('campaign.create') }}</h3>
+        <h3>{{ t('campaign.create') }}</h3><br>
         <form @submit.prevent="handleCreateCampaign">
           <div class="form-group">
             <input v-model="newCampaignName" :placeholder="t('campaign.name')" required/>
@@ -86,9 +85,9 @@
           <div class="form-group">
             <textarea v-model="newCampaignDescription" :placeholder="t('campaign.description')" rows="4"></textarea>
           </div>
-          <div class="modal-actions">
+          <div class="modal-actions" style="display: flex; justify-content: flex-end; gap: 1rem;">
             <button type="button" @click="showCreateModal = false" class="secondary">{{ t('campaign.cancel') }}</button>
-            <button type="submit" class="primary">{{ t('campaign.create') }}</button>
+            <button type="submit" class="primary">{{ t('campaign.createButton') }}</button>
           </div>
         </form>
       </div>
