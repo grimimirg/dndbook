@@ -10,8 +10,6 @@ auth:
   password: "Passwort"
   alreadyHaveAccount: "Haben Sie bereits ein Konto? Anmelden"
   needAccount: "Brauchen Sie ein Konto? Registrieren"
-  loginSuccess: "Anmeldung erfolgreich"
-  registerSuccess: "Registrierung erfolgreich"
 
 campaign:
   campaigns: "Kampagnen"
@@ -24,7 +22,6 @@ campaign:
   name: "Name des Abenteuers"
   description: "Erzähle deine Geschichte..."
   cancel: "Abbrechen"
-  noCampaigns: "Noch keine Kampagnen"
   selectCampaign: "Wählen Sie eine Kampagne aus dem \"Kampagnen\"-Baum rechts, um deren Inhalt anzuzeigen"
   selectCampaignChronicle: "Wählen Sie eine Kampagne aus dem \"Kampagnen\"-Baum rechts, um deren Chronik anzuzeigen"
   inviteUsers: "Spieler Einladen"
@@ -33,7 +30,6 @@ campaign:
   deleteTitle: "Kampagne Löschen"
   selectUsers: "Spieler zum Einladen auswählen"
   sendInvites: "Einladungen Senden"
-  invitesSent: "Einladungen erfolgreich gesendet"
   noUsersAvailable: "Keine Spieler zum Einladen verfügbar"
   descriptionPanel: "Chronik"
   noDescription: "Keine Beschreibung für diese Kampagne verfügbar."
@@ -54,7 +50,6 @@ campaign:
   editChronicle: "Chronik Bearbeiten"
 
 post:
-  posts: "Beiträge"
   createPost: "Beitrag erstellen"
   title: "Beitragstitel..."
   content: "Was passiert in deiner Kampagne?"
@@ -64,7 +59,6 @@ post:
   creating: "Wird erstellt..."
   created: "Erstellt"
   updated: "Aktualisiert"
-  author: "Autor"
   by: "Von"
   readMore: "Mehr lesen"
   addImages: "Bilder hinzufügen"
@@ -76,13 +70,10 @@ post:
   cancel: "Abbrechen"
   editMode: "Bearbeitungsmodus"
   confirmDelete: "Sind Sie sicher, dass Sie diesen Beitrag löschen möchten?"
-  deleteSuccess: "Beitrag erfolgreich gelöscht"
-  updateSuccess: "Beitrag erfolgreich aktualisiert"
   uploadImage: "Bild hochladen"
 
 comment:
   comments: "Kommentare"
-  addComment: "Kommentar hinzufügen..."
   writeComment: "Schreibe einen Kommentar..."
   post: "Posten"
   edit: "Bearbeiten"
@@ -90,7 +81,6 @@ comment:
   deleteTitle: "Kommentar Löschen"
   save: "Speichern"
   cancel: "Abbrechen"
-  noComments: "Keine Kommentare"
   confirmDelete: "Sind Sie sicher, dass Sie diesen Kommentar löschen möchten?"
 
 sort:
@@ -104,19 +94,14 @@ invite:
   invitedTo: "hat Sie eingeladen zu"
   accept: "Annehmen"
   reject: "Ablehnen"
-  accepted: "Einladung angenommen"
-  rejected: "Einladung abgelehnt"
   newInvite: "Neue Einladung"
   inviteMessage: "{inviter} hat Sie zu {campaign} eingeladen"
-  pending: "Ausstehend"
 
 common:
   loading: "Wird geladen..."
   error: "Fehler"
-  success: "Erfolg"
   confirm: "Bestätigen"
   cancel: "Abbrechen"
-  close: "Schließen"
 
 character:
   characters: "Charaktere"

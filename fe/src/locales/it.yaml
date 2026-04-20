@@ -10,8 +10,6 @@ auth:
   password: "Password"
   alreadyHaveAccount: "Hai già un account? Accedi"
   needAccount: "Hai bisogno di un account? Registrati"
-  loginSuccess: "Accesso effettuato con successo"
-  registerSuccess: "Registrazione completata con successo"
   
 campaign:
   campaigns: "Campagne"
@@ -24,7 +22,6 @@ campaign:
   name: "Nome dell'Avventura"
   description: "Racconta la tua storia..."
   cancel: "Annulla"
-  noCampaigns: "Nessuna campagna ancora"
   selectCampaign: "Seleziona una campagna dall'albero \"Campagne\" a destra per visualizzarne i contenuti"
   selectCampaignChronicle: "Seleziona una campagna dall'albero \"Campagne\" a destra per visualizzarne la cronaca"
   inviteUsers: "Invita giocatori"
@@ -33,7 +30,6 @@ campaign:
   deleteTitle: "Elimina Campagna"
   selectUsers: "Seleziona giocatori da invitare"
   sendInvites: "Invia Inviti"
-  invitesSent: "Inviti inviati con successo"
   noUsersAvailable: "Nessun giocatore disponibile da invitare"
   descriptionPanel: "Cronaca"
   noDescription: "Nessuna descrizione disponibile per questa campagna."
@@ -54,7 +50,6 @@ campaign:
   editChronicle: "Modifica Cronaca"
   
 post:
-  posts: "Post"
   createPost: "Crea Post"
   title: "Titolo del post..."
   content: "Cosa sta succedendo nella tua campagna?"
@@ -64,7 +59,6 @@ post:
   creating: "Creazione..."
   created: "Creato"
   updated: "Aggiornato"
-  author: "Autore"
   by: "Di"
   readMore: "Leggi tutto"
   addImages: "Aggiungi Immagini"
@@ -76,13 +70,10 @@ post:
   cancel: "Annulla"
   editMode: "Modalità modifica"
   confirmDelete: "Sei sicuro di voler eliminare questo post?"
-  deleteSuccess: "Post eliminato con successo"
-  updateSuccess: "Post aggiornato con successo"
   uploadImage: "Carica immagine"
 
 comment:
   comments: "Commenti"
-  addComment: "Aggiungi un commento..."
   writeComment: "Scrivi un commento..."
   post: "Pubblica"
   edit: "Modifica"
@@ -90,7 +81,6 @@ comment:
   deleteTitle: "Elimina Commento"
   save: "Salva"
   cancel: "Annulla"
-  noComments: "Nessun commento"
   confirmDelete: "Sei sicuro di voler eliminare questo commento?"
   
 sort:
@@ -104,19 +94,14 @@ invite:
   invitedTo: "ti ha invitato a"
   accept: "Accetta"
   reject: "Rifiuta"
-  accepted: "Invito accettato"
-  rejected: "Invito rifiutato"
   newInvite: "Nuovo Invito"
   inviteMessage: "{inviter} ti ha invitato a {campaign}"
-  pending: "In attesa"
   
 common:
   loading: "Caricamento..."
   error: "Errore"
-  success: "Successo"
   confirm: "Conferma"
   cancel: "Annulla"
-  close: "Chiudi"
 
 character:
   characters: "Personaggi"

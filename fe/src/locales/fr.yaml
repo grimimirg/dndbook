@@ -10,8 +10,6 @@ auth:
   password: "Mot de passe"
   alreadyHaveAccount: "Vous avez déjà un compte ? Connectez-vous"
   needAccount: "Besoin d'un compte ? Inscrivez-vous"
-  loginSuccess: "Connexion réussie"
-  registerSuccess: "Inscription réussie"
 
 campaign:
   campaigns: "Campagnes"
@@ -24,7 +22,6 @@ campaign:
   name: "Nom de l'aventure"
   description: "Racontez votre histoire..."
   cancel: "Annuler"
-  noCampaigns: "Aucune campagne pour le moment"
   selectCampaign: "Sélectionnez une campagne dans l'arbre \"Campagnes\" à droite pour voir son contenu"
   selectCampaignChronicle: "Sélectionnez une campagne dans l'arbre \"Campagnes\" à droite pour voir sa chronique"
   inviteUsers: "Inviter des Joueurs"
@@ -33,7 +30,6 @@ campaign:
   deleteTitle: "Supprimer la Campagne"
   selectUsers: "Sélectionnez les joueurs à inviter"
   sendInvites: "Envoyer les Invitations"
-  invitesSent: "Invitations envoyées avec succès"
   noUsersAvailable: "Aucun joueur disponible à inviter"
   descriptionPanel: "Chronique"
   noDescription: "Aucune description disponible pour cette campagne."
@@ -54,7 +50,6 @@ campaign:
   editChronicle: "Modifier la Chronique"
 
 post:
-  posts: "Publications"
   createPost: "Créer une publication"
   title: "Titre de la publication..."
   content: "Que se passe-t-il dans votre campagne ?"
@@ -64,7 +59,6 @@ post:
   creating: "Création..."
   created: "Créé"
   updated: "Mis à jour"
-  author: "Auteur"
   by: "Par"
   readMore: "Lire plus"
   addImages: "Ajouter des Images"
@@ -76,13 +70,10 @@ post:
   cancel: "Annuler"
   editMode: "Mode édition"
   confirmDelete: "Êtes-vous sûr de vouloir supprimer cette publication ?"
-  deleteSuccess: "Publication supprimée avec succès"
-  updateSuccess: "Publication mise à jour avec succès"
   uploadImage: "Télécharger une image"
 
 comment:
   comments: "Commentaires"
-  addComment: "Ajouter un commentaire..."
   writeComment: "Écrire un commentaire..."
   post: "Publier"
   edit: "Modifier"
@@ -90,7 +81,6 @@ comment:
   deleteTitle: "Supprimer le Commentaire"
   save: "Enregistrer"
   cancel: "Annuler"
-  noComments: "Aucun commentaire"
   confirmDelete: "Êtes-vous sûr de vouloir supprimer ce commentaire ?"
 
 sort:
@@ -104,19 +94,14 @@ invite:
   invitedTo: "vous a invité à"
   accept: "Accepter"
   reject: "Refuser"
-  accepted: "Invitation acceptée"
-  rejected: "Invitation refusée"
   newInvite: "Nouvelle Invitation"
   inviteMessage: "{inviter} vous a invité à {campaign}"
-  pending: "En attente"
   
 common:
   loading: "Chargement..."
   error: "Erreur"
-  success: "Succès"
   confirm: "Confirmer"
   cancel: "Annuler"
-  close: "Fermer"
 
 character:
   characters: "Personnages"

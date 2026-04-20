@@ -10,8 +10,6 @@ auth:
   password: "Password"
   alreadyHaveAccount: "Already have an account? Login"
   needAccount: "Need an account? Register"
-  loginSuccess: "Login successful"
-  registerSuccess: "Registration successful"
   
 campaign:
   campaigns: "Campaigns"
@@ -24,7 +22,6 @@ campaign:
   name: "Adventure Name"
   description: "Tell your tale..."
   cancel: "Cancel"
-  noCampaigns: "No campaigns yet"
   selectCampaign: "Select a campaign from the \"Campaigns\" tree on the right to view its contents"
   selectCampaignChronicle: "Select a campaign from the \"Campaigns\" tree on the right to view its chronicle"
   inviteUsers: "Invite Players"
@@ -33,7 +30,6 @@ campaign:
   deleteTitle: "Delete Campaign"
   selectUsers: "Select players to invite"
   sendInvites: "Send Invites"
-  invitesSent: "Invites sent successfully"
   noUsersAvailable: "No players available to invite"
   descriptionPanel: "Chronicle"
   noDescription: "No description available for this campaign."
@@ -54,7 +50,6 @@ campaign:
   editChronicle: "Edit Chronicle"
   
 post:
-  posts: "Posts"
   createPost: "Create Post"
   title: "Post title..."
   content: "What's happening in your campaign?"
@@ -64,7 +59,6 @@ post:
   creating: "Creating..."
   created: "Created"
   updated: "Updated"
-  author: "Author"
   by: "By"
   readMore: "Read more"
   addImages: "Add Images"
@@ -76,13 +70,10 @@ post:
   cancel: "Cancel"
   editMode: "Edit mode"
   confirmDelete: "Are you sure you want to delete this post?"
-  deleteSuccess: "Post deleted successfully"
-  updateSuccess: "Post updated successfully"
   uploadImage: "Upload image"
 
 comment:
   comments: "Comments"
-  addComment: "Add a comment..."
   writeComment: "Write a comment..."
   post: "Post"
   edit: "Edit"
@@ -90,7 +81,6 @@ comment:
   deleteTitle: "Delete Comment"
   save: "Save"
   cancel: "Cancel"
-  noComments: "No comments"
   confirmDelete: "Are you sure you want to delete this comment?"
   
 sort:
@@ -104,19 +94,14 @@ invite:
   invitedTo: "invited you to"
   accept: "Accept"
   reject: "Reject"
-  accepted: "Invite accepted"
-  rejected: "Invite rejected"
   newInvite: "New Invite"
   inviteMessage: "{inviter} invited you to {campaign}"
-  pending: "Pending"
   
 common:
   loading: "Loading..."
   error: "Error"
-  success: "Success"
   confirm: "Confirm"
   cancel: "Cancel"
-  close: "Close"
 
 character:
   characters: "Characters"

@@ -138,23 +138,3 @@ async function confirmDelete() {
   await campaignsStore.deleteCampaign(campaignsStore.currentCampaign.id);
 }
 </script>
-
-<style scoped>
-.panel-header span[title] {
-  cursor: pointer;
-}
-
-.panel-header .delete-btn {
-  opacity: 1;
-  margin-left: 8px;
-}
-
-.panel-header .delete-btn:hover {
-  transform: scale(1.1);
-}
-
-.panel-content.scrollable {
-  max-height: 400px;
-  overflow-y: auto;
-}
-</style>
