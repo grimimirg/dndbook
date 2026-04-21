@@ -66,11 +66,13 @@ echo "==================================="
 
 cd fe
 
+echo "Syncing environment variables from root .env..."
+./sync-env.sh
+
 if [ ! -f ".env" ]; then
-    echo "❌ Frontend .env file not found!"
-    echo "Please create fe/.env file before running."
-    echo "You can copy: cp fe/.env.example fe/.env"
-    exit 1
+    echo "⚠️  Frontend .env file not found!"
+    echo "   Using only variables from root .env (via .env.local)"
+    echo "   To add frontend-specific overrides: cp fe/.env.example fe/.env"
 fi
 
 # Check if node_modules exists

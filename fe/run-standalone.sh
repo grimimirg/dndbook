@@ -6,11 +6,15 @@ echo "==================================="
 echo "D&D Book Frontend - Standalone Setup"
 echo "==================================="
 
+echo ""
+echo "Syncing environment variables from root .env..."
+./sync-env.sh
+
 if [ ! -f ".env" ]; then
-    echo "❌ .env file not found!"
-    echo "Please create .env file before running the application."
-    echo "You can copy .env.example: cp .env.example .env"
-    exit 1
+    echo ""
+    echo "⚠️  Frontend .env file not found!"
+    echo "   Using only variables from root .env (via .env.local)"
+    echo "   To add frontend-specific overrides: cp .env.example .env"
 fi
 
 echo ""
