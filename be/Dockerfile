@@ -14,7 +14,7 @@ COPY pyproject.toml .
 
 RUN python -m venv .venv && \
     .venv/bin/pip install --upgrade pip && \
-    uv pip install --python .venv/bin/python -r pyproject.toml
+    uv pip install --python .venv/bin/python .
 
 ENV PATH="/app/.venv/bin:$PATH"
 ENV VIRTUAL_ENV="/app/.venv"
