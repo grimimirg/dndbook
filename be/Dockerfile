@@ -19,8 +19,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-RUN ls -la && ls -la app/ && \
-    mkdir -p uploads && chmod 755 uploads
+RUN mkdir -p uploads && chmod 755 uploads
 
 EXPOSE 5000
 
