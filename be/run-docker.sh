@@ -31,8 +31,8 @@ docker rm $CONTAINER_NAME 2>/dev/null || true
 echo "✓ Cleanup complete"
 
 echo ""
-echo "Building Docker image..."
-docker build -t $IMAGE_NAME .
+echo "Building Docker image (without cache)..."
+docker build --no-cache -t $IMAGE_NAME .
 echo "✓ Image built successfully"
 
 echo ""

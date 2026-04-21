@@ -3,15 +3,15 @@ services:
     image: postgres:16-alpine
     container_name: dndbook-postgres
     environment:
-      POSTGRES_USER: dndbook_user
-      POSTGRES_PASSWORD: dndbook_password
-      POSTGRES_DB: dndbook_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
       - dndbook-postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U dndbook_user"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -22,11 +22,16 @@ services:
     container_name: dndbook-backend
     ports:
       - "5000:5000"
-    env_file:
-      - ./be/.env
     environment:
       - FLASK_ENV=production
-      - DATABASE_URL=postgresql://dndbook_user:dndbook_password@postgres:5432/dndbook_db
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      - SECRET_KEY=${SECRET_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - MOCK_DATA=${MOCK_DATA}
+      - UPLOAD_FOLDER=${UPLOAD_FOLDER}
+      - MAX_CONTENT_LENGTH=${MAX_CONTENT_LENGTH}
+      - POSTS_PER_PAGE=${POSTS_PER_PAGE}
     volumes:
       - ./be/uploads:/app/uploads
     depends_on:
@@ -35,12 +40,18 @@ services:
     restart: unless-stopped
 
   frontend:
-    build: ./fe
+    build:
+      context: ./fe
+      args:
+        DEPLOYMENT_MODE: standalone
+        VITE_API_URL: "${VITE_API_URL}"
+        VITE_MOCK_DATA: "${VITE_MOCK_DATA}"
+        VITE_AVAILABLE_LOCALES: "${VITE_AVAILABLE_LOCALES}"
+        VITE_POSTS_PER_PAGE: "${VITE_POSTS_PER_PAGE}"
+        VITE_POST_PREVIEW_LIMIT: "${VITE_POST_PREVIEW_LIMIT}"
     container_name: dndbook-frontend
     ports:
       - "80:80"
-    env_file:
-      - ./fe/.env
     depends_on:
       - backend
     restart: unless-stopped

@@ -38,11 +38,11 @@ apiService.interceptors.response.use(
 const apiWrapper = {
   get(url, config) {
     if (isMockMode) {
-      if (url === '/apiService/campaigns') {
+      if (url === '/api/campaigns') {
         return mockApi.getCampaigns();
       }
-      if (url.match(/\/apiService\/campaigns\/\d+\/posts/)) {
-        const campaignId = parseInt(url.match(/\/apiService\/campaigns\/(\d+)\/posts/)[1]);
+      if (url.match(/\/api\/campaigns\/\d+\/posts/)) {
+        const campaignId = parseInt(url.match(/\/api\/campaigns\/(\d+)\/posts/)[1]);
         return mockApi.getCampaignPosts(campaignId, config?.params || {});
       }
     }
@@ -51,20 +51,20 @@ const apiWrapper = {
   
   post(url, data, config) {
     if (isMockMode) {
-      if (url === '/apiService/auth/login') {
+      if (url === '/api/auth/login') {
         return mockApi.login(data.username, data.password);
       }
-      if (url === '/apiService/auth/register') {
+      if (url === '/api/auth/register') {
         return mockApi.register(data.username, data.email, data.password);
       }
-      if (url === '/apiService/campaigns') {
+      if (url === '/api/campaigns') {
         return mockApi.createCampaign(data);
       }
-      if (url === '/apiService/posts') {
+      if (url === '/api/posts') {
         return mockApi.createPost(data);
       }
-      if (url.match(/\/apiService\/posts\/\d+\/images/)) {
-        const postId = parseInt(url.match(/\/apiService\/posts\/(\d+)\/images/)[1]);
+      if (url.match(/\/api\/posts\/\d+\/images/)) {
+        const postId = parseInt(url.match(/\/api\/posts\/(\d+)\/images/)[1]);
         return mockApi.uploadImage(postId, data);
       }
     }

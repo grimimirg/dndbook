@@ -2,23 +2,59 @@
 
 set -e
 
-POSTGRES_CONTAINER="dndbook-postgres"
-POSTGRES_VOLUME="dndbook-postgres-data"
-POSTGRES_PORT=5432
-POSTGRES_USER="dndbook_user"
-POSTGRES_PASSWORD="dndbook_password"
-POSTGRES_DB="dndbook_db"
-
 echo "==================================="
 echo "D&D Book Backend - Standalone Setup"
 echo "==================================="
 
-if [ ! -f ".env" ]; then
-    echo "❌ .env file not found!"
-    echo "Please create .env file before running the application."
-    echo "You can copy .env.example: cp .env.example .env"
+echo ""
+echo "Loading environment variables..."
+
+# Load root .env first (shared configuration)
+if [ -f "../.env" ]; then
+    echo "  ✓ Loading ../env (shared configuration)"
+    export $(grep -v '^#' ../.env | xargs)
+else
+    echo "  ⚠️  Root .env not found, using only backend .env"
+fi
+
+# Load backend .env (can override root values)
+if [ -f ".env" ]; then
+    echo "  ✓ Loading be/.env (backend-specific configuration)"
+    export $(grep -v '^#' .env | xargs)
+else
+    echo "  ℹ️  Backend .env not found, using only root configuration"
+fi
+
+# Validate required environment variables
+REQUIRED_VARS=("POSTGRES_USER" "POSTGRES_PASSWORD" "POSTGRES_DB" "POSTGRES_HOST" "POSTGRES_PORT" "DATABASE_URL" "SECRET_KEY" "JWT_SECRET_KEY" "ADMIN_PASSWORD")
+MISSING_VARS=()
+
+for var in "${REQUIRED_VARS[@]}"; do
+    if [ -z "${!var}" ]; then
+        MISSING_VARS+=("$var")
+    fi
+done
+
+if [ ${#MISSING_VARS[@]} -ne 0 ]; then
+    echo ""
+    echo "❌ Missing required environment variables:"
+    for var in "${MISSING_VARS[@]}"; do
+        echo "   - $var"
+    done
+    echo ""
+    echo "These variables must be defined in either:"
+    echo "  - Root .env (../.env) for shared configuration, OR"
+    echo "  - Backend .env (be/.env) for backend-specific values"
+    echo ""
+    echo "See .env.example files for reference."
     exit 1
 fi
+
+# Set PostgreSQL container configuration
+POSTGRES_CONTAINER="dndbook-postgres"
+POSTGRES_VOLUME="dndbook-postgres-data"
+
+echo "✓ Environment variables loaded and validated"
 
 echo ""
 echo "Checking Docker..."
@@ -97,12 +133,27 @@ chmod 755 uploads
 echo "✓ Uploads directory ready"
 
 echo ""
+echo "Initializing database..."
+if [ -f "init-db.sh" ]; then
+    ./init-db.sh
+    if [ $? -ne 0 ]; then
+        echo "❌ Database initialization failed"
+        exit 1
+    fi
+else
+    echo "⚠️  init-db.sh not found, skipping database initialization"
+fi
+
+echo ""
 echo "==================================="
 echo "Starting application..."
 echo "==================================="
 echo ""
 echo "PostgreSQL: localhost:$POSTGRES_PORT"
 echo "Database: $POSTGRES_DB"
+echo ""
+
+echo "Database URL: $DATABASE_URL"
 echo ""
 
 export FLASK_APP=main.py
