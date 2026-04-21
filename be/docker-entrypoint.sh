@@ -1,3 +1,9 @@
+#!/bin/bash
+
+set -e
+
+echo "Starting D&D Book Backend..."
+
 # Wait for PostgreSQL to be ready
 echo "Waiting for PostgreSQL to be ready..."
 echo "DATABASE_URL: $DATABASE_URL"
@@ -37,3 +43,31 @@ except Exception as e:
   echo "PostgreSQL is unavailable - sleeping"
   sleep 2
 done
+
+# Check if database is initialized
+echo "Checking database initialization..."
+DB_INITIALIZED=$(python -c "
+import os
+import sys
+from app import create_app, db
+from app.models import User
+
+app = create_app()
+with app.app_context():
+    try:
+        # Try to query users table
+        User.query.first()
+        print('true')
+    except Exception:
+        print('false')
+" 2>/dev/null || echo "false")
+
+if [ "$DB_INITIALIZED" = "false" ]; then
+    echo "[INFO] Database not initialized, running initialization..."
+    ./init-db.sh
+else
+    echo "[INFO] Database already initialized, skipping..."
+fi
+
+echo "Starting Flask application..."
+exec python app.py
