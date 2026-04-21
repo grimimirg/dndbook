@@ -4,7 +4,7 @@ WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    FLASK_APP=app.py
+    FLASK_APP=main.py
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -23,4 +23,4 @@ RUN mkdir -p uploads && chmod 755 uploads
 
 EXPOSE 5000
 
-CMD ["python", "app.py"]
+CMD ["python", "main.py"]

@@ -105,5 +105,5 @@ echo "PostgreSQL: localhost:$POSTGRES_PORT"
 echo "Database: $POSTGRES_DB"
 echo ""
 
-export FLASK_APP=app.py
-python app.py
+export FLASK_APP=main.py
+python main.py
