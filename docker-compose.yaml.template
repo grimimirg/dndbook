@@ -7,15 +7,28 @@ services:
     environment:
       - FLASK_ENV=production
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@shared_postgres:5432/dndbook_db
+      - SECRET_KEY=${SECRET_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - MOCK_DATA=${MOCK_DATA}
+      - UPLOAD_FOLDER=${UPLOAD_FOLDER}
+      - MAX_CONTENT_LENGTH=${MAX_CONTENT_LENGTH}
+      - POSTS_PER_PAGE=${POSTS_PER_PAGE}
     volumes:
       - ../data/dndbook/uploads:/app/uploads
     networks:
       - ${SHARED_NETWORK}
 
   dndbook_frontend:
-    build: ./fe
-    args:
+    build:
+      context: ./fe
+      args:
         DEPLOYMENT_MODE: homelab
+        VITE_API_URL: "${VITE_API_URL}"
+        VITE_MOCK_DATA: "${VITE_MOCK_DATA}"
+        VITE_AVAILABLE_LOCALES: "${VITE_AVAILABLE_LOCALES}"
+        VITE_POSTS_PER_PAGE: "${VITE_POSTS_PER_PAGE}"
+        VITE_POST_PREVIEW_LIMIT: "${VITE_POST_PREVIEW_LIMIT}"
     container_name: dndbook_frontend
     user: ${HOST_UID}:${HOST_GID}
     restart: always
