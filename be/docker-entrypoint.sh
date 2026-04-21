@@ -7,7 +7,7 @@ echo "Starting D&D Book Backend..."
 # Wait for PostgreSQL to be ready
 echo "Waiting for PostgreSQL to be ready..."
 echo "DATABASE_URL: $DATABASE_URL"
-until python -c "
+until /app/.venv/bin/python -c "
 import psycopg2
 import os
 import sys
@@ -46,7 +46,7 @@ done
 
 # Check if database is initialized
 echo "Checking database initialization..."
-DB_INITIALIZED=$(python -c "
+DB_INITIALIZED=$(/app/.venv/bin/python -c "
 import os
 import sys
 from app import create_app, db
@@ -70,4 +70,4 @@ else
 fi
 
 echo "Starting Flask application..."
-exec python app.py
+exec /app/.venv/bin/python app.py
