@@ -2,6 +2,13 @@
 
 set -e
 
+POSTGRES_CONTAINER="dndbook-postgres"
+POSTGRES_VOLUME="dndbook-postgres-data"
+POSTGRES_PORT=5432
+POSTGRES_USER="dndbook_user"
+POSTGRES_PASSWORD="dndbook_password"
+POSTGRES_DB="dndbook_db"
+
 echo "==================================="
 echo "D&D Book Backend - Standalone Setup"
 echo "==================================="
@@ -12,6 +19,14 @@ if [ ! -f ".env" ]; then
     echo "You can copy .env.example: cp .env.example .env"
     exit 1
 fi
+
+echo ""
+echo "Checking Docker..."
+if ! command -v docker &> /dev/null; then
+    echo "❌ Docker not found. Please install Docker for PostgreSQL."
+    exit 1
+fi
+echo "✓ Docker found"
 
 echo ""
 echo "Checking Python..."
@@ -51,6 +66,31 @@ pip install -r requirements.txt
 echo "✓ Dependencies installed"
 
 echo ""
+echo "Setting up PostgreSQL container..."
+if docker ps -a -q -f name=$POSTGRES_CONTAINER | grep -q .; then
+    if docker ps -q -f name=$POSTGRES_CONTAINER | grep -q .; then
+        echo "✓ PostgreSQL container already running"
+    else
+        echo "Starting existing PostgreSQL container..."
+        docker start $POSTGRES_CONTAINER
+        echo "✓ PostgreSQL container started"
+    fi
+else
+    echo "Creating PostgreSQL container..."
+    docker run -d \
+        --name $POSTGRES_CONTAINER \
+        -e POSTGRES_USER=$POSTGRES_USER \
+        -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
+        -e POSTGRES_DB=$POSTGRES_DB \
+        -p $POSTGRES_PORT:5432 \
+        -v $POSTGRES_VOLUME:/var/lib/postgresql/data \
+        postgres:15-alpine
+    echo "✓ PostgreSQL container created and started"
+    echo "⏳ Waiting for PostgreSQL to be ready..."
+    sleep 5
+fi
+
+echo ""
 echo "Creating uploads directory..."
 mkdir -p uploads
 chmod 755 uploads
@@ -60,6 +100,9 @@ echo ""
 echo "==================================="
 echo "Starting application..."
 echo "==================================="
+echo ""
+echo "PostgreSQL: localhost:$POSTGRES_PORT"
+echo "Database: $POSTGRES_DB"
 echo ""
 
 export FLASK_APP=app.py
