@@ -1,7 +1,7 @@
-__pycache__
-*.py[cod]
-*$py.class
-*.so
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/*.pyd
 .Python
 env/
 venv/
