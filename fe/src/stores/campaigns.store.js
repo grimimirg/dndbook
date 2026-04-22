@@ -11,7 +11,7 @@ export const useCampaignsStore = defineStore('campaigns', () => {
   async function fetchCampaigns() {
     loading.value = true;
     try {
-      const response = await api.get('/api/campaigns');
+      const response = await api.get('/campaigns');
       ownedCampaigns.value = response.data.owned || [];
       sharedCampaigns.value = response.data.shared || [];
     } catch (error) {
@@ -23,7 +23,7 @@ export const useCampaignsStore = defineStore('campaigns', () => {
 
   async function createCampaign(name, description) {
     try {
-      const response = await api.post('/api/campaigns', { name, description });
+      const response = await api.post('/campaigns', { name, description });
       ownedCampaigns.value.push(response.data);
       return { success: true, campaign: response.data };
     } catch (error) {
@@ -36,7 +36,7 @@ export const useCampaignsStore = defineStore('campaigns', () => {
 
   async function updateCampaign(id, data) {
     try {
-      const response = await api.put(`/api/campaigns/${id}`, data);
+      const response = await api.put(`/campaigns/${id}`, data);
       const ownedIndex = ownedCampaigns.value.findIndex(c => c.id === id);
       const sharedIndex = sharedCampaigns.value.findIndex(c => c.id === id);
       
@@ -61,7 +61,7 @@ export const useCampaignsStore = defineStore('campaigns', () => {
 
   async function deleteCampaign(id) {
     try {
-      await api.delete(`/api/campaigns/${id}`);
+      await api.delete(`/campaigns/${id}`);
       ownedCampaigns.value = ownedCampaigns.value.filter(c => c.id !== id);
       sharedCampaigns.value = sharedCampaigns.value.filter(c => c.id !== id);
       if (currentCampaign.value?.id === id) {

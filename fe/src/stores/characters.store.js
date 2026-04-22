@@ -14,7 +14,7 @@ export const useCharactersStore = defineStore('characters', () => {
 
     loading.value = true;
     try {
-      const response = await api.get(`/api/campaigns/${campaignId}/characters`);
+      const response = await api.get(`/campaigns/${campaignId}/characters`);
       characters.value = response.data || [];
     } catch (error) {
       console.error('Failed to fetch characters:', error);
@@ -26,7 +26,7 @@ export const useCharactersStore = defineStore('characters', () => {
 
   async function createCharacter(campaignId, formData) {
     try {
-      const response = await api.post(`/api/campaigns/${campaignId}/characters`, formData, {
+      const response = await api.post(`/campaigns/${campaignId}/characters`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -43,7 +43,7 @@ export const useCharactersStore = defineStore('characters', () => {
 
   async function updateCharacter(campaignId, characterId, formData) {
     try {
-      const response = await api.put(`/api/campaigns/${campaignId}/characters/${characterId}`, formData, {
+      const response = await api.put(`/campaigns/${campaignId}/characters/${characterId}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -63,7 +63,7 @@ export const useCharactersStore = defineStore('characters', () => {
 
   async function deleteCharacter(campaignId, characterId) {
     try {
-      await api.delete(`/api/campaigns/${campaignId}/characters/${characterId}`);
+      await api.delete(`/campaigns/${campaignId}/characters/${characterId}`);
       characters.value = characters.value.filter(c => c.id !== characterId);
       return { success: true };
     } catch (error) {

@@ -114,7 +114,7 @@ async function fetchMembers() {
 
   loading.value = true;
   try {
-    const response = await api.get(`/api/campaigns/${campaignsStore.currentCampaign.id}/members`);
+    const response = await api.get(`/campaigns/${campaignsStore.currentCampaign.id}/members`);
     members.value = response.data.members || [];
     pendingInvites.value = response.data.pending_invites || [];
   } catch (error) {
@@ -132,7 +132,7 @@ function handleRemoveMember(member) {
 async function confirmRemoveMember() {
   showRemoveMemberConfirm.value = false;
   try {
-    await api.delete(`/api/campaigns/${campaignsStore.currentCampaign.id}/members/${memberToRemove.value.id}`);
+    await api.delete(`/campaigns/${campaignsStore.currentCampaign.id}/members/${memberToRemove.value.id}`);
     await fetchMembers();
   } catch (error) {
     alert(error.response?.data?.error || t('common.error'));
@@ -153,7 +153,7 @@ function handleCancelInvite(invite) {
 async function confirmCancelInvite() {
   showCancelInviteConfirm.value = false;
   try {
-    await api.delete(`/api/campaigns/${campaignsStore.currentCampaign.id}/invites/${inviteToCancel.value.id}`);
+    await api.delete(`/campaigns/${campaignsStore.currentCampaign.id}/invites/${inviteToCancel.value.id}`);
     await fetchMembers();
   } catch (error) {
     alert(error.response?.data?.error || t('common.error'));

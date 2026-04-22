@@ -11,7 +11,7 @@ export const useInvitesStore = defineStore('invites', () => {
   async function fetchInvites() {
     loading.value = true;
     try {
-      const response = await api.get('/api/invites');
+      const response = await api.get('/invites');
       invites.value = response.data;
     } catch (error) {
       console.error('Failed to fetch invites:', error);
@@ -22,7 +22,7 @@ export const useInvitesStore = defineStore('invites', () => {
 
   async function acceptInvite(inviteId) {
     try {
-      const response = await api.post(`/api/invites/${inviteId}/accept`);
+      const response = await api.post(`/invites/${inviteId}/accept`);
       
       // Remove from invites list
       invites.value = invites.value.filter(inv => inv.id !== inviteId);
@@ -38,7 +38,7 @@ export const useInvitesStore = defineStore('invites', () => {
 
   async function rejectInvite(inviteId) {
     try {
-      await api.post(`/api/invites/${inviteId}/reject`);
+      await api.post(`/invites/${inviteId}/reject`);
       
       // Remove from invites list
       invites.value = invites.value.filter(inv => inv.id !== inviteId);
@@ -54,7 +54,7 @@ export const useInvitesStore = defineStore('invites', () => {
 
   async function inviteUsers(campaignId, userIds) {
     try {
-      const response = await api.post(`/api/invites/campaign/${campaignId}`, {
+      const response = await api.post(`/invites/campaign/${campaignId}`, {
         user_ids: userIds
       });
       return { success: true, data: response.data };
@@ -68,7 +68,7 @@ export const useInvitesStore = defineStore('invites', () => {
 
   async function getAvailableUsers(campaignId) {
     try {
-      const response = await api.get(`/api/invites/available-users/${campaignId}`);
+      const response = await api.get(`/invites/available-users/${campaignId}`);
       return { success: true, users: response.data };
     } catch (error) {
       return { 

@@ -3,8 +3,10 @@ import { mockApi } from './mockData.service.js';
 
 const isMockMode = import.meta.env.VITE_MOCK_DATA === 'true';
 
+const baseURL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
+
 const apiService = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
+  baseURL: baseURL,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -38,11 +40,11 @@ apiService.interceptors.response.use(
 const apiWrapper = {
   get(url, config) {
     if (isMockMode) {
-      if (url === '/api/campaigns') {
+      if (url === '/campaigns') {
         return mockApi.getCampaigns();
       }
-      if (url.match(/\/api\/campaigns\/\d+\/posts/)) {
-        const campaignId = parseInt(url.match(/\/api\/campaigns\/(\d+)\/posts/)[1]);
+      if (url.match(/\/campaigns\/\d+\/posts/)) {
+        const campaignId = parseInt(url.match(/\/campaigns\/(\d+)\/posts/)[1]);
         return mockApi.getCampaignPosts(campaignId, config?.params || {});
       }
     }
@@ -51,20 +53,20 @@ const apiWrapper = {
   
   post(url, data, config) {
     if (isMockMode) {
-      if (url === '/api/auth/login') {
+      if (url === '/auth/login') {
         return mockApi.login(data.username, data.password);
       }
-      if (url === '/api/auth/register') {
+      if (url === '/auth/register') {
         return mockApi.register(data.username, data.email, data.password);
       }
-      if (url === '/api/campaigns') {
+      if (url === '/campaigns') {
         return mockApi.createCampaign(data);
       }
-      if (url === '/api/posts') {
+      if (url === '/posts') {
         return mockApi.createPost(data);
       }
-      if (url.match(/\/api\/posts\/\d+\/images/)) {
-        const postId = parseInt(url.match(/\/api\/posts\/(\d+)\/images/)[1]);
+      if (url.match(/\/posts\/\d+\/images/)) {
+        const postId = parseInt(url.match(/\/posts\/(\d+)\/images/)[1]);
         return mockApi.uploadImage(postId, data);
       }
     }

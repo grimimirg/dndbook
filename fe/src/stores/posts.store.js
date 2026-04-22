@@ -15,7 +15,7 @@ export const usePostsStore = defineStore('posts', () => {
   async function fetchPosts(campaignId, page = 1, append = false) {
     loading.value = true;
     try {
-      const response = await api.get(`/api/campaigns/${campaignId}/posts`, {
+      const response = await api.get(`/campaigns/${campaignId}/posts`, {
         params: { page, per_page: postsPerPage, sort: sortBy.value, order: sortDirection.value }
       });
       
@@ -40,7 +40,7 @@ export const usePostsStore = defineStore('posts', () => {
 
   async function createPost(campaignId, title, content) {
     try {
-      const response = await api.post('/api/posts', { 
+      const response = await api.post('/posts', { 
         campaign_id: campaignId, 
         title, 
         content 
@@ -57,7 +57,7 @@ export const usePostsStore = defineStore('posts', () => {
 
   async function updatePost(postId, data) {
     try {
-      const response = await api.put(`/api/posts/${postId}`, data);
+      const response = await api.put(`/posts/${postId}`, data);
       const index = posts.value.findIndex(p => p.id === postId);
       if (index !== -1) {
         posts.value[index] = response.data;
@@ -73,7 +73,7 @@ export const usePostsStore = defineStore('posts', () => {
 
   async function deletePost(postId) {
     try {
-      await api.delete(`/api/posts/${postId}`);
+      await api.delete(`/posts/${postId}`);
       posts.value = posts.value.filter(p => p.id !== postId);
       return { success: true };
     } catch (error) {
@@ -89,7 +89,7 @@ export const usePostsStore = defineStore('posts', () => {
       const formData = new FormData();
       formData.append('file', file);
       
-      const response = await api.post(`/api/posts/${postId}/images`, formData, {
+      const response = await api.post(`/posts/${postId}/images`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
@@ -104,7 +104,7 @@ export const usePostsStore = defineStore('posts', () => {
 
   async function deleteImage(postId, imageId) {
     try {
-      await api.delete(`/api/posts/${postId}/images/${imageId}`);
+      await api.delete(`/posts/${postId}/images/${imageId}`);
       return { success: true };
     } catch (error) {
       return { 
@@ -140,7 +140,7 @@ export const usePostsStore = defineStore('posts', () => {
 
   async function createComment(postId, content) {
     try {
-      const response = await api.post(`/api/posts/${postId}/comments`, { content });
+      const response = await api.post(`/posts/${postId}/comments`, { content });
       const post = posts.value.find(p => p.id === postId);
       if (post) {
         if (!post.comments) {
@@ -159,7 +159,7 @@ export const usePostsStore = defineStore('posts', () => {
 
   async function updateComment(postId, commentId, content) {
     try {
-      const response = await api.put(`/api/posts/${postId}/comments/${commentId}`, { content });
+      const response = await api.put(`/posts/${postId}/comments/${commentId}`, { content });
       const post = posts.value.find(p => p.id === postId);
       if (post && post.comments) {
         const index = post.comments.findIndex(c => c.id === commentId);
@@ -178,7 +178,7 @@ export const usePostsStore = defineStore('posts', () => {
 
   async function deleteComment(postId, commentId) {
     try {
-      await api.delete(`/api/posts/${postId}/comments/${commentId}`);
+      await api.delete(`/posts/${postId}/comments/${commentId}`);
       const post = posts.value.find(p => p.id === postId);
       if (post && post.comments) {
         post.comments = post.comments.filter(c => c.id !== commentId);
