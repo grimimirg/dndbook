@@ -10,6 +10,7 @@ from flask import Flask, send_from_directory
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 load_dotenv()
 
@@ -40,6 +41,10 @@ def create_app():
         ValueError: If DATABASE_URL is not set when MOCK_DATA is false
     """
     app = Flask(__name__)
+    
+    app.wsgi_app = ProxyFix(
+        app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
+    )
 
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key')
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'dev-jwt-secret-key')
