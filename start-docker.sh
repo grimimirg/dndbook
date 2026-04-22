@@ -70,6 +70,10 @@ echo ""
 # Stop any existing containers
 echo "Stopping existing containers (if any)..."
 $DOCKER_COMPOSE -f docker-compose.standalone.yaml down 2>/dev/null || true
+
+# Remove any orphaned containers with the same names
+echo "Removing any orphaned containers..."
+docker rm -f dndbook-postgres dndbook-backend dndbook-frontend 2>/dev/null || true
 echo "✓ Cleanup complete"
 echo ""
 

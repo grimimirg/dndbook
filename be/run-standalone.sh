@@ -120,7 +120,7 @@ else
         -e POSTGRES_DB=$POSTGRES_DB \
         -p $POSTGRES_PORT:5432 \
         -v $POSTGRES_VOLUME:/var/lib/postgresql/data \
-        postgres:15-alpine
+        postgres:16-alpine
     echo "✓ PostgreSQL container created and started"
     echo "⏳ Waiting for PostgreSQL to be ready..."
     sleep 5

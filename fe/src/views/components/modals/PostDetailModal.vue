@@ -97,6 +97,7 @@
 import {ref, watch} from 'vue';
 import {useI18n} from 'vue-i18n';
 import {usePostsStore} from '../../../stores/posts.store.js';
+import config from '../../../config/config.js';
 
 const {t} = useI18n();
 const postsStore = usePostsStore();
@@ -147,7 +148,9 @@ function formatDate(dateString) {
 }
 
 function getImageUrl(filePath) {
-  return `http://localhost:5000/uploads/${filePath}`;
+  if (!filePath) return '';
+  if (filePath.startsWith('http')) return filePath;
+  return filePath;
 }
 
 function previousImage() {

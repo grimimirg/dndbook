@@ -1,12 +1,53 @@
-# 📖 D&D Book
+<div align="center">
+  <img src="fe/images/dnd-book-logo.png" alt="D&D Book Logo" width="500"/>
+  
+  ### *Your Campaign's Chronicle Awaits*
+  
+  [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+  [![Docker](https://img.shields.io/badge/docker-ready-brightgreen.svg)](docker-compose.standalone.yaml)
+  
+</div>
 
-A web platform to manage your Dungeons & Dragons campaigns.
+---
+
+## Welcome, Adventurer!
+
+In the realm of tabletop role-playing, every campaign tells a story—of heroes forged in battle, of kingdoms saved or lost, of friendships tested and legends born. But as any seasoned Dungeon Master knows, keeping track of these epic tales can be as challenging as facing a dragon in its lair.
+
+**D&D Book** is your digital grimoire, a powerful web platform designed to chronicle your Dungeons & Dragons campaigns with the care they deserve. Whether you're a DM weaving intricate plots or a player documenting your character's journey, this tool transforms chaos into order, scattered notes into organized lore.
+
+### Features
+
+- **📚 Campaign Management**: Create and organize multiple campaigns with detailed descriptions
+- **👥 Party Collaboration**: Invite players to join your campaigns and collaborate in real-time
+- **📝 Session Chronicles**: Document your adventures with rich text posts and image galleries
+- **🎭 Character Profiles**: Build detailed character sheets with portraits and backstories
+- **💬 Interactive Comments**: Discuss sessions and share memories with your party
+- **🌍 Multi-language Support**: Available in English, Italian, German, Spanish, and French
+- **🔒 Secure & Private**: Your campaigns are protected with JWT authentication
+- **🌙 Dark Mode**: Easy on the eyes during those late-night gaming sessions
+
+---
+
+## Table of Contents
+
+- [Quick Start](#-quick-start)
+  - [Option 1: Docker Standalone](#-option-1-docker-standalone-recommended---easiest)
+  - [Option 2: Homelab Deployment](#-option-2-homelab-deployment)
+  - [Option 3: Standalone (For Developers)](#-option-3-standalone-for-developers)
+- [Project Structure](#-project-structure)
+- [Configuration](#️-configuration)
+- [Useful Commands](#️-useful-commands)
+- [Common Issues](#-common-issues)
+- [Notes](#-notes)
+
+---
 
 ## 🚀 Quick Start
 
-There are **two ways** to run the application. Choose the one that fits your needs:
+There are **three ways** to run the application. Choose the one that fits your needs:
 
-### 🐳 Option 1: Docker (Recommended - Easiest)
+### 🐳 Option 1: Docker Standalone (Recommended - Easiest)
 
 **Best for:** You want to start everything with a single command, without installing anything on your computer.
 
@@ -38,7 +79,74 @@ There are **two ways** to run the application. Choose the one that fits your nee
 
 ---
 
-### 💻 Option 2: Standalone (For Developers)
+### 🏠 Option 2: Homelab Deployment
+
+**Best for:** You have an existing homelab with shared services (PostgreSQL, Nginx reverse proxy).
+
+**⚠️ Important:** This configuration assumes your homelab is set up similarly to the reference implementation (shared PostgreSQL, external Docker network, Nginx reverse proxy). If your setup differs, you'll need to customize the configuration accordingly.
+
+**Requirements:**
+- Existing PostgreSQL database
+- Nginx reverse proxy
+- Docker and Docker Compose
+
+**Steps:**
+
+1. **Copy the template file**
+   ```bash
+   cp docker-compose.yaml.template docker-compose.yaml
+   ```
+
+2. **Configure environment variables**
+   
+   Edit your homelab's `.env` file and add these variables:
+   ```bash
+   # Database (use your existing PostgreSQL)
+   DNDBOOK_DB_NAME=dndbook_db
+   DNDBOOK_DB_USER=dndbook_user
+   DNDBOOK_DB_PASS=your-secure-password
+   
+   # Security Keys
+   SECRET_KEY=your-secret-key-here
+   JWT_SECRET_KEY=your-jwt-secret-here
+   ADMIN_PASSWORD=your-admin-password
+   
+   # Application Settings
+   MOCK_DATA=false
+   UPLOAD_FOLDER=uploads
+   MAX_CONTENT_LENGTH=16777216
+   POSTS_PER_PAGE=10
+   
+   # Frontend Settings
+   VITE_API_URL=/api
+   VITE_MOCK_DATA=false
+   VITE_AVAILABLE_LOCALES=en,it,de,es,fr
+   VITE_POSTS_PER_PAGE=10
+   VITE_POST_PREVIEW_LIMIT=200
+   
+   # Homelab Infrastructure
+   HOST_UID=1000
+   HOST_GID=1000
+   SHARED_NETWORK=your_network_name
+   ```
+
+3. **Configure Nginx**
+   
+   Use `nginx.conf.template` as reference for your reverse proxy configuration.
+
+4. **Start the application**
+   ```bash
+   docker-compose up -d
+   ```
+
+**Note:** The `docker-compose.yaml.template` expects:
+- PostgreSQL accessible at `shared_postgres:5432`
+- An external Docker network for service communication
+- Nginx handling SSL/TLS termination and routing
+
+---
+
+### 💻 Option 3: Standalone (For Developers)
 
 **Best for:** You want to develop or modify the code.
 
@@ -170,8 +278,13 @@ You forgot to create the `.env` file. Run: `cp .env.example .env`
 
 ### Frontend can't connect to backend
 Check that `VITE_API_URL` in `.env` is correct:
-- Docker: leave empty or `VITE_API_URL=`
-- Standalone: `VITE_API_URL=http://localhost:5000`
+- **Homelab**: `VITE_API_URL=/api` (or your custom API path)
+- **Docker Standalone**: `VITE_API_URL=http://localhost:5000`
+- **Standalone Dev**: `VITE_API_URL=http://localhost:5000`
+
+**Note:** The frontend code uses paths like `/auth/login`, `/campaigns`, etc. The `VITE_API_URL` is prepended to these paths, so:
+- With `VITE_API_URL=/api` → calls become `/api/auth/login`
+- With `VITE_API_URL=http://localhost:5000` → calls become `http://localhost:5000/auth/login`
 
 ---
 

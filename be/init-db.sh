@@ -109,9 +109,9 @@ try:
             print(f"✓ Admin user created (username: admin, password: {admin_password})")
         
         print("")
-        print("==================================="
+        print("===================================")
         print("Database initialization complete!")
-        print("==================================="
+        print("===================================")
         
 except Exception as e:
     print(f"❌ Error during database initialization: {e}")

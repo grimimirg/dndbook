@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from flask import request
 from app import db
 
 
@@ -24,9 +25,14 @@ class Image(db.Model):
         Returns:
             dict: Image data
         """
+        file_path = self.file_path
+        if file_path and not file_path.startswith('http'):
+            base_url = request.host_url.rstrip('/')
+            file_path = f"{base_url}{self.file_path}"
+        
         return {
             'id': self.id,
             'post_id': self.post_id,
-            'file_path': self.file_path,
+            'file_path': file_path,
             'order_index': self.order_index
         }

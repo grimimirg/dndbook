@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from flask import request
 from app import db
 
 
@@ -28,6 +29,14 @@ class Character(db.Model):
         Returns:
             dict: Character data
         """
+        image_url = None
+        if self.image_url:
+            if self.image_url.startswith('http'):
+                image_url = self.image_url
+            else:
+                base_url = request.host_url.rstrip('/')
+                image_url = f"{base_url}{self.image_url}"
+        
         return {
             'id': self.id,
             'campaign_id': self.campaign_id,
@@ -35,7 +44,7 @@ class Character(db.Model):
             'race': self.race,
             'character_class': self.character_class,
             'description': self.description,
-            'image_url': self.image_url,
+            'image_url': image_url,
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat()
         }

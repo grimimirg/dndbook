@@ -87,6 +87,7 @@ def create_app():
     from app.controllers import posts_controller as posts
     from app.controllers import invites_controller as invites
     from app.controllers import characters_controller as characters
+    from app.events import socketio_events
 
     app.register_blueprint(auth.bp)
     app.register_blueprint(campaigns.bp)
