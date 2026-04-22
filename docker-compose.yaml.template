@@ -1,12 +1,12 @@
 services:
   dndbook_backend:
-    build: ./be
+    build: ../dndbook-app/be
     container_name: dndbook_backend
     user: ${HOST_UID}:${HOST_GID}
     restart: always
     environment:
       - FLASK_ENV=production
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@shared_postgres:5432/dndbook_db
+      - DATABASE_URL=postgresql://${DNDBOOK_DB_USER}:${DNDBOOK_DB_PASS}@shared_postgres:5432/${DNDBOOK_DB_NAME}
       - SECRET_KEY=${SECRET_KEY}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
@@ -21,7 +21,7 @@ services:
 
   dndbook_frontend:
     build:
-      context: ./fe
+      context: ../dndbook-app/fe
       args:
         DEPLOYMENT_MODE: homelab
         VITE_API_URL: "${VITE_API_URL}"
