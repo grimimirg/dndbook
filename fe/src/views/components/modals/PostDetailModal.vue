@@ -98,7 +98,6 @@
 import {ref, watch} from 'vue';
 import {useI18n} from 'vue-i18n';
 import {usePostsStore} from '../../../stores/posts.store.js';
-import config from '../../../config/config.js';
 
 const {t} = useI18n();
 const postsStore = usePostsStore();
@@ -248,5 +247,23 @@ async function handleImageUpload(event) {
   object-fit: contain;
   display: block;
   margin: 0 auto;
+}
+
+.modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: var(--input-bg);
+  border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: rgba(139, 111, 71, 0.5);
+  border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 111, 71, 0.7);
 }
 </style>
