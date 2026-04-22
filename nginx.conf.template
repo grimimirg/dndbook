@@ -14,7 +14,7 @@ server {
         proxy_set_header X-Forwarded-Proto ${DOLLAR}scheme;
     }
 
-    location /apiService {
+    location /api {
         proxy_pass http://dndbook_backend:5000;
         proxy_set_header Host ${DOLLAR}host;
         proxy_set_header X-Real-IP ${DOLLAR}remote_addr;
@@ -40,7 +40,7 @@ server {
         proxy_set_header X-Forwarded-Proto ${DOLLAR}scheme;
     }
 
-    location /apiService {
+    location /api {
         proxy_pass http://dndbook_backend:5000;
         proxy_set_header Host ${DOLLAR}host;
         proxy_set_header X-Real-IP ${DOLLAR}remote_addr;
