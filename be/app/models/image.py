@@ -28,7 +28,7 @@ class Image(db.Model):
         file_path = self.file_path
         if file_path and not file_path.startswith('http'):
             base_url = request.host_url.rstrip('/')
-            file_path = f"{base_url}{self.file_path}"
+            file_path = f"{base_url}/uploads/{self.file_path}"
         
         return {
             'id': self.id,
