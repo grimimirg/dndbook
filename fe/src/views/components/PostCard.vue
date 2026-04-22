@@ -16,7 +16,7 @@
 
     <div v-if="post.images && post.images.length > 0" class="post-images">
       <div class="image-container">
-        <img :src="getImageUrl(post.images[currentImageIndex].file_path)" alt="Post image"/>
+        <img :src="getImageUrl(post.images[currentImageIndex].file_path)" alt="Post image" class="post-image"/>
 
         <div v-if="post.images.length > 1" class="image-controls flex-align-center">
           <button @click="previousImage" class="nav-button" :disabled="currentImageIndex === 0">‹</button>
@@ -304,3 +304,13 @@ function toggleComments() {
   showComments.value = !showComments.value;
 }
 </script>
+
+<style scoped>
+.post-image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+}
+</style>

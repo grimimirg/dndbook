@@ -16,7 +16,7 @@
             :placeholder="t('post.title')"
         />
 
-        <div class="modal-meta flex-align-center">
+        <div v-if="!isEditing" class="modal-meta flex-align-center">
           <span>{{ t('post.by') }}: {{ post.author }}</span>
           <span>{{ t('post.created') }}: {{ formatDate(post.created_at) }}</span>
           <span v-if="post.updated_at !== post.created_at">
@@ -30,6 +30,7 @@
                 v-if="post.images && post.images.length > 0"
                 :src="getImageUrl(post.images[currentImageIndex].file_path)"
                 alt="Post image"
+                class="modal-image"
             />
 
             <div v-if="post.images && post.images.length > 1" class="image-controls flex-align-center">
@@ -237,3 +238,15 @@ async function handleImageUpload(event) {
   event.target.value = '';
 }
 </script>
+
+<style scoped>
+.modal-image {
+  max-width: 100%;
+  max-height: 600px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+</style>
