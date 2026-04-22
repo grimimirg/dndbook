@@ -30,7 +30,7 @@ services:
         VITE_POSTS_PER_PAGE: "${VITE_POSTS_PER_PAGE}"
         VITE_POST_PREVIEW_LIMIT: "${VITE_POST_PREVIEW_LIMIT}"
     container_name: dndbook_frontend
-    user: ${HOST_UID}:${HOST_GID}
+    # user: ${HOST_UID}:${HOST_GID}
     restart: always
     depends_on:
       - dndbook_backend
