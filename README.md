@@ -29,6 +29,17 @@ In the realm of tabletop role-playing, every campaign tells a story—of heroes 
 
 ---
 
+See D&D Book in action! Here are some screenshots showcasing some features:
+
+<div align="center">
+  <img src="demo-screenshots/1.png" alt="D&D Book Screenshot 1" width="800"/>
+  <br/><br/>
+  <a href="demo-screenshots/2.png"><img src="demo-screenshots/2.png" alt="D&D Book Screenshot 2" width="400"/></a>
+  <a href="demo-screenshots/3.png"><img src="demo-screenshots/3.png" alt="D&D Book Screenshot 3" width="400"/></a>
+</div>
+
+---
+
 ## Table of Contents
 
 - [Quick Start](#-quick-start)
@@ -42,6 +53,12 @@ In the realm of tabletop role-playing, every campaign tells a story—of heroes 
 - [Notes](#-notes)
 
 ---
+
+> **⚠️ Development Notice**  
+> This project is under active development. You may encounter bugs or unexpected behavior. We appreciate your patience and welcome any feedback or bug reports to help improve the application!
+
+---
+
 
 ## 🚀 Quick Start
 
