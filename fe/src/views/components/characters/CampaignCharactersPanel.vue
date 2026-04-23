@@ -46,21 +46,31 @@
               <span class="character-class">{{ character.character_class }}</span>
             </div>
 
-            <div v-if="isCurrentCampaignOwned" class="character-actions flex-align-center" @click.stop>
+            <div v-if="isCurrentCampaignOwned" class="character-actions" @click.stop>
               <button
-                  @click="openEditModal(character)"
-                  class="edit-btn"
-                  :title="t('character.edit')"
+                  :ref="el => setButtonRef(character.id, el)"
+                  @click="toggleCharacterMenu(character.id, $event)"
+                  class="menu-toggle-btn"
+                  :title="t('character.actions')"
               >
-                🪶
+                ⋮
               </button>
-              <button
-                  @click="handleDeleteCharacter(character)"
-                  class="delete-btn"
-                  :title="t('character.delete')"
-              >
-                💀
-              </button>
+              <Teleport to="body">
+                <div
+                    v-if="openMenuId === character.id"
+                    class="campaign-actions-menu"
+                    :style="menuPosition"
+                >
+                  <button @click="handleEditCharacter(character)" class="menu-item">
+                    <span class="menu-icon">🪶</span>
+                    <span>{{ t('character.edit') }}</span>
+                  </button>
+                  <button @click="handleDeleteCharacter(character)" class="menu-item">
+                    <span class="menu-icon">💀</span>
+                    <span>{{ t('character.delete') }}</span>
+                  </button>
+                </div>
+              </Teleport>
             </div>
           </div>
         </div>
@@ -96,7 +106,7 @@
 </template>
 
 <script setup>
-import {computed, ref, watch} from 'vue';
+import {computed, onMounted, onUnmounted, ref, watch} from 'vue';
 import {useI18n} from 'vue-i18n';
 import {useCampaignsStore} from '../../../stores/campaigns.store.js';
 import {useCharactersStore} from '../../../stores/characters.store.js';
@@ -117,6 +127,9 @@ const showDeleteConfirm = ref(false);
 const characterToEdit = ref(null);
 const selectedCharacter = ref(null);
 const characterToDelete = ref(null);
+const openMenuId = ref(null);
+const menuPosition = ref({});
+const buttonRefs = ref({});
 
 const isCurrentCampaignOwned = computed(() => {
   if (!campaignsStore.currentCampaign) return false;
@@ -166,7 +179,50 @@ function handleCharacterSaved() {
   charactersStore.fetchCharacters(campaignsStore.currentCampaign.id);
 }
 
+function setButtonRef(characterId, el) {
+  if (el) {
+    buttonRefs.value[characterId] = el;
+  }
+}
+
+function toggleCharacterMenu(characterId, event) {
+  if (openMenuId.value === characterId) {
+    openMenuId.value = null;
+    menuPosition.value = {};
+  } else {
+    openMenuId.value = characterId;
+    const button = event.currentTarget;
+    const rect = button.getBoundingClientRect();
+    const menuWidth = 200;
+    const viewportWidth = window.innerWidth;
+    
+    let left = rect.right - menuWidth;
+    
+    if (left < 8) {
+      left = 8;
+    }
+    
+    if (left + menuWidth > viewportWidth - 8) {
+      left = viewportWidth - menuWidth - 8;
+    }
+    
+    const top = rect.bottom + 8;
+    
+    menuPosition.value = {
+      top: `${top}px`,
+      left: `${left}px`,
+      right: 'auto'
+    };
+  }
+}
+
+function handleEditCharacter(character) {
+  openMenuId.value = null;
+  openEditModal(character);
+}
+
 function handleDeleteCharacter(character) {
+  openMenuId.value = null;
   characterToDelete.value = character;
   showDeleteConfirm.value = true;
 }
@@ -184,6 +240,21 @@ async function confirmDelete() {
   }
   characterToDelete.value = null;
 }
+
+function handleClickOutside(event) {
+  const menuContainer = event.target.closest('.character-actions');
+  if (!menuContainer && openMenuId.value !== null) {
+    openMenuId.value = null;
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
 
 watch(() => campaignsStore.currentCampaign, (newCampaign) => {
   if (newCampaign) {

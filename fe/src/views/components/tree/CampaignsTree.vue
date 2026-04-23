@@ -3,19 +3,26 @@
     <div class="sidebar-header flex-between">
       <h2>{{ t('campaign.campaigns') }}</h2>
       <div class="campaign-menu-container">
-        <button @click="showActionsMenu = !showActionsMenu" class="menu-toggle-btn" :title="t('campaign.actions')">
+        <button 
+            ref="actionsMenuButton"
+            @click="toggleActionsMenu" 
+            class="menu-toggle-btn" 
+            :title="t('campaign.actions')"
+        >
           ⋮
         </button>
-        <div v-if="showActionsMenu" class="campaign-actions-menu">
-          <button @click="handleNewCampaign" class="menu-item">
-            <span class="menu-icon">+</span>
-            <span>{{ t('campaign.new') }}</span>
-          </button>
-          <button @click="handleImportCampaign" class="menu-item">
-            <span class="menu-icon">⬆</span>
-            <span>{{ t('campaign.import') }}</span>
-          </button>
-        </div>
+        <Teleport to="body">
+          <div v-if="showActionsMenu" class="campaign-actions-menu" :style="menuPosition">
+            <button @click="handleNewCampaign" class="menu-item">
+              <span class="menu-icon">+</span>
+              <span>{{ t('campaign.new') }}</span>
+            </button>
+            <button @click="handleImportCampaign" class="menu-item">
+              <span class="menu-icon">⬆</span>
+              <span>{{ t('campaign.import') }}</span>
+            </button>
+          </div>
+        </Teleport>
       </div>
     </div>
 
@@ -90,6 +97,41 @@ const showImportModal = ref(false);
 const showExportConfirm = ref(false);
 const selectedCampaignId = ref(null);
 const showActionsMenu = ref(false);
+const menuPosition = ref({});
+const actionsMenuButton = ref(null);
+
+function toggleActionsMenu() {
+  if (showActionsMenu.value) {
+    showActionsMenu.value = false;
+    menuPosition.value = {};
+  } else {
+    showActionsMenu.value = true;
+    const button = actionsMenuButton.value;
+    if (button) {
+      const rect = button.getBoundingClientRect();
+      const menuWidth = 200;
+      const viewportWidth = window.innerWidth;
+      
+      let left = rect.right - menuWidth;
+      
+      if (left < 8) {
+        left = 8;
+      }
+      
+      if (left + menuWidth > viewportWidth - 8) {
+        left = viewportWidth - menuWidth - 8;
+      }
+      
+      const top = rect.bottom + 8;
+      
+      menuPosition.value = {
+        top: `${top}px`,
+        left: `${left}px`,
+        right: 'auto'
+      };
+    }
+  }
+}
 
 function handleNewCampaign() {
   showActionsMenu.value = false;

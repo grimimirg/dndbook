@@ -115,7 +115,6 @@ function toggleCampaignMenu(campaignId, event) {
     const button = event.currentTarget;
     const rect = button.getBoundingClientRect();
 
-    // Calcola la posizione del menu
     const menuWidth = 200;
     const top = rect.bottom + 8;
     const left = rect.right - menuWidth;
