@@ -34,33 +34,13 @@
       <p class="no-description">{{ t('campaign.selectCampaignChronicle') }}</p>
     </div>
 
-    <Teleport to="body">
-      <div v-if="showEditModal" class="modal-overlay" @click="closeEditModal">
-        <div class="modal-content" @click.stop>
-          <h3>{{ t('campaign.editChronicle') }}</h3>
-          <br>
-          <div class="modal-body">
-            <div class="form-group">
-              <textarea
-                  v-model="editedDescription"
-                  class="edit-description-textarea"
-                  :placeholder="t('campaign.description')"
-                  rows="10"
-              />
-            </div>
-          </div>
-
-          <div class="edit-actions flex-end">
-            <button class="cancel-button" @click="closeEditModal">
-              {{ t('post.cancel') }}
-            </button>
-            <button class="save-button" @click="saveDescription" :disabled="saving">
-              {{ saving ? t('common.loading') : t('post.save') }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </Teleport>
+    <CampaignDescriptionEditModal
+        :show="showEditModal"
+        :description="editedDescription"
+        :saving="saving"
+        @close="closeEditModal"
+        @save="saveDescription"
+    />
 
     <ConfirmModal
         :show="showDeleteConfirm"
@@ -78,6 +58,7 @@ import {useI18n} from 'vue-i18n';
 import {useCampaignsStore} from '../../stores/campaigns.store.js';
 import {useAuthStore} from '../../stores/auth.store.js';
 import ConfirmModal from './modals/ConfirmModal.vue';
+import CampaignDescriptionEditModal from './modals/CampaignDescriptionEditModal.vue';
 
 const {t} = useI18n();
 const campaignsStore = useCampaignsStore();
@@ -103,21 +84,19 @@ const isDescriptionLong = computed(() => {
 function openEditModal() {
   editedDescription.value = campaignsStore.currentCampaign.description || '';
   showEditModal.value = true;
-  document.body.style.overflow = 'hidden';
 }
 
 function closeEditModal() {
   showEditModal.value = false;
   editedDescription.value = '';
-  document.body.style.overflow = '';
 }
 
-async function saveDescription() {
+async function saveDescription(description) {
   saving.value = true;
 
   const result = await campaignsStore.updateCampaign(
       campaignsStore.currentCampaign.id,
-      {description: editedDescription.value}
+      {description}
   );
 
   saving.value = false;

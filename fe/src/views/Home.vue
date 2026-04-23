@@ -64,7 +64,7 @@
         </div>
       </div>
 
-      <Sidebar @invites-sent="handleInvitesSent"/>
+      <CampaignsTree @invites-sent="handleInvitesSent"/>
     </div>
 
     <InviteToast/>
@@ -80,7 +80,7 @@ import {useCampaignsStore} from '../stores/campaigns.store.js';
 import {usePostsStore} from '../stores/posts.store.js';
 import {useInvitesStore} from '../stores/invites.store.js';
 import socketService from '../services/socket.service.js';
-import Sidebar from './components/Sidebar.vue';
+import CampaignsTree from './components/tree/CampaignsTree.vue';
 import PostCard from './components/PostCard.vue';
 import PostCreator from './components/PostCreator.vue';
 import LanguageSelector from './components/LanguageSelector.vue';

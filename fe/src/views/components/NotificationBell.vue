@@ -59,7 +59,6 @@ function toggleDropdown() {
 async function handleAccept(inviteId) {
   const result = await invitesStore.acceptInvite(inviteId);
   if (result.success) {
-    // Add campaign to shared campaigns
     campaignsStore.addSharedCampaign(result.campaign);
   }
 }

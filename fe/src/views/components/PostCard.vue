@@ -151,7 +151,6 @@ import {usePostsStore} from '../../stores/posts.store.js';
 import {useAuthStore} from '../../stores/auth.store.js';
 import ConfirmModal from './modals/ConfirmModal.vue';
 import PostDetailModal from './modals/PostDetailModal.vue';
-import config from '../../config/config.js';
 
 const {t} = useI18n();
 const postsStore = usePostsStore();

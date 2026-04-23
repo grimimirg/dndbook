@@ -1190,7 +1190,7 @@ input::placeholder, textarea::placeholder {
     transform: translateX(100%);
 }
 
-/* Sidebar.vue styles */
+/* CampaignsTree.vue styles */
 .campaign-group {
     margin-bottom: 1.5rem;
 }
