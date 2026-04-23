@@ -14,23 +14,30 @@
         <span class="expand-icon">{{ expandedCampaignId === campaign.id ? '▼' : '▶' }}</span>
         <span class="campaign-name">{{ campaign.name }}</span>
         <div class="campaign-menu-container">
-          <button 
-              @click.stop="toggleCampaignMenu(campaign.id)" 
+          <button
+              :ref="el => setButtonRef(campaign.id, el)"
+              @click.stop="toggleCampaignMenu(campaign.id, $event)"
               class="menu-toggle-btn"
               :title="t('campaign.actions')"
           >
             ⋮
           </button>
-          <div v-if="openMenuId === campaign.id" class="campaign-actions-menu">
-            <button @click.stop="handleInvite(campaign.id)" class="menu-item">
-              <span class="menu-icon">+</span>
-              <span>{{ t('campaign.inviteUsers') }}</span>
-            </button>
-            <button @click.stop="handleExport(campaign.id)" class="menu-item">
-              <span class="menu-icon">⬇</span>
-              <span>{{ t('campaign.export') }}</span>
-            </button>
-          </div>
+          <Teleport to="body">
+            <div
+                v-if="openMenuId === campaign.id"
+                class="campaign-actions-menu"
+                :style="menuPosition"
+            >
+              <button @click.stop="handleInvite(campaign.id)" class="menu-item">
+                <span class="menu-icon">+</span>
+                <span>{{ t('campaign.inviteUsers') }}</span>
+              </button>
+              <button @click.stop="handleExport(campaign.id)" class="menu-item">
+                <span class="menu-icon">⬇</span>
+                <span>{{ t('campaign.export') }}</span>
+              </button>
+            </div>
+          </Teleport>
         </div>
       </div>
 
@@ -49,7 +56,7 @@
 </template>
 
 <script setup>
-import {ref, onMounted, onUnmounted} from 'vue';
+import {onMounted, onUnmounted, ref} from 'vue';
 import {useI18n} from 'vue-i18n';
 import {useCampaignsStore} from '../../../stores/campaigns.store.js';
 import {usePostsStore} from '../../../stores/posts.store.js';
@@ -58,6 +65,8 @@ const {t} = useI18n();
 const campaignsStore = useCampaignsStore();
 const postsStore = usePostsStore();
 const openMenuId = ref(null);
+const menuPosition = ref({});
+const buttonRefs = ref({});
 
 const props = defineProps({
   expandedCampaignId: {
@@ -91,8 +100,32 @@ function openExportModal(campaignId) {
   emit('open-export-modal', campaignId);
 }
 
-function toggleCampaignMenu(campaignId) {
-  openMenuId.value = openMenuId.value === campaignId ? null : campaignId;
+function setButtonRef(campaignId, el) {
+  if (el) {
+    buttonRefs.value[campaignId] = el;
+  }
+}
+
+function toggleCampaignMenu(campaignId, event) {
+  if (openMenuId.value === campaignId) {
+    openMenuId.value = null;
+    menuPosition.value = {};
+  } else {
+    openMenuId.value = campaignId;
+    const button = event.currentTarget;
+    const rect = button.getBoundingClientRect();
+
+    // Calcola la posizione del menu
+    const menuWidth = 200;
+    const top = rect.bottom + 8;
+    const left = rect.right - menuWidth;
+
+    menuPosition.value = {
+      top: `${top}px`,
+      left: `${left}px`,
+      right: 'auto'
+    };
+  }
 }
 
 function handleInvite(campaignId) {

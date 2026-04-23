@@ -652,7 +652,6 @@ input::placeholder, textarea::placeholder {
 .campaigns-tree {
     max-height: 600px;
     overflow-y: auto;
-    overflow-x: visible;
 }
 
 /* Custom scrollbar */
@@ -684,8 +683,6 @@ input::placeholder, textarea::placeholder {
 
 .campaign-node {
     margin-bottom: 8px;
-    position: relative;
-    overflow: visible;
 }
 
 .campaign-header {
@@ -2236,7 +2233,7 @@ input::placeholder, textarea::placeholder {
 .menu-toggle-btn {
     background: transparent;
     border: none;
-    font-size: 20px;
+    font-size: 16px;
     cursor: pointer;
     padding: 4px 8px;
     color: var(--text-primary);
@@ -2262,10 +2259,7 @@ input::placeholder, textarea::placeholder {
 }
 
 .campaign-actions-menu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    margin-top: 8px;
+    position: fixed;
     background: linear-gradient(145deg, var(--card-bg-1) 0%, var(--card-bg-2) 100%);
     border: 1px solid rgba(139, 111, 71, 0.3);
     border-radius: 8px;
