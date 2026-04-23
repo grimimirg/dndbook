@@ -28,7 +28,7 @@
               :class="{ primary: postsStore.sortBy === 'created', secondary: postsStore.sortBy !== 'created' }"
           >
             {{ t('sort.byCreated') }}
-            <span v-if="postsStore.sortBy === 'created'">{{ postsStore.sortDirection === 'desc' ? ' ↓' : ' ↑' }}</span>
+            <span>{{ postsStore.sortDirection === 'desc' ? ' ↓' : ' ↑' }}</span>
           </button>
           <button
               @click="changeSortBy('updated')"
