@@ -38,7 +38,7 @@ campaign:
   players: "Jugadores"
   invitedPlayers: "Invitados"
   noPlayers: "No hay jugadores en la campaña"
-  noPlayersHint: "💡 Pasa el ratón sobre el nombre de la campaña y haz clic en el + para invitar jugadores"
+  noPlayersHint: "💡 Pasa el ratón sobre el nombre de la campaña y haz clic en los tres puntos para invitar jugadores"
   noInvitedPlayers: "No hay invitaciones pendientes"
   removePlayer: "Eliminar jugador"
   removePlayerTitle: "Eliminar Jugador"

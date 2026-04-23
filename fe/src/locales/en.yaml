@@ -38,7 +38,7 @@ campaign:
   players: "Players"
   invitedPlayers: "Invited"
   noPlayers: "No players in the campaign"
-  noPlayersHint: "💡 Hover over the campaign name and click the + to invite players"
+  noPlayersHint: "💡 Hover over the campaign name and click the three dots to invite players"
   noInvitedPlayers: "No pending invites"
   removePlayer: "Remove player"
   removePlayerTitle: "Remove Player"
