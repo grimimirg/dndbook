@@ -23,6 +23,7 @@ In the realm of tabletop role-playing, every campaign tells a story—of heroes 
 - **📝 Session Chronicles**: Document your adventures with rich text posts and image galleries
 - **🎭 Character Profiles**: Build detailed character sheets with portraits and backstories
 - **💬 Interactive Comments**: Discuss sessions and share memories with your party
+- **📤 Export & Import**: Backup and transfer your campaigns between instances
 - **🌍 Multi-language Support**: Available in English, Italian, German, Spanish, and French
 - **🔒 Secure & Private**: Your campaigns are protected with JWT authentication
 - **🌙 Dark Mode**: Easy on the eyes during those late-night gaming sessions
@@ -51,6 +52,7 @@ See D&D Book in action! Here are some screenshots showcasing some features:
 - [Useful Commands](#️-useful-commands)
 - [Common Issues](#-common-issues)
 - [Notes](#-notes)
+- [Support the Project](#-support-the-project)
 
 ---
 
@@ -310,3 +312,13 @@ Check that `VITE_API_URL` in `.env` is correct:
 - The `.env` file contains passwords and secret keys: **DO NOT share it** and **DO NOT upload it to Git**
 - For production, always generate new random secret keys
 - The database is saved in a Docker volume, so your data persists even after stopping the application
+
+---
+
+## 💖 Support the Project
+
+If you find D&D Book useful and want to support its development, consider making a donation via PayPal. Your support helps keep the project alive and enables new features!
+
+[![Donate with PayPal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)]()
+
+Every contribution, no matter how small, is greatly appreciated! 🙏
