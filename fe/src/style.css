@@ -641,6 +641,14 @@ input::placeholder, textarea::placeholder {
     color: var(--text-heading);
 }
 
+.campaign-action-btn {
+    padding: 6px 8px;
+    font-size: 11px;
+    min-width: 60px;
+    text-align: center;
+    white-space: nowrap;
+}
+
 .campaigns-tree {
     max-height: 600px;
     overflow-y: auto;
@@ -2144,6 +2152,69 @@ input::placeholder, textarea::placeholder {
     justify-content: flex-end;
     gap: 1rem;
     margin-top: 1rem;
+}
+
+/* CampaignImportModal.vue styles */
+.file-upload-area {
+    margin: 1rem 0;
+}
+
+.file-input {
+    display: none;
+}
+
+.file-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 2rem;
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--input-bg);
+}
+
+.file-label:hover {
+    border-color: var(--accent-gold-2);
+    background: var(--hover-bg);
+}
+
+.file-icon {
+    font-size: 3rem;
+}
+
+.file-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
+    word-break: break-all;
+}
+
+.file-placeholder {
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.export-btn {
+    margin-left: 0.25rem;
+    background-color: var(--accent-gold-1);
+    color: white;
+    border: none;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: all 0.2s;
+    opacity: 0;
+}
+
+.campaign-header:hover .export-btn {
+    opacity: 1;
+}
+
+.export-btn:hover {
+    background-color: var(--accent-gold-2);
+    transform: scale(1.1);
 }
 
 /* Responsive design */

@@ -15,7 +15,7 @@ export const LOCALE_NAMES = {
  * Configured in .env via VITE_AVAILABLE_LOCALES
  */
 export function getAvailableLocales() {
-  const localesEnv = import.meta.env.VITE_AVAILABLE_LOCALES || 'en,it,de';
+  const localesEnv = import.meta.env.VITE_AVAILABLE_LOCALES || 'en,it,de,es,fr';
   return localesEnv.split(',').map(locale => locale.trim());
 }
 

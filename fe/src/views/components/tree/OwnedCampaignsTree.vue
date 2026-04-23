@@ -20,6 +20,13 @@
         >
           +
         </span>
+        <span
+            @click.stop="openExportModal(campaign.id)"
+            class="export-btn btn-circle btn-circle-sm"
+            :title="t('campaign.exportTooltip')"
+        >
+          ⬇
+        </span>
       </div>
 
       <div v-if="expandedCampaignId === campaign.id" class="posts-list">
@@ -52,7 +59,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['toggle-campaign', 'open-invite-modal', 'scroll-to-post']);
+const emit = defineEmits(['toggle-campaign', 'open-invite-modal', 'open-export-modal', 'scroll-to-post']);
 
 async function toggleCampaign(campaign) {
   emit('toggle-campaign', campaign);
@@ -71,5 +78,9 @@ function scrollToPost(postId) {
 
 function openInviteModal(campaignId) {
   emit('open-invite-modal', campaignId);
+}
+
+function openExportModal(campaignId) {
+  emit('open-export-modal', campaignId);
 }
 </script>

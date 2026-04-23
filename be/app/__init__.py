@@ -92,6 +92,8 @@ def create_app():
     from app.controllers import posts_controller as posts
     from app.controllers import invites_controller as invites
     from app.controllers import characters_controller as characters
+    from app.controllers import export_controller as export
+    from app.controllers import import_controller as import_ctrl
     from app.events import socketio_events
 
     app.register_blueprint(auth.bp)
@@ -99,6 +101,8 @@ def create_app():
     app.register_blueprint(posts.bp)
     app.register_blueprint(invites.bp)
     app.register_blueprint(characters.bp)
+    app.register_blueprint(export.bp)
+    app.register_blueprint(import_ctrl.bp)
 
     @app.route('/uploads/<path:filename>')
     def serve_upload(filename):
