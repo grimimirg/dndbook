@@ -13,20 +13,25 @@
       >
         <span class="expand-icon">{{ expandedCampaignId === campaign.id ? '▼' : '▶' }}</span>
         <span class="campaign-name">{{ campaign.name }}</span>
-        <span
-            @click.stop="openInviteModal(campaign.id)"
-            class="invite-btn btn-circle btn-circle-sm"
-            :title="t('campaign.inviteTooltip')"
-        >
-          +
-        </span>
-        <span
-            @click.stop="openExportModal(campaign.id)"
-            class="export-btn btn-circle btn-circle-sm"
-            :title="t('campaign.exportTooltip')"
-        >
-          ⬇
-        </span>
+        <div class="campaign-menu-container">
+          <button 
+              @click.stop="toggleCampaignMenu(campaign.id)" 
+              class="menu-toggle-btn"
+              :title="t('campaign.actions')"
+          >
+            ⋮
+          </button>
+          <div v-if="openMenuId === campaign.id" class="campaign-actions-menu">
+            <button @click.stop="handleInvite(campaign.id)" class="menu-item">
+              <span class="menu-icon">+</span>
+              <span>{{ t('campaign.inviteUsers') }}</span>
+            </button>
+            <button @click.stop="handleExport(campaign.id)" class="menu-item">
+              <span class="menu-icon">⬇</span>
+              <span>{{ t('campaign.export') }}</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <div v-if="expandedCampaignId === campaign.id" class="posts-list">
@@ -44,6 +49,7 @@
 </template>
 
 <script setup>
+import {ref, onMounted, onUnmounted} from 'vue';
 import {useI18n} from 'vue-i18n';
 import {useCampaignsStore} from '../../../stores/campaigns.store.js';
 import {usePostsStore} from '../../../stores/posts.store.js';
@@ -51,6 +57,7 @@ import {usePostsStore} from '../../../stores/posts.store.js';
 const {t} = useI18n();
 const campaignsStore = useCampaignsStore();
 const postsStore = usePostsStore();
+const openMenuId = ref(null);
 
 const props = defineProps({
   expandedCampaignId: {
@@ -83,4 +90,33 @@ function openInviteModal(campaignId) {
 function openExportModal(campaignId) {
   emit('open-export-modal', campaignId);
 }
+
+function toggleCampaignMenu(campaignId) {
+  openMenuId.value = openMenuId.value === campaignId ? null : campaignId;
+}
+
+function handleInvite(campaignId) {
+  openMenuId.value = null;
+  openInviteModal(campaignId);
+}
+
+function handleExport(campaignId) {
+  openMenuId.value = null;
+  openExportModal(campaignId);
+}
+
+function handleClickOutside(event) {
+  const menuContainer = event.target.closest('.campaign-menu-container');
+  if (!menuContainer && openMenuId.value !== null) {
+    openMenuId.value = null;
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
 </script>

@@ -2,13 +2,20 @@
   <div class="sidebar">
     <div class="sidebar-header flex-between">
       <h2>{{ t('campaign.campaigns') }}</h2>
-      <div class="flex-align-center" style="gap: 8px;">
-        <button @click="showCreateModal = true" class="primary campaign-action-btn" :title="t('campaign.newTooltip')">
-          + {{ t('campaign.new') }}
+      <div class="campaign-menu-container">
+        <button @click="showActionsMenu = !showActionsMenu" class="menu-toggle-btn" :title="t('campaign.actions')">
+          ⋮
         </button>
-        <button @click="showImportModal = true" class="secondary campaign-action-btn" :title="t('campaign.importTooltip')">
-          ⬆ {{ t('campaign.import') }}
-        </button>
+        <div v-if="showActionsMenu" class="campaign-actions-menu">
+          <button @click="handleNewCampaign" class="menu-item">
+            <span class="menu-icon">+</span>
+            <span>{{ t('campaign.new') }}</span>
+          </button>
+          <button @click="handleImportCampaign" class="menu-item">
+            <span class="menu-icon">⬆</span>
+            <span>{{ t('campaign.import') }}</span>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -60,7 +67,7 @@
 </template>
 
 <script setup>
-import {ref} from 'vue';
+import {ref, onMounted, onUnmounted} from 'vue';
 import {useI18n} from 'vue-i18n';
 import {useCampaignsStore} from '../../../stores/campaigns.store.js';
 import {usePostsStore} from '../../../stores/posts.store.js';
@@ -82,6 +89,17 @@ const showInviteModal = ref(false);
 const showImportModal = ref(false);
 const showExportConfirm = ref(false);
 const selectedCampaignId = ref(null);
+const showActionsMenu = ref(false);
+
+function handleNewCampaign() {
+  showActionsMenu.value = false;
+  showCreateModal.value = true;
+}
+
+function handleImportCampaign() {
+  showActionsMenu.value = false;
+  showImportModal.value = true;
+}
 
 async function toggleCampaign(campaign) {
   if (expandedCampaignId.value !== campaign.id) {
@@ -175,4 +193,19 @@ async function handleImportSuccess(data) {
   await campaignsStore.fetchCampaigns();
   showImportModal.value = false;
 }
+
+function handleClickOutside(event) {
+  const menuContainer = event.target.closest('.campaign-menu-container');
+  if (!menuContainer && showActionsMenu.value) {
+    showActionsMenu.value = false;
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
 </script>
