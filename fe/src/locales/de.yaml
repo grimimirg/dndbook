@@ -103,6 +103,7 @@ sort:
   label: "Sortieren nach"
   byCreated: "Erstellungsdatum"
   byUpdated: "Letzter Aktualisierung"
+  search: "Beiträge suchen..."
 
 invite:
   notifications: "Benachrichtigungen"

@@ -303,6 +303,29 @@ input::placeholder, textarea::placeholder {
     font-size: 12px;
 }
 
+.search-input {
+    flex: 1;
+    max-width: 300px;
+    padding: 6px 12px;
+    font-size: 12px;
+    border: 1px solid rgba(139, 111, 71, 0.3);
+    border-radius: 4px;
+    background: var(--card-bg-2);
+    color: var(--text-primary);
+    transition: border-color 0.3s ease, background 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: var(--card-bg-1);
+}
+
+.search-input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
 .loading, .empty-state {
     text-align: center;
     padding: 40px;

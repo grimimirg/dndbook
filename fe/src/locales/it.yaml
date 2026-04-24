@@ -103,6 +103,7 @@ sort:
   label: "Ordina per"
   byCreated: "Data di creazione"
   byUpdated: "Ultimo aggiornamento"
+  search: "Cerca nei post..."
   
 invite:
   notifications: "Notifiche"

@@ -36,6 +36,12 @@
           >
             {{ t('sort.byUpdated') }}
           </button>
+          <input
+              v-model="searchQuery"
+              type="text"
+              :placeholder="t('sort.search')"
+              class="search-input"
+          />
         </div>
 
         <PostCreator v-if="isCurrentCampaignOwned"/>
@@ -53,7 +59,7 @@
         </div>
 
         <PostCard
-            v-for="post in postsStore.posts"
+            v-for="post in filteredPosts"
             :key="post.id"
             :post="post"
             :ref="el => setPostRef(post.id, el)"
@@ -72,7 +78,7 @@
 </template>
 
 <script setup>
-import {computed, onMounted, onUnmounted, ref} from 'vue';
+import {computed, onMounted, onUnmounted, ref, watch} from 'vue';
 import {useRouter} from 'vue-router';
 import {useI18n} from 'vue-i18n';
 import {useAuthStore} from '../stores/auth.store.js';
@@ -100,12 +106,38 @@ const invitesStore = useInvitesStore();
 
 const postRefs = ref({});
 const playersPanel = ref(null);
+const searchQuery = ref('');
+const debouncedSearchQuery = ref('');
+let debounceTimeout = null;
 
 const isCurrentCampaignOwned = computed(() => {
   if (!campaignsStore.currentCampaign) return false;
   return campaignsStore.ownedCampaigns.some(
       campaign => campaign.id === campaignsStore.currentCampaign.id
   );
+});
+
+const filteredPosts = computed(() => {
+  if (!debouncedSearchQuery.value.trim()) {
+    return postsStore.posts;
+  }
+
+  const query = debouncedSearchQuery.value.toLowerCase();
+  return postsStore.posts.filter(post => {
+    const titleMatch = post.title?.toLowerCase().includes(query);
+    const contentMatch = post.content?.toLowerCase().includes(query);
+    return titleMatch || contentMatch;
+  });
+});
+
+watch(searchQuery, (newValue) => {
+  if (debounceTimeout) {
+    clearTimeout(debounceTimeout);
+  }
+
+  debounceTimeout = setTimeout(() => {
+    debouncedSearchQuery.value = newValue;
+  }, 500);
 });
 
 function setPostRef(postId, el) {
@@ -120,16 +152,16 @@ function setupPlayerJoinedListener() {
       player: data.player_username,
       campaign: data.campaign_name
     });
-    
+
     if (Notification.permission === 'granted') {
       new Notification(t('campaign.players'), {
         body: message,
         icon: '/images/dnd-book-logo.png'
       });
     }
-    
+
     alert(message);
-    
+
     if (playersPanel.value && campaignsStore.currentCampaign?.id === data.campaign_id) {
       playersPanel.value.fetchMembers();
     }
@@ -146,7 +178,6 @@ onMounted(async () => {
   await campaignsStore.fetchCampaigns();
   await invitesStore.fetchInvites();
 
-  // Initialize Socket.IO
   const token = localStorage.getItem('token');
   if (token) {
     socketService.connect(token);

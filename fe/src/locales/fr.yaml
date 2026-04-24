@@ -103,6 +103,7 @@ sort:
   label: "Trier par"
   byCreated: "Date de création"
   byUpdated: "Dernière mise à jour"
+  search: "Rechercher des publications..."
 
 invite:
   notifications: "Notifications"
