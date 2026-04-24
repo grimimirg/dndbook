@@ -2,19 +2,20 @@
   <div class="home">
     <header class="header">
       <div class="header-content flex-align-center">
+        <HamburgerMenu ref="hamburgerMenu" @invites-sent="handleInvitesSent" class="mobile-only"/>
         <h1>{{ t('app.title') }}</h1>
         <div class="user-info flex-align-center">
-          <span>{{ authStore.user?.username }}</span>
+          <span class="username-label">{{ authStore.user?.username }}</span>
           <NotificationBell/>
-          <button @click="handleLogout" class="secondary">{{ t('auth.logout') }}</button>
-          <LanguageSelector/>
-          <ThemeToggle/>
+          <button @click="handleLogout" class="secondary desktop-only">{{ t('auth.logout') }}</button>
+          <LanguageSelector class="desktop-only"/>
+          <ThemeToggle class="desktop-only"/>
         </div>
       </div>
     </header>
 
     <div class="main-content">
-      <div class="campaign-info-column flex-col">
+      <div class="campaign-info-column flex-col desktop-only">
         <CampaignDescriptionPanel/>
         <CampaignCharactersPanel v-if="campaignsStore.currentCampaign"/>
         <CampaignPlayersPanel v-if="campaignsStore.currentCampaign" ref="playersPanel"/>
@@ -70,7 +71,7 @@
         </div>
       </div>
 
-      <CampaignsTree @invites-sent="handleInvitesSent"/>
+      <CampaignsTree @invites-sent="handleInvitesSent" class="desktop-only"/>
     </div>
 
     <InviteToast/>
@@ -96,6 +97,7 @@ import InviteToast from './components/InviteToast.vue';
 import CampaignDescriptionPanel from './components/CampaignDescriptionPanel.vue';
 import CampaignCharactersPanel from './components/characters/CampaignCharactersPanel.vue';
 import CampaignPlayersPanel from './components/CampaignPlayersPanel.vue';
+import HamburgerMenu from './components/HamburgerMenu.vue';
 
 const router = useRouter();
 const {t} = useI18n();
@@ -106,6 +108,7 @@ const invitesStore = useInvitesStore();
 
 const postRefs = ref({});
 const playersPanel = ref(null);
+const hamburgerMenu = ref(null);
 const searchQuery = ref('');
 const debouncedSearchQuery = ref('');
 let debounceTimeout = null;
@@ -171,6 +174,9 @@ function setupPlayerJoinedListener() {
 function handleInvitesSent() {
   if (playersPanel.value) {
     playersPanel.value.fetchMembers();
+  }
+  if (hamburgerMenu.value?.playersPanel) {
+    hamburgerMenu.value.playersPanel.fetchMembers();
   }
 }
 

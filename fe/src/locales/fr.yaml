@@ -1,5 +1,9 @@
 app:
   title: "D&D Book"
+  menu: "Menu"
+  settings: "Paramètres"
+  language: "Langue"
+  theme: "Thème"
 
 auth:
   login: "Connexion"
