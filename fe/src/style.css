@@ -658,6 +658,8 @@ input::placeholder, textarea::placeholder {
     transition: background 0.3s ease;
     width: 300px;
     min-width: 300px;
+    display: flex;
+    flex-direction: column;
 }
 
 .sidebar-header {
@@ -2507,9 +2509,13 @@ input::placeholder, textarea::placeholder {
 }
 
 /* Responsive design */
-@media (max-width: 1200px) {
-    .main-content {
-        grid-template-columns: 1fr 300px;
+@media (max-width: 1200px) and (max-height: 855px) {
+    .mobile-only {
+        display: flex;
+    }
+
+    .desktop-only {
+        display: none !important;
     }
 
     .campaign-info-column .campaign-description-panel {
@@ -2518,16 +2524,6 @@ input::placeholder, textarea::placeholder {
 
     .hamburger-menu .campaign-description-panel {
         display: flex;
-    }
-}
-
-@media (max-width: 768px) {
-    .mobile-only {
-        display: flex;
-    }
-
-    .desktop-only {
-        display: none !important;
     }
 
     .main-content {
