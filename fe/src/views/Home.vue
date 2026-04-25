@@ -22,6 +22,8 @@
       </div>
 
       <div class="feed">
+        <CampaignsTree @invites-sent="handleInvitesSent" class="mobile-campaigns-tree"/>
+        
         <div v-if="campaignsStore.currentCampaign" class="sort-controls flex-align-center">
           <span class="sort-label">{{ t('sort.label') }}:</span>
           <button

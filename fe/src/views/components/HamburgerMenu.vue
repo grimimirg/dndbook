@@ -36,10 +36,6 @@
               <CampaignPlayersPanel v-if="campaignsStore.currentCampaign" ref="playersPanel"/>
             </div>
 
-            <div class="menu-section">
-              <CampaignsTree @invites-sent="handleInvitesSent"/>
-            </div>
-
             <div class="menu-section menu-controls">
               <h3>{{ t('app.settings') }}</h3>
               <div class="control-group">
@@ -73,7 +69,6 @@ import {useCampaignsStore} from '../../stores/campaigns.store.js';
 import CampaignDescriptionPanel from './CampaignDescriptionPanel.vue';
 import CampaignCharactersPanel from './characters/CampaignCharactersPanel.vue';
 import CampaignPlayersPanel from './CampaignPlayersPanel.vue';
-import CampaignsTree from './tree/CampaignsTree.vue';
 import LanguageSelector from './LanguageSelector.vue';
 import ThemeToggle from './ThemeToggle.vue';
 

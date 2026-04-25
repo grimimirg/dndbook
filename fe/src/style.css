@@ -2508,6 +2508,12 @@ input::placeholder, textarea::placeholder {
     display: flex;
 }
 
+.mobile-campaigns-tree {
+    display: none;
+    max-width: 680px;
+    width: 100%;
+}
+
 /* Responsive design */
 @media (max-width: 1200px) and (max-height: 855px) {
     .mobile-only {
@@ -2516,6 +2522,12 @@ input::placeholder, textarea::placeholder {
 
     .desktop-only {
         display: none !important;
+    }
+
+    .mobile-campaigns-tree {
+        display: block;
+        margin-bottom: 20px;
+        max-width: 100%;
     }
 
     .campaign-info-column .campaign-description-panel {
