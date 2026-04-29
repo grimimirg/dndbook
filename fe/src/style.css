@@ -264,21 +264,26 @@ input::placeholder, textarea::placeholder {
 }
 
 .main-content {
-    max-width: 1500px;
+    max-width: 100%;
     margin: 0 auto;
-    padding: 20px;
+    padding: 20px 40px;
     display: grid;
-    grid-template-columns: 380px 1fr 300px;
+    grid-template-columns: minmax(380px, auto) 1fr minmax(300px, auto);
     gap: 20px;
+    align-items: start;
 }
 
 .campaign-info-column {
     gap: 1rem;
+    position: sticky;
+    top: 80px;
+    align-self: start;
 }
 
 .feed {
     max-width: 680px;
     min-width: 0;
+    margin: 0 auto;
 }
 
 .sort-controls {
@@ -2514,7 +2519,24 @@ input::placeholder, textarea::placeholder {
     width: 100%;
 }
 
-/* Responsive design */
+/* Responsive design - Tablet */
+@media (max-width: 1024px) {
+    .main-content {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+
+    .campaign-info-column,
+    .sidebar.desktop-only {
+        display: none;
+    }
+
+    .feed {
+        max-width: 100%;
+    }
+}
+
+/* Responsive design - Mobile */
 @media (max-width: 1200px) and (max-height: 855px) {
     .mobile-only {
         display: flex;
