@@ -34,3 +34,7 @@ be/*.egg-info/
 .DS_Store
 
 .idea
+.windsurf
+
+# OpenSpec
+openspec/

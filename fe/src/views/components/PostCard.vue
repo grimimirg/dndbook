@@ -16,7 +16,7 @@
 
     <div v-if="post.images && post.images.length > 0" class="post-images">
       <div class="image-container">
-        <img :src="getImageUrl(post.images[currentImageIndex].file_path)" alt="Post image" class="post-image"/>
+        <img :src="getImageUrl(post.images[currentImageIndex].file_path)" alt="Post image" class="post-image" @click="openLightbox(currentImageIndex)"/>
 
         <div v-if="post.images.length > 1" class="image-controls flex-align-center">
           <button @click="previousImage" class="nav-button" :disabled="currentImageIndex === 0">‹</button>
@@ -141,6 +141,13 @@
         @confirm="confirmDeleteComment"
         @cancel="cancelDeleteComment"
     />
+
+    <ImageLightbox
+        :show="showLightbox"
+        :images="post.images"
+        :initial-index="lightboxImageIndex"
+        @close="closeLightbox"
+    />
   </div>
 </template>
 
@@ -151,6 +158,7 @@ import {usePostsStore} from '../../stores/posts.store.js';
 import {useAuthStore} from '../../stores/auth.store.js';
 import ConfirmModal from './modals/ConfirmModal.vue';
 import PostDetailModal from './modals/PostDetailModal.vue';
+import ImageLightbox from './modals/ImageLightbox.vue';
 
 const {t} = useI18n();
 const postsStore = usePostsStore();
@@ -167,6 +175,8 @@ const PREVIEW_CHAR_LIMIT = parseInt(import.meta.env.VITE_POST_PREVIEW_LIMIT || '
 
 const currentImageIndex = ref(0);
 const showModal = ref(false);
+const showLightbox = ref(false);
+const lightboxImageIndex = ref(0);
 const newCommentContent = ref('');
 const editingCommentId = ref(null);
 const editedCommentContent = ref('');
@@ -226,6 +236,15 @@ function nextImage() {
   } else {
     currentImageIndex.value = 0;
   }
+}
+
+function openLightbox(index) {
+  lightboxImageIndex.value = index;
+  showLightbox.value = true;
+}
+
+function closeLightbox() {
+  showLightbox.value = false;
 }
 
 async function confirmDeletePost() {
@@ -311,5 +330,6 @@ function toggleComments() {
   object-fit: cover;
   object-position: top;
   display: block;
+  cursor: pointer;
 }
 </style>
