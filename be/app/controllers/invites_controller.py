@@ -4,8 +4,8 @@ from sqlalchemy import and_, or_
 
 from app import db
 from app.jwt.jwt_utils import token_required
-from app.models import CampaignInvite, Campaign, User, campaign_members
-from app.events.socketio_events import send_invite_notification, send_player_joined_notification
+from app.models import CampaignInvite, Campaign, User, campaign_members, Notification
+from app.events.socketio_events import send_invite_notification, send_player_joined_notification, send_notification
 
 bp = Blueprint('invites', __name__, url_prefix='/api/invites')
 
@@ -202,6 +202,20 @@ def invite_users(current_user, campaign_id):
         )
         db.session.add(invite)
         db.session.flush()
+
+        # Create notification entry in unified notification system
+        notification = Notification(
+            user_id=user_id,
+            campaign_id=campaign_id,
+            notification_type='invite',
+            title=f'Campaign invite: {campaign.name}',
+            message=f'{current_user.username} invited you to join the campaign "{campaign.name}".',
+            related_post_id=None
+        )
+        db.session.add(notification)
+
+        # Send WebSocket notification to the invited user
+        send_notification(user_id)
 
         send_invite_notification(user_id, {
             'id': invite.id,

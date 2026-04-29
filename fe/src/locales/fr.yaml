@@ -117,7 +117,19 @@ invite:
   reject: "Refuser"
   newInvite: "Nouvelle Invitation"
   inviteMessage: "{inviter} vous a invité à {campaign}"
-  
+
+notification:
+  title: "Notifications"
+  empty: "Aucune notification"
+  justNow: "À l'instant"
+  minutesAgo: "il y a {n} min"
+  hoursAgo: "il y a {n} h"
+  daysAgo: "il y a {n} j"
+  type:
+    post_created: "Nouvelle publication"
+    post_edited: "Publication mise à jour"
+    invite: "Invitation de campagne"
+
 common:
   loading: "Chargement..."
   error: "Erreur"

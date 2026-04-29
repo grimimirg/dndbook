@@ -118,6 +118,18 @@ invite:
   newInvite: "Neue Einladung"
   inviteMessage: "{inviter} hat Sie zu {campaign} eingeladen"
 
+notification:
+  title: "Benachrichtigungen"
+  empty: "Keine Benachrichtigungen"
+  justNow: "Gerade eben"
+  minutesAgo: "vor {n} Min."
+  hoursAgo: "vor {n} Std."
+  daysAgo: "vor {n} Tagen"
+  type:
+    post_created: "Neuer Beitrag"
+    post_edited: "Beitrag aktualisiert"
+    invite: "Kampagneneinladung"
+
 common:
   loading: "Wird geladen..."
   error: "Fehler"

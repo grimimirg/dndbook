@@ -111,7 +111,7 @@ python3 << 'PYTHON_SCRIPT'
 import os
 import sys
 from app import create_app, db
-from app.models import User, Campaign, Post, CampaignInvite, Character, PostViewedStatus
+from app.models import User, Campaign, Post, CampaignInvite, Character, PostViewedStatus, Notification
 from werkzeug.security import generate_password_hash
 
 try:

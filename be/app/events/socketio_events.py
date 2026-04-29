@@ -63,3 +63,12 @@ def send_player_joined_notification(owner_id, player_data):
         player_data,
         room=f'user_{owner_id}'
     )
+
+
+def send_notification(user_id):
+    """Send notification update to a specific user"""
+    socketio.emit(
+        'notification_update',
+        {},
+        room=f'user_{user_id}'
+    )

@@ -1,9 +1,10 @@
 from flask import Blueprint, request, jsonify, current_app
 from werkzeug.utils import secure_filename
 from app import db
-from app.models import Post, Campaign, Image, Comment
+from app.models import Post, Campaign, Image, Comment, Notification
 from app.jwt.jwt_utils import token_required
 from app.controllers.mock_data_controller import MockDataProvider
+from app.events.socketio_events import send_notification
 import os
 import uuid
 
@@ -38,6 +39,46 @@ def can_access_campaign(campaign, user):
         return True
     is_member = campaign.members.filter_by(id=user.id).first() is not None
     return is_member
+
+def create_notification_entries(user_id, campaign_id, notification_type, title, message, related_post_id=None):
+    """
+    Create notification entries for all campaign members (excluding owner).
+    
+    Args:
+        user_id (int): The ID of the user who triggered the notification (will be excluded)
+        campaign_id (int): The ID of the campaign
+        notification_type (str): Type of notification ('post_created', 'post_edited', 'invite')
+        title (str): Notification title
+        message (str): Notification message
+        related_post_id (int, optional): Related post ID for post notifications
+    """
+    campaign = Campaign.query.get(campaign_id)
+    if not campaign:
+        return
+    
+    # Query campaign members excluding the owner
+    members = campaign.members.filter(Campaign.id != campaign.owner_id).all()
+    
+    # Create notification entries for all members
+    for member in members:
+        # Skip the user who made the change
+        if member.id == user_id:
+            continue
+        
+        notification = Notification(
+            user_id=member.id,
+            campaign_id=campaign_id,
+            notification_type=notification_type,
+            title=title,
+            message=message,
+            related_post_id=related_post_id
+        )
+        db.session.add(notification)
+        
+        # Send WebSocket notification to the member
+        send_notification(member.id)
+    
+    db.session.commit()
 
 @bp.route('/campaigns/<int:campaign_id>/posts', methods=['GET'])
 @token_required
@@ -165,6 +206,16 @@ def create_post(current_user):
     db.session.commit()
     db.session.refresh(post)
     
+    # Create notifications for campaign members (excluding owner and author)
+    create_notification_entries(
+        user_id=current_user.id,
+        campaign_id=data['campaign_id'],
+        notification_type='post_created',
+        title=f'New post: {data["title"]}',
+        message=f'A new post "{data["title"]}" was created in the campaign.',
+        related_post_id=post.id
+    )
+    
     return jsonify(post.to_dict()), 201
 
 @bp.route('/posts/<int:post_id>', methods=['GET'])
@@ -229,6 +280,16 @@ def update_post(current_user, post_id):
         post.content = data['content']
     
     db.session.commit()
+    
+    # Create notifications for campaign members (excluding owner and author)
+    create_notification_entries(
+        user_id=current_user.id,
+        campaign_id=post.campaign_id,
+        notification_type='post_edited',
+        title=f'Post updated: {post.title}',
+        message=f'The post "{post.title}" was edited in the campaign.',
+        related_post_id=post.id
+    )
     
     return jsonify(post.to_dict()), 200
 
