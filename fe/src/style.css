@@ -1062,7 +1062,7 @@ input::placeholder, textarea::placeholder {
     position: absolute;
     top: 0;
     right: 0;
-    background-color: #ff4444;
+    background-color: #dc3545;
     color: white;
     font-size: 0.75rem;
     font-weight: bold;
