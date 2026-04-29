@@ -15,6 +15,7 @@
     --button-secondary-hover: rgba(80, 80, 80, 0.8);
     --placeholder-color: #6a6a6a;
     --hover-bg: rgba(60, 60, 60, 0.4);
+    --success-color: #4caf50;
 }
 
 :root[data-theme="light"] {
@@ -34,6 +35,7 @@
     --button-secondary-hover: rgba(212, 197, 185, 0.9);
     --placeholder-color: #9a8575;
     --hover-bg: rgba(228, 218, 203, 0.5);
+    --success-color: #4caf50;
 }
 
 :root {

@@ -22,7 +22,11 @@
       </div>
 
       <div class="feed">
-        <CampaignsTree @invites-sent="handleInvitesSent" class="mobile-campaigns-tree"/>
+        <CampaignsTree 
+          :viewed-post-ids="viewedPostIds" 
+          :is-owner="isCurrentCampaignOwned"
+          @invites-sent="handleInvitesSent"
+          class="mobile-campaigns-tree"/>
         
         <div v-if="campaignsStore.currentCampaign" class="sort-controls flex-align-center">
           <span class="sort-label">{{ t('sort.label') }}:</span>
@@ -65,6 +69,9 @@
             v-for="post in filteredPosts"
             :key="post.id"
             :post="post"
+            :is-viewed="viewedPostIds.has(post.id)"
+            :is-owner="isCurrentCampaignOwned"
+            @mark-viewed="markPostAsViewed"
             :ref="el => setPostRef(post.id, el)"
         />
 
@@ -73,7 +80,11 @@
         </div>
       </div>
 
-      <CampaignsTree @invites-sent="handleInvitesSent" class="desktop-only"/>
+      <CampaignsTree 
+        :viewed-post-ids="viewedPostIds" 
+        :is-owner="isCurrentCampaignOwned"
+        @invites-sent="handleInvitesSent"
+        class="desktop-only"/>
     </div>
 
     <InviteToast/>
@@ -89,6 +100,7 @@ import {useCampaignsStore} from '../stores/campaigns.store.js';
 import {usePostsStore} from '../stores/posts.store.js';
 import {useInvitesStore} from '../stores/invites.store.js';
 import socketService from '../services/socket.service.js';
+import apiService from '../services/api.service.js';
 import CampaignsTree from './components/tree/CampaignsTree.vue';
 import PostCard from './components/PostCard.vue';
 import PostCreator from './components/PostCreator.vue';
@@ -113,6 +125,7 @@ const playersPanel = ref(null);
 const hamburgerMenu = ref(null);
 const searchQuery = ref('');
 const debouncedSearchQuery = ref('');
+const viewedPostIds = ref(new Set());
 let debounceTimeout = null;
 
 const isCurrentCampaignOwned = computed(() => {
@@ -219,4 +232,45 @@ async function loadMore() {
     );
   }
 }
+
+async function fetchViewedStatus() {
+  if (!campaignsStore.currentCampaign || isCurrentCampaignOwned.value) {
+    viewedPostIds.value = new Set();
+    return;
+  }
+
+  try {
+    const response = await apiService.get(`/campaigns/${campaignsStore.currentCampaign.id}/posts/viewed-status`);
+    viewedPostIds.value = new Set(response.data.viewed_post_ids || []);
+  } catch (error) {
+    console.error('Failed to fetch viewed status:', error);
+    viewedPostIds.value = new Set();
+  }
+}
+
+async function markPostAsViewed(postId) {
+  if (isCurrentCampaignOwned.value) return;
+
+  const wasViewed = viewedPostIds.value.has(postId);
+
+  // Optimistic update
+  viewedPostIds.value.add(postId);
+
+  try {
+    await apiService.post(`/posts/${postId}/mark-viewed`);
+  } catch (error) {
+    console.error('Failed to mark post as viewed:', error);
+    // Revert on error
+    if (!wasViewed) {
+      viewedPostIds.value.delete(postId);
+    }
+  }
+}
+
+// Watch for campaign changes to fetch viewed status
+watch(() => campaignsStore.currentCampaign, () => {
+  if (campaignsStore.currentCampaign) {
+    fetchViewedStatus();
+  }
+});
 </script>

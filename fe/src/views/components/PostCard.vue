@@ -2,9 +2,12 @@
   <div :id="`post-${post.id}`" class="post-card card">
     <div class="post-header">
       <h3 class="post-title" @click="openModal">{{ post.title }}</h3>
-      <button class="delete-button" @click.stop="showDeletePostConfirm = true" :title="t('post.delete')">
-        ×
-      </button>
+      <div class="post-header-actions flex-align-center">
+        <span v-if="!isOwner && !isViewed" class="checkmark-icon" :title="t('post.unviewed')">✓</span>
+        <button class="delete-button" @click.stop="showDeletePostConfirm = true" :title="t('post.delete')">
+          ×
+        </button>
+      </div>
       <div class="post-meta flex-align-center">
         <span>{{ t('post.by') }}: {{ post.author }}</span>
         <span>{{ t('post.created') }}: {{ formatDate(post.created_at) }}</span>
@@ -124,6 +127,7 @@
         :post="post"
         @close="closeModal"
         @delete="showDeletePostConfirm = true"
+        @mark-viewed="emitMarkViewed"
     />
 
     <ConfirmModal
@@ -164,10 +168,20 @@ const {t} = useI18n();
 const postsStore = usePostsStore();
 const authStore = useAuthStore();
 
+const emit = defineEmits(['mark-viewed']);
+
 const props = defineProps({
   post: {
     type: Object,
     required: true
+  },
+  isViewed: {
+    type: Boolean,
+    default: false
+  },
+  isOwner: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -321,9 +335,24 @@ function cancelDeleteComment() {
 function toggleComments() {
   showComments.value = !showComments.value;
 }
+
+function emitMarkViewed(postId) {
+  emit('mark-viewed', postId);
+}
 </script>
 
 <style scoped>
+.post-header-actions {
+  gap: 8px;
+}
+
+.checkmark-icon {
+  color: var(--success-color, #4caf50);
+  font-weight: bold;
+  font-size: 1.2em;
+  cursor: default;
+}
+
 .post-image {
   width: 100%;
   height: 300px;

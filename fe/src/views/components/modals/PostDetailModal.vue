@@ -113,7 +113,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['close', 'delete']);
+const emit = defineEmits(['close', 'delete', 'mark-viewed']);
 
 const currentImageIndex = ref(0);
 const isEditing = ref(false);
@@ -127,6 +127,7 @@ watch(() => props.show, (newValue) => {
     document.body.style.overflow = 'hidden';
     currentImageIndex.value = 0;
     isEditing.value = false;
+    emit('mark-viewed', props.post.id);
   } else {
     document.body.style.overflow = '';
   }

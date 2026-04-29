@@ -19,10 +19,11 @@
         <div
             v-for="post in getCampaignPosts(campaign.id)"
             :key="post.id"
-            class="post-item"
+            class="post-item flex-align-center"
             @click="scrollToPost(post.id)"
         >
-          {{ post.title }}
+          <span v-if="!isOwner && !viewedPostIds.has(post.id)" class="checkmark-icon">✓</span>
+          <span class="post-title">{{ post.title }}</span>
         </div>
       </div>
     </div>
@@ -42,6 +43,14 @@ const props = defineProps({
   expandedCampaignId: {
     type: Number,
     default: null
+  },
+  viewedPostIds: {
+    type: Set,
+    default: () => new Set()
+  },
+  isOwner: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -62,3 +71,16 @@ function scrollToPost(postId) {
   emit('scroll-to-post', postId);
 }
 </script>
+
+<style scoped>
+.checkmark-icon {
+  color: var(--success-color, #4caf50);
+  font-weight: bold;
+  font-size: 1em;
+  margin-right: 8px;
+}
+
+.post-title {
+  flex: 1;
+}
+</style>

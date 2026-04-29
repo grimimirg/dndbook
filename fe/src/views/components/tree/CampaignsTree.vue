@@ -31,6 +31,8 @@
     <div v-else class="campaigns-tree">
       <OwnedCampaignsTree
           :expanded-campaign-id="expandedCampaignId"
+          :viewed-post-ids="props.viewedPostIds"
+          :is-owner="props.isOwner"
           @toggle-campaign="toggleCampaign"
           @open-invite-modal="openInviteModal"
           @open-export-modal="openExportModal"
@@ -39,6 +41,8 @@
 
       <SharedCampaignsTree
           :expanded-campaign-id="expandedCampaignId"
+          :viewed-post-ids="props.viewedPostIds"
+          :is-owner="props.isOwner"
           @toggle-campaign="toggleCampaign"
           @scroll-to-post="scrollToPost"
       />
@@ -99,6 +103,17 @@ const selectedCampaignId = ref(null);
 const showActionsMenu = ref(false);
 const menuPosition = ref({});
 const actionsMenuButton = ref(null);
+
+const props = defineProps({
+  viewedPostIds: {
+    type: Set,
+    default: () => new Set()
+  },
+  isOwner: {
+    type: Boolean,
+    default: false
+  }
+});
 
 function toggleActionsMenu() {
   if (showActionsMenu.value) {
