@@ -1414,6 +1414,44 @@ input::placeholder, textarea::placeholder {
 .campaign-description-panel .panel-header {
     margin-bottom: 16px;
     padding-bottom: 12px;
+}
+
+/* PostCard.vue styles */
+.post-header-actions {
+    gap: 8px;
+}
+
+.checkmark-icon {
+    color: var(--success-color, #4caf50);
+    font-weight: bold;
+    font-size: 1.2em;
+    cursor: default;
+}
+
+.post-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+    cursor: pointer;
+}
+
+.comment-item.highlighted {
+    background-color: var(--highlight-color, rgba(255, 193, 7, 0.3));
+    animation: highlight-fade 3s ease-out;
+}
+
+@keyframes highlight-fade {
+    0% {
+        background-color: var(--highlight-color, rgba(255, 193, 7, 0.6));
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+
+.campaign-description-panel .panel-header {
     border-bottom: 1px solid rgba(139, 111, 71, 0.3);
 }
 

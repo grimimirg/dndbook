@@ -59,8 +59,8 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '../stores/auth.store.js';
-import LanguageSelector from './components/LanguageSelector.vue';
-import ThemeToggle from './components/ThemeToggle.vue';
+import LanguageSelector from './components/up/LanguageSelector.vue';
+import ThemeToggle from './components/up/ThemeToggle.vue';
 
 const router = useRouter();
 const { t } = useI18n();

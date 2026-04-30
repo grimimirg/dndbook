@@ -64,13 +64,13 @@
 import {ref} from 'vue';
 import {useRouter} from 'vue-router';
 import {useI18n} from 'vue-i18n';
-import {useAuthStore} from '../../stores/auth.store.js';
-import {useCampaignsStore} from '../../stores/campaigns.store.js';
+import {useAuthStore} from '../../../stores/auth.store.js';
+import {useCampaignsStore} from '../../../stores/campaigns.store.js';
 import CampaignDescriptionPanel from './CampaignDescriptionPanel.vue';
 import CampaignCharactersPanel from './characters/CampaignCharactersPanel.vue';
 import CampaignPlayersPanel from './CampaignPlayersPanel.vue';
-import LanguageSelector from './LanguageSelector.vue';
-import ThemeToggle from './ThemeToggle.vue';
+import LanguageSelector from '../up/LanguageSelector.vue';
+import ThemeToggle from '../up/ThemeToggle.vue';
 
 const router = useRouter();
 const {t} = useI18n();

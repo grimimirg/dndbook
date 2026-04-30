@@ -13,7 +13,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { getAvailableLocales, getLocaleName } from '../../config/locales.js';
+import { getAvailableLocales, getLocaleName } from '../../../config/locales.js';
 
 const { locale } = useI18n();
 const currentLocale = ref(locale.value);

@@ -44,8 +44,8 @@
 <script setup>
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useCampaignsStore } from '../../stores/campaigns.store.js';
-import { usePostsStore } from '../../stores/posts.store.js';
+import { useCampaignsStore } from '../../../stores/campaigns.store.js';
+import { usePostsStore } from '../../../stores/posts.store.js';
 
 const { t } = useI18n();
 const campaignsStore = useCampaignsStore();

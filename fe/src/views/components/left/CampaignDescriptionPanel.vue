@@ -62,10 +62,10 @@
 <script setup>
 import {computed, onMounted, onUnmounted, ref} from 'vue';
 import {useI18n} from 'vue-i18n';
-import {useCampaignsStore} from '../../stores/campaigns.store.js';
-import {useAuthStore} from '../../stores/auth.store.js';
-import ConfirmModal from './modals/ConfirmModal.vue';
-import CampaignDescriptionEditModal from './modals/CampaignDescriptionEditModal.vue';
+import {useCampaignsStore} from '../../../stores/campaigns.store.js';
+import {useAuthStore} from '../../../stores/auth.store.js';
+import ConfirmModal from '../modals/ConfirmModal.vue';
+import CampaignDescriptionEditModal from '../modals/CampaignDescriptionEditModal.vue';
 
 const {t} = useI18n();
 const campaignsStore = useCampaignsStore();

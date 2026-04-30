@@ -160,11 +160,11 @@
 <script setup>
 import {computed, ref} from 'vue';
 import {useI18n} from 'vue-i18n';
-import {usePostsStore} from '../../stores/posts.store.js';
-import {useAuthStore} from '../../stores/auth.store.js';
-import ConfirmModal from './modals/ConfirmModal.vue';
-import PostDetailModal from './modals/PostDetailModal.vue';
-import ImageLightbox from './modals/ImageLightbox.vue';
+import {usePostsStore} from '../../../stores/posts.store.js';
+import {useAuthStore} from '../../../stores/auth.store.js';
+import ConfirmModal from '../modals/ConfirmModal.vue';
+import PostDetailModal from '../modals/PostDetailModal.vue';
+import ImageLightbox from '../modals/ImageLightbox.vue';
 
 const {t} = useI18n();
 const postsStore = usePostsStore();
@@ -206,13 +206,13 @@ const showDeletePostConfirm = ref(false);
 const showDeleteCommentConfirm = ref(false);
 const commentToDelete = ref(null);
 
+const currentUserId = computed(() => authStore.user?.id);
 const truncatedContent = computed(() => {
   if (props.post.content.length <= PREVIEW_CHAR_LIMIT) {
     return props.post.content;
   }
   return props.post.content.substring(0, PREVIEW_CHAR_LIMIT) + '...';
 });
-
 const isContentTruncated = computed(() => {
   return props.post.content.length > PREVIEW_CHAR_LIMIT;
 });
@@ -277,8 +277,6 @@ async function confirmDeletePost() {
     alert(result.error || t('common.error'));
   }
 }
-
-const currentUserId = computed(() => authStore.user?.id);
 
 async function handleAddComment() {
   if (!newCommentContent.value.trim()) return;
@@ -351,39 +349,3 @@ function emitMarkViewed(postId) {
   emit('mark-viewed', postId);
 }
 </script>
-
-<style scoped>
-.post-header-actions {
-  gap: 8px;
-}
-
-.checkmark-icon {
-  color: var(--success-color, #4caf50);
-  font-weight: bold;
-  font-size: 1.2em;
-  cursor: default;
-}
-
-.post-image {
-  width: 100%;
-  height: 300px;
-  object-fit: cover;
-  object-position: top;
-  display: block;
-  cursor: pointer;
-}
-
-.comment-item.highlighted {
-  background-color: var(--highlight-color, rgba(255, 193, 7, 0.3));
-  animation: highlight-fade 3s ease-out;
-}
-
-@keyframes highlight-fade {
-  0% {
-    background-color: var(--highlight-color, rgba(255, 193, 7, 0.6));
-  }
-  100% {
-    background-color: transparent;
-  }
-}
-</style>

@@ -51,10 +51,10 @@
 import {onMounted, onUnmounted, ref, watch} from 'vue';
 import {useRouter} from 'vue-router';
 import {useI18n} from 'vue-i18n';
-import {useInvitesStore} from '../../stores/invites.store.js';
-import {useCampaignsStore} from '../../stores/campaigns.store.js';
-import apiService from '../../services/api.service.js';
-import socketService from '../../services/socket.service.js';
+import {useInvitesStore} from '../../../stores/invites.store.js';
+import {useCampaignsStore} from '../../../stores/campaigns.store.js';
+import apiService from '../../../services/api.service.js';
+import socketService from '../../../services/socket.service.js';
 
 const router = useRouter();
 const {t} = useI18n();
