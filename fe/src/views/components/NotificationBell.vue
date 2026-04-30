@@ -49,12 +49,14 @@
 
 <script setup>
 import {onMounted, onUnmounted, ref, watch} from 'vue';
+import {useRouter} from 'vue-router';
 import {useI18n} from 'vue-i18n';
 import {useInvitesStore} from '../../stores/invites.store.js';
 import {useCampaignsStore} from '../../stores/campaigns.store.js';
 import apiService from '../../services/api.service.js';
 import socketService from '../../services/socket.service.js';
 
+const router = useRouter();
 const {t} = useI18n();
 const invitesStore = useInvitesStore();
 const campaignsStore = useCampaignsStore();
@@ -127,9 +129,15 @@ async function handleReject(notification) {
 }
 
 function handleNotificationClick(notification) {
+  showDropdown.value = false;
+
   if (notification.related_post_id) {
-    // Navigate to the post - emit event to parent
-    // This would require the parent component to handle navigation
+    // Navigate to the post with optional comment anchor
+    const route = { name: 'home' };
+    if (notification.related_comment_id) {
+      route.query = { commentId: notification.related_comment_id };
+    }
+    router.push(route);
   }
 }
 
@@ -183,181 +191,3 @@ onUnmounted(() => {
   socketService.off('notification_update');
 });
 </script>
-
-<style scoped>
-.notification-bell {
-  position: relative;
-}
-
-.bell-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s;
-}
-
-.bell-button:hover {
-  background-color: var(--hover-color);
-}
-
-.bell-icon {
-  font-size: 1.2rem;
-}
-
-.badge {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background-color: #dc3545 !important;
-  color: white;
-  border-radius: 50%;
-  min-width: 18px;
-  height: 18px;
-  font-size: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-}
-
-.dropdown {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: 8px;
-  width: 350px;
-  max-height: 500px;
-  background-color: var(--background-color, #ffffff);
-  border: 1px solid var(--border-color, #e0e0e0);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-  z-index: 1000;
-}
-
-@media (prefers-color-scheme: dark) {
-  .dropdown {
-    background-color: var(--background-color, #1e1e1e);
-    border-color: var(--border-color, #3e3e3e);
-  }
-}
-
-.dropdown-header {
-  padding: 16px;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.dropdown-header h3 {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-color);
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--text-color);
-  font-size: 1.5rem;
-  line-height: 1;
-}
-
-.loading,
-.empty-state {
-  padding: 32px 16px;
-  text-align: center;
-  color: var(--text-secondary-color);
-}
-
-.notifications-list {
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.notification-item {
-  padding: 16px;
-  border-bottom: 1px solid var(--border-color);
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.notification-item:hover {
-  background-color: var(--hover-color);
-}
-
-.notification-item:last-child {
-  border-bottom: none;
-}
-
-.notification-content {
-  margin-bottom: 8px;
-}
-
-.notification-type {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--primary-color);
-  margin-bottom: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.notification-message {
-  font-size: 0.9rem;
-  color: var(--text-color);
-  line-height: 1.4;
-  margin-bottom: 6px;
-}
-
-.notification-time {
-  font-size: 0.8rem;
-  color: var(--text-secondary-color);
-}
-
-.invite-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.accept-btn,
-.reject-btn {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-
-.accept-btn {
-  background-color: var(--primary-color);
-  color: white;
-}
-
-.reject-btn {
-  background-color: var(--danger-color);
-  color: white;
-}
-
-.accept-btn:hover,
-.reject-btn:hover {
-  opacity: 0.9;
-}
-</style>

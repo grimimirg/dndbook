@@ -113,18 +113,32 @@ import sys
 from app import create_app, db
 from app.models import User, Campaign, Post, CampaignInvite, Character, PostViewedStatus, Notification
 from werkzeug.security import generate_password_hash
+from sqlalchemy import inspect, text
 
 try:
     app = create_app()
-    
+
     with app.app_context():
         # Create all tables
         db.create_all()
         print("✓ Database tables created/updated")
-        
+
+        # Add related_comment_id column to notifications table if it doesn't exist
+        inspector = inspect(db.engine)
+        columns = [col['name'] for col in inspector.get_columns('notifications')]
+
+        if 'related_comment_id' not in columns:
+            print("Adding related_comment_id column to notifications table...")
+            with db.engine.connect() as conn:
+                conn.execute(text("ALTER TABLE notifications ADD COLUMN related_comment_id INTEGER REFERENCES comments(id)"))
+                conn.commit()
+            print("✓ related_comment_id column added")
+        else:
+            print("✓ related_comment_id column already exists")
+
         # Check if admin user exists
         admin_user = User.query.filter_by(username='admin').first()
-        
+
         if admin_user:
             print("✓ Admin user already exists")
         else:
@@ -138,12 +152,12 @@ try:
             db.session.add(admin)
             db.session.commit()
             print(f"✓ Admin user created (username: admin, password: {admin_password})")
-        
+
         print("")
         print("===================================")
         print("Database initialization complete!")
         print("===================================")
-        
+
 except Exception as e:
     print(f"❌ Error during database initialization: {e}")
     import traceback

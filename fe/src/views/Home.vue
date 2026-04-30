@@ -71,6 +71,7 @@
             :post="post"
             :is-viewed="viewedPostIds.has(post.id)"
             :is-owner="isCurrentCampaignOwned"
+            :highlighted-comment-id="highlightedCommentId"
             @mark-viewed="markPostAsViewed"
             :ref="el => setPostRef(post.id, el)"
         />
@@ -126,6 +127,7 @@ const hamburgerMenu = ref(null);
 const searchQuery = ref('');
 const debouncedSearchQuery = ref('');
 const viewedPostIds = ref(new Set());
+const highlightedCommentId = ref(null);
 let debounceTimeout = null;
 
 const isCurrentCampaignOwned = computed(() => {
@@ -273,4 +275,22 @@ watch(() => campaignsStore.currentCampaign, () => {
     fetchViewedStatus();
   }
 });
+
+// Watch for route changes to handle comment deep linking
+watch(() => router.currentRoute.value.query.commentId, (newCommentId) => {
+  if (newCommentId) {
+    highlightedCommentId.value = parseInt(newCommentId);
+    // Scroll to comment after a short delay to allow DOM to update
+    setTimeout(() => {
+      const commentElement = document.getElementById(`comment-${newCommentId}`);
+      if (commentElement) {
+        commentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Clear highlight after animation
+        setTimeout(() => {
+          highlightedCommentId.value = null;
+        }, 3000);
+      }
+    }, 500);
+  }
+}, { immediate: true });
 </script>

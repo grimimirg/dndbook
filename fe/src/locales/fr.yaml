@@ -129,6 +129,7 @@ notification:
     post_created: "Nouvelle publication"
     post_edited: "Publication mise à jour"
     invite: "Invitation de campagne"
+    comment_added: "Nouveau commentaire"
 
 common:
   loading: "Chargement..."

@@ -41,7 +41,8 @@ def get_notifications(current_user):
             'title': notif.title,
             'message': notif.message,
             'related_post_id': notif.related_post_id,
-            'created_at': notif.created_at.isoformat() if notif.created_at else None
+            'related_comment_id': notif.related_comment_id,
+            'created_at': notif.created_at.isoformat() + 'Z' if notif.created_at else None
         })
     
     return jsonify({

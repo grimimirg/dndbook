@@ -138,9 +138,13 @@ export const usePostsStore = defineStore('posts', () => {
     sortDirection.value = 'desc';
   }
 
-  async function createComment(postId, content) {
+  async function createComment(postId, content, postTitle, campaignName) {
     try {
-      const response = await api.post(`/posts/${postId}/comments`, { content });
+      const response = await api.post(`/posts/${postId}/comments`, {
+        content,
+        post_title: postTitle,
+        campaign_name: campaignName
+      });
       const post = posts.value.find(p => p.id === postId);
       if (post) {
         if (!post.comments) {
@@ -150,9 +154,9 @@ export const usePostsStore = defineStore('posts', () => {
       }
       return { success: true, comment: response.data };
     } catch (error) {
-      return { 
-        success: false, 
-        error: error.response?.data?.error || 'Failed to create comment' 
+      return {
+        success: false,
+        error: error.response?.data?.error || 'Failed to create comment'
       };
     }
   }

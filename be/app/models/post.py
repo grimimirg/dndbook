@@ -42,8 +42,8 @@ class Post(db.Model):
             'author': self.author.username if self.author else None,
             'title': self.title,
             'content': self.content,
-            'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat()
+            'created_at': self.created_at.isoformat() + 'Z',
+            'updated_at': self.updated_at.isoformat() + 'Z'
         }
         if include_images:
             result['images'] = [img.to_dict() for img in self.images]

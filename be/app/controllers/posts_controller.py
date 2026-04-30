@@ -43,7 +43,7 @@ def can_access_campaign(campaign, user):
 def create_notification_entries(user_id, campaign_id, notification_type, title, message, related_post_id=None):
     """
     Create notification entries for all campaign members (excluding owner).
-    
+
     Args:
         user_id (int): The ID of the user who triggered the notification (will be excluded)
         campaign_id (int): The ID of the campaign
@@ -55,16 +55,16 @@ def create_notification_entries(user_id, campaign_id, notification_type, title, 
     campaign = Campaign.query.get(campaign_id)
     if not campaign:
         return
-    
+
     # Query campaign members excluding the owner
     members = campaign.members.filter(Campaign.id != campaign.owner_id).all()
-    
+
     # Create notification entries for all members
     for member in members:
         # Skip the user who made the change
         if member.id == user_id:
             continue
-        
+
         notification = Notification(
             user_id=member.id,
             campaign_id=campaign_id,
@@ -74,10 +74,55 @@ def create_notification_entries(user_id, campaign_id, notification_type, title, 
             related_post_id=related_post_id
         )
         db.session.add(notification)
-        
+
         # Send WebSocket notification to the member
         send_notification(member.id)
-    
+
+    db.session.commit()
+
+def create_comment_notification_entries(user_id, campaign_id, post_id, comment_id, comment_content, post_title, campaign_name):
+    """
+    Create notification entries for all campaign members when a comment is added.
+
+    Args:
+        user_id (int): The ID of the user who created the comment (will be excluded)
+        campaign_id (int): The ID of the campaign
+        post_id (int): The ID of the post
+        comment_id (int): The ID of the comment
+        comment_content (str): The content of the comment (for preview)
+        post_title (str): The title of the post (passed from FE to avoid extra query)
+        campaign_name (str): The name of the campaign (passed from FE to avoid extra query)
+    """
+    campaign = Campaign.query.get(campaign_id)
+    if not campaign:
+        return
+
+    # Query all campaign members
+    members = campaign.members.all()
+
+    # Create notification entries for all members
+    for member in members:
+        # Skip the user who made the comment
+        if member.id == user_id:
+            continue
+
+        # Truncate comment content for preview (max 100 chars)
+        comment_preview = comment_content[:100] + '...' if len(comment_content) > 100 else comment_content
+
+        notification = Notification(
+            user_id=member.id,
+            campaign_id=campaign_id,
+            notification_type='comment_added',
+            title='New comment',
+            message=f'New comment on "{post_title}" in {campaign_name}: "{comment_preview}"',
+            related_post_id=post_id,
+            related_comment_id=comment_id
+        )
+        db.session.add(notification)
+
+        # Send WebSocket notification to the member
+        send_notification(member.id)
+
     db.session.commit()
 
 @bp.route('/campaigns/<int:campaign_id>/posts', methods=['GET'])
@@ -433,16 +478,18 @@ def delete_image(current_user, post_id, image_id):
 def create_comment(current_user, post_id):
     """
     Create a comment on a post.
-    
+
     User must have access to the campaign to comment.
-    
+
     Expected JSON payload:
         - content (str): Comment content (required)
-        
+        - post_title (str): Post title (optional, for notification optimization)
+        - campaign_name (str): Campaign name (optional, for notification optimization)
+
     Args:
         current_user: The authenticated user (injected by token_required decorator)
         post_id (int): The ID of the post to comment on
-        
+
     Returns:
         JSON response with:
         - 201: Created comment data
@@ -452,25 +499,40 @@ def create_comment(current_user, post_id):
     """
     post = Post.query.get_or_404(post_id)
     campaign = Campaign.query.get(post.campaign_id)
-    
+
     if not can_access_campaign(campaign, current_user):
         return jsonify({'error': 'Unauthorized'}), 403
-    
+
     data = request.get_json()
-    
+
     if not data or not data.get('content'):
         return jsonify({'error': 'Missing content'}), 400
-    
+
     comment = Comment(
         post_id=post_id,
         author_id=current_user.id,
         content=data['content']
     )
-    
+
     db.session.add(comment)
     db.session.commit()
     db.session.refresh(comment)
-    
+
+    # Get post_title and campaign_name from request if provided (for performance)
+    post_title = data.get('post_title', post.title)
+    campaign_name = data.get('campaign_name', campaign.name)
+
+    # Create notifications for all campaign members (excluding comment author)
+    create_comment_notification_entries(
+        user_id=current_user.id,
+        campaign_id=post.campaign_id,
+        post_id=post_id,
+        comment_id=comment.id,
+        comment_content=data['content'],
+        post_title=post_title,
+        campaign_name=campaign_name
+    )
+
     return jsonify(comment.to_dict()), 201
 
 @bp.route('/posts/<int:post_id>/comments/<int:comment_id>', methods=['PUT'])

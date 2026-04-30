@@ -21,7 +21,7 @@ class Comment(db.Model):
     def to_dict(self):
         """
         Convert comment object to dictionary representation.
-        
+
         Returns:
             dict: Comment data
         """
@@ -31,6 +31,6 @@ class Comment(db.Model):
             'author_id': self.author_id,
             'author': self.author.username if self.author else None,
             'content': self.content,
-            'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat()
+            'created_at': self.created_at.isoformat() + 'Z',
+            'updated_at': self.updated_at.isoformat() + 'Z'
         }

@@ -45,6 +45,8 @@
         <div
             v-for="comment in post.comments"
             :key="comment.id"
+            :id="`comment-${comment.id}`"
+            :class="{ 'highlighted': highlightedCommentId === comment.id }"
             class="comment-item flex-between"
             @mouseenter="hoveredCommentId = comment.id"
             @mouseleave="hoveredCommentId = null"
@@ -182,6 +184,10 @@ const props = defineProps({
   isOwner: {
     type: Boolean,
     default: false
+  },
+  highlightedCommentId: {
+    type: Number,
+    default: null
   }
 });
 
@@ -277,7 +283,12 @@ const currentUserId = computed(() => authStore.user?.id);
 async function handleAddComment() {
   if (!newCommentContent.value.trim()) return;
 
-  const result = await postsStore.createComment(props.post.id, newCommentContent.value);
+  const result = await postsStore.createComment(
+    props.post.id,
+    newCommentContent.value,
+    props.post.title,
+    props.post.campaign_name
+  );
 
   if (result.success) {
     newCommentContent.value = '';
@@ -360,5 +371,19 @@ function emitMarkViewed(postId) {
   object-position: top;
   display: block;
   cursor: pointer;
+}
+
+.comment-item.highlighted {
+  background-color: var(--highlight-color, rgba(255, 193, 7, 0.3));
+  animation: highlight-fade 3s ease-out;
+}
+
+@keyframes highlight-fade {
+  0% {
+    background-color: var(--highlight-color, rgba(255, 193, 7, 0.6));
+  }
+  100% {
+    background-color: transparent;
+  }
 }
 </style>

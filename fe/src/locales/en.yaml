@@ -129,6 +129,7 @@ notification:
     post_created: "New post"
     post_edited: "Post updated"
     invite: "Campaign invite"
+    comment_added: "New comment"
 
 common:
   loading: "Loading..."
