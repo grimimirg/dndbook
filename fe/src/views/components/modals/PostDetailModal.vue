@@ -82,7 +82,7 @@
         </div>
 
         <div v-if="!isEditing" class="modal-actions flex-end">
-          <button v-if="!isEditing" class="edit-button" @click="startEditing">
+          <button v-if="!isEditing && permissionsStore.canEditPost(props.post)" class="edit-button" @click="startEditing">
             {{ t('post.edit') }}
           </button>
           <button class="delete-button-modal" @click="$emit('delete')">
@@ -98,9 +98,11 @@
 import {ref, watch} from 'vue';
 import {useI18n} from 'vue-i18n';
 import {usePostsStore} from '../../../stores/posts.store.js';
+import {usePermissionsStore} from '../../../stores/permissions.store.js';
 
 const {t} = useI18n();
 const postsStore = usePostsStore();
+const permissionsStore = usePermissionsStore();
 
 const props = defineProps({
   show: {
@@ -171,6 +173,9 @@ function nextImage() {
 }
 
 function startEditing() {
+  if (!permissionsStore.canEditPost(props.post)) {
+    return;
+  }
   isEditing.value = true;
   editedTitle.value = props.post.title;
   editedContent.value = props.post.content;

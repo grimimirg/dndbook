@@ -70,7 +70,7 @@
             :key="post.id"
             :post="post"
             :is-viewed="viewedPostIds.has(post.id)"
-            :is-owner="isCurrentCampaignOwned"
+            :is-owner="isPostOwner(post)"
             :highlighted-comment-id="highlightedCommentId"
             @mark-viewed="markPostAsViewed"
             :ref="el => setPostRef(post.id, el)"
@@ -100,6 +100,7 @@ import {useAuthStore} from '../stores/auth.store.js';
 import {useCampaignsStore} from '../stores/campaigns.store.js';
 import {usePostsStore} from '../stores/posts.store.js';
 import {useInvitesStore} from '../stores/invites.store.js';
+import {usePermissionsStore} from '../stores/permissions.store.js';
 import socketService from '../services/socket.service.js';
 import apiService from '../services/api.service.js';
 import CampaignsTree from './components/right/tree/CampaignsTree.vue';
@@ -120,6 +121,7 @@ const authStore = useAuthStore();
 const campaignsStore = useCampaignsStore();
 const postsStore = usePostsStore();
 const invitesStore = useInvitesStore();
+const permissionsStore = usePermissionsStore();
 
 const postRefs = ref({});
 const playersPanel = ref(null);
@@ -136,6 +138,10 @@ const isCurrentCampaignOwned = computed(() => {
       campaign => campaign.id === campaignsStore.currentCampaign.id
   );
 });
+
+function isPostOwner(post) {
+  return permissionsStore.isPostOwner(post);
+}
 
 const filteredPosts = computed(() => {
   if (!debouncedSearchQuery.value.trim()) {

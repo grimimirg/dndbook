@@ -58,7 +58,7 @@
                 <span class="comment-date">{{ formatDate(comment.created_at) }}</span>
               </div>
 
-              <div v-if="comment.author_id === currentUserId" class="comment-actions flex-align-center"
+              <div v-if="permissionsStore.isCommentOwner(comment)" class="comment-actions flex-align-center"
                    :class="{ 'visible': hoveredCommentId === comment.id }">
                 <button
                     v-if="editingCommentId !== comment.id"
@@ -162,6 +162,7 @@ import {computed, ref} from 'vue';
 import {useI18n} from 'vue-i18n';
 import {usePostsStore} from '../../../stores/posts.store.js';
 import {useAuthStore} from '../../../stores/auth.store.js';
+import {usePermissionsStore} from '../../../stores/permissions.store.js';
 import ConfirmModal from '../modals/ConfirmModal.vue';
 import PostDetailModal from '../modals/PostDetailModal.vue';
 import ImageLightbox from '../modals/ImageLightbox.vue';
@@ -169,6 +170,7 @@ import ImageLightbox from '../modals/ImageLightbox.vue';
 const {t} = useI18n();
 const postsStore = usePostsStore();
 const authStore = useAuthStore();
+const permissionsStore = usePermissionsStore();
 
 const emit = defineEmits(['mark-viewed']);
 
