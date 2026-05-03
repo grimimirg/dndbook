@@ -1029,17 +1029,20 @@ input::placeholder, textarea::placeholder {
 
 .bell-button {
     position: relative;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 0.5rem;
+    background: var(--button-secondary-bg);
+    border: 1px solid var(--button-secondary-border);
     border-radius: 50%;
-    transition: background-color 0.2s;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
 }
 
 .bell-button:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    background: var(--button-secondary-hover);
 }
 
 .bell-button.has-notifications {
@@ -1058,103 +1061,123 @@ input::placeholder, textarea::placeholder {
     }
 }
 
-.badge {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background-color: #dc3545;
-    color: white;
-    font-size: 0.75rem;
-    font-weight: bold;
+.bell-icon {
+    font-size: 20px;
 }
 
-.dropdown {
+.badge {
     position: absolute;
-    top: 100%;
+    top: -5px;
+    right: -5px;
+    background: var(--accent-gold-1);
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-bell .dropdown {
+    position: absolute;
+    top: 50px;
     right: 0;
-    margin-top: 0.5rem;
+    width: 350px;
+    max-height: 500px;
+    overflow-y: auto;
     background: var(--bg-primary);
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    min-width: 350px;
-    max-width: 400px;
-    max-height: 500px;
-    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     z-index: 1000;
 }
 
-.dropdown-header {
-    padding: 1rem;
+.notification-bell .dropdown-header {
+    padding: 16px;
     border-bottom: 1px solid var(--border-color);
 }
 
-.dropdown-header h3 {
+.notification-bell .dropdown-header h3 {
     margin: 0;
-    font-size: 1.1rem;
+    color: var(--text-heading);
 }
 
-.close-btn {
-    background: none;
+.notification-bell .close-btn {
+    background: transparent;
     border: none;
-    font-size: 1.5rem;
+    cursor: pointer;
     color: var(--text-secondary);
-    padding: 0;
-    border-radius: 4px;
 }
 
-.close-btn:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+.notification-bell .loading {
+    padding: 32px;
+    text-align: center;
+    color: var(--text-secondary);
 }
 
-.invites-list {
-    padding: 0.5rem;
+.notification-bell .empty-state {
+    padding: 32px;
+    text-align: center;
+    color: var(--text-secondary);
 }
 
-.invite-item {
-    padding: 1rem;
+.notification-bell .notifications-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.notification-bell .notification-item {
+    padding: 16px;
     border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: background 0.3s ease;
 }
 
-.invite-item:last-child {
-    border-bottom: none;
+.notification-bell .notification-item:hover {
+    background: var(--hover-bg);
 }
 
-.invite-content {
-    margin-bottom: 0.75rem;
-    line-height: 1.5;
+.notification-bell .notification-type {
+    font-weight: bold;
+    color: var(--text-heading);
+    margin-bottom: 4px;
 }
 
-.invite-actions {
-    gap: 0.5rem;
+.notification-bell .notification-message {
+    color: var(--text-primary);
+    margin-bottom: 8px;
 }
 
-.accept-btn, .reject-btn {
-    flex: 1;
-    padding: 0.5rem 1rem;
+.notification-bell .notification-time {
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.notification-bell .invite-actions {
+    margin-top: 12px;
+    gap: 8px;
+}
+
+.notification-bell .accept-btn {
+    background: var(--accent-gold-1);
+    color: white;
     border: none;
+    padding: 6px 12px;
     border-radius: 4px;
     cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s;
+    font-size: 12px;
 }
 
-.accept-btn {
-    background-color: #4CAF50;
+.notification-bell .reject-btn {
+    background: var(--danger);
     color: white;
-}
-
-.accept-btn:hover {
-    background-color: #45a049;
-}
-
-.reject-btn {
-    background-color: #f44336;
-    color: white;
-}
-
-.reject-btn:hover {
-    background-color: #da190b;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
 }
 
 /* InviteToast.vue styles */
@@ -2654,181 +2677,4 @@ input::placeholder, textarea::placeholder {
     .menu-section .card {
         margin-bottom: 0;
     }
-}
-
-/* Notification Bell Styles */
-.notification-bell {
-    position: relative;
-}
-
-.notification-bell .bell-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
-}
-
-.notification-bell .bell-button:hover {
-    background-color: var(--hover-color);
-}
-
-.notification-bell .bell-icon {
-    font-size: 1.2rem;
-}
-
-.notification-bell .badge {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background-color: #dc3545 !important;
-    color: white;
-    border-radius: 50%;
-    min-width: 18px;
-    height: 18px;
-    font-size: 0.75rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    animation: notification-pulse 2s infinite;
-}
-
-@keyframes notification-pulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.1);
-    }
-}
-
-.notification-bell .dropdown {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    margin-top: 8px;
-    width: 350px;
-    max-height: 500px;
-    background-color: var(--background-color, #ffffff);
-    border: 1px solid var(--border-color, #e0e0e0);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    overflow: hidden;
-    z-index: 1000;
-}
-
-@media (prefers-color-scheme: dark) {
-    .notification-bell .dropdown {
-        background-color: var(--background-color, #1e1e1e);
-        border-color: var(--border-color, #3e3e3e);
-    }
-}
-
-.notification-bell .dropdown-header {
-    padding: 16px;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.notification-bell .dropdown-header h3 {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text-color);
-}
-
-.notification-bell .close-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--text-color);
-    font-size: 1.5rem;
-    line-height: 1;
-}
-
-.notification-bell .loading,
-.notification-bell .empty-state {
-    padding: 32px 16px;
-    text-align: center;
-    color: var(--text-secondary-color);
-}
-
-.notification-bell .notifications-list {
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-.notification-bell .notification-item {
-    padding: 16px;
-    border-bottom: 1px solid var(--border-color);
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.notification-bell .notification-item:hover {
-    background-color: var(--hover-color);
-}
-
-.notification-bell .notification-item:last-child {
-    border-bottom: none;
-}
-
-.notification-bell .notification-content {
-    margin-bottom: 8px;
-}
-
-.notification-bell .notification-type {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--primary-color);
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.notification-bell .notification-message {
-    font-size: 0.9rem;
-    color: var(--text-color);
-    line-height: 1.4;
-    margin-bottom: 6px;
-}
-
-.notification-bell .notification-time {
-    font-size: 0.8rem;
-    color: var(--text-secondary-color);
-}
-
-.notification-bell .invite-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 8px;
-}
-
-.notification-bell .accept-btn,
-.notification-bell .reject-btn {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 4px;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: opacity 0.2s;
-}
-
-.notification-bell .accept-btn {
-    background-color: var(--primary-color);
-    color: white;
-}
-
-.notification-bell .reject-btn {
-    background-color: var(--danger-color);
-    color: white;
-}
-
-.notification-bell .accept-btn:hover,
-.notification-bell .reject-btn:hover {
-    opacity: 0.9;
 }

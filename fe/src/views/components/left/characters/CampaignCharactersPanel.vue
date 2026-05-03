@@ -108,13 +108,13 @@
 <script setup>
 import {computed, onMounted, onUnmounted, ref, watch} from 'vue';
 import {useI18n} from 'vue-i18n';
-import {useCampaignsStore} from '../../../stores/campaigns.store.js';
-import {useCharactersStore} from '../../../stores/characters.store.js';
-import {useAuthStore} from '../../../stores/auth.store.js';
+import {useCampaignsStore} from '../../../../stores/campaigns.store.js';
+import {useCharactersStore} from '../../../../stores/characters.store.js';
+import {useAuthStore} from '../../../../stores/auth.store.js';
 import CreateCharacterModal from './CreateCharacterModal.vue';
 import CharacterDetailModal from './CharacterDetailModal.vue';
-import ConfirmModal from '../modals/ConfirmModal.vue';
-import config from '../../../config/config.js';
+import ConfirmModal from '../../modals/ConfirmModal.vue';
+import config from '../../../../config/config.js';
 
 const {t} = useI18n();
 const campaignsStore = useCampaignsStore();

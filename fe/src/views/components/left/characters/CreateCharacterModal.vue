@@ -88,8 +88,8 @@
 <script setup>
 import {computed, ref, watch} from 'vue';
 import {useI18n} from 'vue-i18n';
-import {useCharactersStore} from '../../../stores/characters.store.js';
-import config from '../../../config/config.js';
+import {useCharactersStore} from '../../../../stores/characters.store.js';
+import config from '../../../../config/config.js';
 
 const props = defineProps({
   show: Boolean,

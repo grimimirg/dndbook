@@ -80,12 +80,12 @@
 <script setup>
 import {ref, onMounted, onUnmounted} from 'vue';
 import {useI18n} from 'vue-i18n';
-import {useCampaignsStore} from '../../../stores/campaigns.store.js';
-import {usePostsStore} from '../../../stores/posts.store.js';
-import InviteUsersModal from '../modals/InviteUsersModal.vue';
-import CampaignCreationModal from '../modals/CampaignCreationModal.vue';
-import CampaignImportModal from '../modals/CampaignImportModal.vue';
-import ConfirmModal from '../modals/ConfirmModal.vue';
+import {useCampaignsStore} from '../../../../stores/campaigns.store.js';
+import {usePostsStore} from '../../../../stores/posts.store.js';
+import InviteUsersModal from '../../modals/InviteUsersModal.vue';
+import CampaignCreationModal from '../../modals/CampaignCreationModal.vue';
+import CampaignImportModal from '../../modals/CampaignImportModal.vue';
+import ConfirmModal from '../../modals/ConfirmModal.vue';
 import OwnedCampaignsTree from './OwnedCampaignsTree.vue';
 import SharedCampaignsTree from './SharedCampaignsTree.vue';
 import axios from 'axios';
