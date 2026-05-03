@@ -37,6 +37,7 @@
           @open-invite-modal="openInviteModal"
           @open-export-modal="openExportModal"
           @scroll-to-post="scrollToPost"
+          @edit-post="handleEditPost"
       />
 
       <SharedCampaignsTree
@@ -45,6 +46,7 @@
           :is-owner="props.isOwner"
           @toggle-campaign="toggleCampaign"
           @scroll-to-post="scrollToPost"
+          @edit-post="handleEditPost"
       />
     </div>
 
@@ -194,7 +196,7 @@ function openInviteModal(campaignId) {
   showInviteModal.value = true;
 }
 
-const emit = defineEmits(['invites-sent']);
+const emit = defineEmits(['invites-sent', 'edit-post']);
 
 function handleInviteSuccess() {
   console.log('Invites sent successfully');
@@ -249,6 +251,10 @@ async function handleImportSuccess(data) {
   console.log('Campaign imported successfully:', data);
   await campaignsStore.fetchCampaigns();
   showImportModal.value = false;
+}
+
+function handleEditPost(post) {
+  emit('edit-post', post);
 }
 
 function handleClickOutside(event) {

@@ -107,6 +107,7 @@ sort:
   label: "Sortieren nach"
   byCreated: "Erstellungsdatum"
   byUpdated: "Letzter Aktualisierung"
+  byCustom: "Benutzerdefinierte Reihenfolge"
   search: "Beiträge suchen..."
 
 invite:

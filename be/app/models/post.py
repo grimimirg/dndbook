@@ -16,6 +16,7 @@ class Post(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     title = db.Column(db.String(200), nullable=False)
     content = db.Column(db.Text, nullable=False)
+    post_order = db.Column(db.Integer, nullable=True, index=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -42,6 +43,7 @@ class Post(db.Model):
             'author': self.author.username if self.author else None,
             'title': self.title,
             'content': self.content,
+            'order': self.post_order,
             'created_at': self.created_at.isoformat() + 'Z',
             'updated_at': self.updated_at.isoformat() + 'Z'
         }

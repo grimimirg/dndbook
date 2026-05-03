@@ -1,8 +1,7 @@
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify
 from sqlalchemy import and_
 
 from app import db
-from app.controllers.mock_data_controller import MockDataProvider
 from app.jwt.jwt_utils import token_required
 from app.models import Campaign, CampaignInvite, campaign_members
 
@@ -16,7 +15,6 @@ def get_campaigns(current_user):
     Get all campaigns for the authenticated user.
     
     Returns campaigns owned by the user and campaigns where the user is a member.
-    Supports both mock data mode and database queries.
     
     Args:
         current_user: The authenticated user (injected by token_required decorator)
@@ -25,11 +23,6 @@ def get_campaigns(current_user):
         JSON response with:
         - 200: Object containing 'owned' and 'shared' campaign arrays
     """
-    if current_app.config['MOCK_DATA']:
-        user_id = current_user if isinstance(current_user, int) else current_user.id
-        campaigns = MockDataProvider.get_campaigns(user_id)
-        return jsonify(campaigns), 200
-
     owned_campaigns = Campaign.query.filter_by(owner_id=current_user.id).all()
 
     member_campaigns = [c for c in current_user.member_campaigns if c.owner_id != current_user.id]

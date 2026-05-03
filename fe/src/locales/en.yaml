@@ -107,6 +107,7 @@ sort:
   label: "Sort by"
   byCreated: "Creation Date"
   byUpdated: "Last Update"
+  byCustom: "Custom Order"
   search: "Search posts..."
   
 invite:

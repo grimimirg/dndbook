@@ -23,12 +23,11 @@ def create_app():
     Application factory function.
     
     Creates and configures the Flask application with all necessary extensions,
-    blueprints, and routes. Supports both mock data mode and database mode.
+    blueprints, and routes.
     
     Environment variables:
         - SECRET_KEY: Flask secret key for sessions
         - JWT_SECRET_KEY: Secret key for JWT token encoding/decoding
-        - MOCK_DATA: Enable mock data mode (true/false)
         - DATABASE_URL: PostgreSQL database connection string
         - UPLOAD_FOLDER: Directory for uploaded files (default: 'uploads')
         - MAX_CONTENT_LENGTH: Maximum upload size in bytes (default: 16MB)
@@ -38,7 +37,7 @@ def create_app():
         Flask: Configured Flask application instance
         
     Raises:
-        ValueError: If DATABASE_URL is not set when MOCK_DATA is false
+        ValueError: If DATABASE_URL is not set
     """
     app = Flask(__name__)
     
@@ -48,13 +47,12 @@ def create_app():
 
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key')
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'dev-jwt-secret-key')
-    app.config['MOCK_DATA'] = os.getenv('MOCK_DATA', 'false').lower() == 'true'
 
     database_url = os.getenv('DATABASE_URL')
-    if not app.config['MOCK_DATA'] and not database_url:
-        raise ValueError("DATABASE_URL must be set when MOCK_DATA is false")
+    if not database_url:
+        raise ValueError("DATABASE_URL must be set")
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///:memory:'
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     upload_folder = os.getenv('UPLOAD_FOLDER', 'uploads')
@@ -67,8 +65,7 @@ def create_app():
 
     os.makedirs(app.config['UPLOAD_FOLDER'], mode=0o755, exist_ok=True)
 
-    if not app.config['MOCK_DATA']:
-        db.init_app(app)
+    db.init_app(app)
 
     CORS(app,
          resources={

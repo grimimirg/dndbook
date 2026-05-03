@@ -107,6 +107,7 @@ sort:
   label: "Trier par"
   byCreated: "Date de création"
   byUpdated: "Dernière mise à jour"
+  byCustom: "Ordre personnalisé"
   search: "Rechercher des publications..."
 
 invite:

@@ -1,8 +1,7 @@
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify
 
 from app import db
 from app.jwt.jwt_utils import generate_token
-from app.controllers.mock_data_controller import MockDataProvider
 from app.models import User
 
 bp = Blueprint('auth', __name__, url_prefix='/api/auth')
@@ -73,20 +72,6 @@ def login():
 
     if not data or not data.get('username') or not data.get('password'):
         return jsonify({'error': 'Missing username or password'}), 400
-
-    if current_app.config['MOCK_DATA']:
-        mock_user = MockDataProvider.get_user_by_username(data['username'])
-
-        if not mock_user:
-            return jsonify({'error': 'Invalid credentials'}), 401
-
-        token = generate_token(mock_user['id'])
-
-        return jsonify({
-            'message': 'Login successful',
-            'token': token,
-            'user': mock_user
-        }), 200
 
     user = User.query.filter_by(username=data['username']).first()
 

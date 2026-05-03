@@ -43,6 +43,12 @@
           >
             {{ t('sort.byUpdated') }}
           </button>
+          <button
+              @click="changeSortBy('custom')"
+              :class="{ primary: postsStore.sortBy === 'custom', secondary: postsStore.sortBy !== 'custom' }"
+          >
+            {{ t('sort.byCustom') }}
+          </button>
           <input
               v-model="searchQuery"
               type="text"
@@ -65,16 +71,40 @@
           {{ t('post.noPosts') }}
         </div>
 
-        <PostCard
-            v-for="post in filteredPosts"
-            :key="post.id"
-            :post="post"
-            :is-viewed="viewedPostIds.has(post.id)"
-            :is-owner="isPostOwner(post)"
-            :highlighted-comment-id="highlightedCommentId"
-            @mark-viewed="markPostAsViewed"
-            :ref="el => setPostRef(post.id, el)"
-        />
+        <draggable
+            v-if="postsStore.sortBy === 'custom' && isCurrentCampaignOwned"
+            v-model="postsStore.posts"
+            item-key="id"
+            :delay="500"
+            :delay-on-touch-only="true"
+            @end="handlePostReorder"
+            class="draggable-posts"
+        >
+          <template #item="{element: post}">
+            <PostCard
+                :key="post.id"
+                :post="post"
+                :is-viewed="viewedPostIds.has(post.id)"
+                :is-owner="isPostOwner(post)"
+                :highlighted-comment-id="highlightedCommentId"
+                @mark-viewed="markPostAsViewed"
+                :ref="el => setPostRef(post.id, el)"
+            />
+          </template>
+        </draggable>
+
+        <template v-else>
+          <PostCard
+              v-for="post in filteredPosts"
+              :key="post.id"
+              :post="post"
+              :is-viewed="viewedPostIds.has(post.id)"
+              :is-owner="isPostOwner(post)"
+              :highlighted-comment-id="highlightedCommentId"
+              @mark-viewed="markPostAsViewed"
+              :ref="el => setPostRef(post.id, el)"
+          />
+        </template>
 
         <div v-if="postsStore.hasMore && !postsStore.loading" class="load-more">
           <button @click="loadMore" class="secondary">{{ t('post.loadMore') }}</button>
@@ -85,10 +115,17 @@
         :viewed-post-ids="viewedPostIds" 
         :is-owner="isCurrentCampaignOwned"
         @invites-sent="handleInvitesSent"
+        @edit-post="handleEditPost"
         class="desktop-only"/>
     </div>
 
     <InviteToast/>
+    <PostDetailModal
+        :show="showPostDetailModal"
+        :post="selectedPost"
+        :start-in-edit-mode="startInEditMode"
+        @close="showPostDetailModal = false; startInEditMode = false"
+    />
   </div>
 </template>
 
@@ -103,9 +140,11 @@ import {useInvitesStore} from '../stores/invites.store.js';
 import {usePermissionsStore} from '../stores/permissions.store.js';
 import socketService from '../services/socket.service.js';
 import apiService from '../services/api.service.js';
+import draggable from 'vuedraggable';
 import CampaignsTree from './components/right/tree/CampaignsTree.vue';
 import PostCard from './components/middle/PostCard.vue';
 import PostCreator from './components/middle/PostCreator.vue';
+import PostDetailModal from './components/modals/PostDetailModal.vue';
 import LanguageSelector from './components/up/LanguageSelector.vue';
 import ThemeToggle from './components/up/ThemeToggle.vue';
 import NotificationBell from './components/up/NotificationBell.vue';
@@ -130,6 +169,9 @@ const searchQuery = ref('');
 const debouncedSearchQuery = ref('');
 const viewedPostIds = ref(new Set());
 const highlightedCommentId = ref(null);
+const showPostDetailModal = ref(false);
+const selectedPost = ref(null);
+const startInEditMode = ref(false);
 let debounceTimeout = null;
 
 const isCurrentCampaignOwned = computed(() => {
@@ -172,6 +214,12 @@ function setPostRef(postId, el) {
   }
 }
 
+async function handlePostReorder() {
+  if (!campaignsStore.currentCampaign) return;
+  
+  await postsStore.reorderPosts();
+}
+
 function setupPlayerJoinedListener() {
   socketService.on('player_joined', (data) => {
     const message = t('campaign.playerJoined', {
@@ -201,6 +249,12 @@ function handleInvitesSent() {
   if (hamburgerMenu.value?.playersPanel) {
     hamburgerMenu.value.playersPanel.fetchMembers();
   }
+}
+
+function handleEditPost(post) {
+  selectedPost.value = post;
+  startInEditMode.value = true;
+  showPostDetailModal.value = true;
 }
 
 onMounted(async () => {

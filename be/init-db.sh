@@ -136,6 +136,43 @@ try:
         else:
             print("✓ related_comment_id column already exists")
 
+        # Add post_order column to posts table if it doesn't exist
+        posts_columns = [col['name'] for col in inspector.get_columns('posts')]
+
+        if 'post_order' not in posts_columns:
+            print("Adding post_order column to posts table...")
+            with db.engine.connect() as conn:
+                conn.execute(text("ALTER TABLE posts ADD COLUMN post_order INTEGER"))
+                conn.execute(text("CREATE INDEX ix_posts_post_order ON posts(post_order)"))
+                conn.commit()
+            print("✓ post_order column added to posts table")
+
+            # Backfill existing posts with order based on created_at
+            print("Backfilling post_order values for existing posts...")
+            with db.engine.connect() as conn:
+                # Get all campaigns
+                campaigns = conn.execute(text("SELECT id FROM campaigns ORDER BY id")).fetchall()
+                
+                for campaign in campaigns:
+                    campaign_id = campaign[0]
+                    # Get posts ordered by created_at
+                    posts = conn.execute(
+                        text("SELECT id FROM posts WHERE campaign_id = :campaign_id ORDER BY created_at"),
+                        {'campaign_id': campaign_id}
+                    ).fetchall()
+                    
+                    # Assign sequential order values
+                    for idx, post in enumerate(posts, start=1):
+                        conn.execute(
+                            text("UPDATE posts SET post_order = :order_val WHERE id = :post_id"),
+                            {'order_val': idx, 'post_id': post[0]}
+                        )
+                
+                conn.commit()
+            print("✓ post_order values backfilled for existing posts")
+        else:
+            print("✓ post_order column already exists in posts table")
+
         # Check if admin user exists
         admin_user = User.query.filter_by(username='admin').first()
 

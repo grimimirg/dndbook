@@ -3,7 +3,6 @@ from werkzeug.utils import secure_filename
 from app import db
 from app.models import Post, Campaign, Image, Comment, Notification
 from app.jwt.jwt_utils import token_required
-from app.controllers.mock_data_controller import MockDataProvider
 from app.events.socketio_events import send_notification
 import os
 import uuid
@@ -152,30 +151,25 @@ def get_posts(current_user, campaign_id):
     """
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', current_app.config['POSTS_PER_PAGE'], type=int)
-    sort_by = request.args.get('sort', 'updated')
-    order = request.args.get('order', 'desc')
-    
-    if current_app.config['MOCK_DATA']:
-        user_id = current_user if isinstance(current_user, int) else current_user.id
-        campaign = MockDataProvider.get_campaign(campaign_id)
-        
-        if not campaign or campaign['owner_id'] != user_id:
-            return jsonify({'error': 'Unauthorized'}), 403
-        
-        result = MockDataProvider.get_posts(campaign_id, page, per_page, sort_by, order)
-        return jsonify(result), 200
-    
+    sort_by = request.args.get('sort', 'order')
+    order = request.args.get('order', 'asc')
+
     campaign = Campaign.query.get_or_404(campaign_id)
     
     if not can_access_campaign(campaign, current_user):
         return jsonify({'error': 'Unauthorized'}), 403
     
     query = Post.query.filter_by(campaign_id=campaign_id)
-    
-    # Determina il campo di ordinamento
-    order_field = Post.updated_at if sort_by == 'updated' else Post.created_at
-    
-    # Applica la direzione di ordinamento
+
+    # Determine the sort field
+    if sort_by == 'order' or sort_by == 'custom':
+        order_field = Post.post_order
+    elif sort_by == 'created':
+        order_field = Post.created_at
+    else:  # default to 'updated'
+        order_field = Post.updated_at
+
+    # Apply sort direction
     if order == 'asc':
         query = query.order_by(order_field.asc())
     else:
@@ -219,34 +213,24 @@ def create_post(current_user):
     
     if not data or not data.get('campaign_id') or not data.get('title') or not data.get('content'):
         return jsonify({'error': 'Missing required fields'}), 400
-    
-    if current_app.config['MOCK_DATA']:
-        user_id = current_user if isinstance(current_user, int) else current_user.id
-        campaign = MockDataProvider.get_campaign(data['campaign_id'])
-        
-        if not campaign or campaign['owner_id'] != user_id:
-            return jsonify({'error': 'Unauthorized'}), 403
-        
-        new_post = MockDataProvider.create_post(
-            data['campaign_id'],
-            user_id,
-            data['title'],
-            data['content']
-        )
-        return jsonify(new_post), 201
-    
+
     campaign = Campaign.query.get_or_404(data['campaign_id'])
-    
+
     if not can_access_campaign(campaign, current_user):
         return jsonify({'error': 'Unauthorized'}), 403
-    
+
+    # Calculate order as max existing order + 1 for this campaign
+    max_order = db.session.query(db.func.max(Post.post_order)).filter_by(campaign_id=data['campaign_id']).scalar()
+    new_order = (max_order + 1) if max_order is not None else 1
+
     post = Post(
         campaign_id=data['campaign_id'],
         author_id=current_user.id,
         title=data['title'],
-        content=data['content']
+        content=data['content'],
+        post_order=new_order
     )
-    
+
     db.session.add(post)
     db.session.commit()
     db.session.refresh(post)
@@ -601,3 +585,54 @@ def delete_comment(current_user, post_id, comment_id):
     db.session.commit()
     
     return jsonify({'message': 'Comment deleted successfully'}), 200
+
+@bp.route('/posts/<int:post_id>/reorder', methods=['PUT'])
+@token_required
+def reorder_posts(current_user, post_id):
+    """
+    Reorder posts within a campaign.
+
+    Accepts an array of post IDs in the new order and updates the order field
+    for each post based on its position in the array.
+
+    User must be the campaign owner to reorder posts.
+
+    Expected JSON payload:
+        - post_ids (array): Array of post IDs in the desired order
+
+    Args:
+        current_user: The authenticated user (injected by token_required decorator)
+        post_id (int): The ID of a post in the campaign (used to identify the campaign)
+
+    Returns:
+        JSON response with:
+        - 200: Success message
+        - 400: Missing post_ids array
+        - 403: User is not authorized to reorder posts in this campaign
+        - 404: Post not found
+    """
+    post = Post.query.get_or_404(post_id)
+    campaign = Campaign.query.get(post.campaign_id)
+
+    # Only campaign owner can reorder posts
+    if campaign.owner_id != current_user.id:
+        return jsonify({'error': 'Unauthorized'}), 403
+
+    data = request.get_json()
+
+    if not data or not data.get('post_ids') or not isinstance(data['post_ids'], list):
+        return jsonify({'error': 'Missing or invalid post_ids array'}), 400
+
+    post_ids = data['post_ids']
+
+    # Update order for each post based on its position in the array
+    for idx, pid in enumerate(post_ids, start=1):
+        post_to_update = Post.query.get(pid)
+        if post_to_update and post_to_update.campaign_id == campaign.id:
+            post_to_update.post_order = idx
+        else:
+            return jsonify({'error': f'Post {pid} not found or not in campaign'}), 400
+
+    db.session.commit()
+
+    return jsonify({'message': 'Posts reordered successfully'}), 200

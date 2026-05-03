@@ -1,15 +1,17 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import api from '../services/api.service.js';
+import { useCampaignsStore } from './campaigns.store.js';
 
 export const usePostsStore = defineStore('posts', () => {
+  const campaignsStore = useCampaignsStore();
   const posts = ref([]);
   const loading = ref(false);
   const currentPage = ref(1);
   const totalPages = ref(1);
   const hasMore = ref(false);
-  const sortBy = ref('updated');
-  const sortDirection = ref('desc');
+  const sortBy = ref('custom');
+  const sortDirection = ref('asc');
   const postsPerPage = parseInt(import.meta.env.VITE_POSTS_PER_PAGE || '10');
 
   async function fetchPosts(campaignId, page = 1, append = false) {
@@ -115,7 +117,10 @@ export const usePostsStore = defineStore('posts', () => {
   }
 
   function setSortBy(sort) {
-    if (sort === 'updated') {
+    if (sort === 'custom') {
+      sortBy.value = 'custom';
+      sortDirection.value = 'asc';
+    } else if (sort === 'updated') {
       sortBy.value = 'updated';
       sortDirection.value = 'desc';
     } else if (sortBy.value === sort) {
@@ -134,8 +139,37 @@ export const usePostsStore = defineStore('posts', () => {
   }
 
   function resetSort() {
-    sortBy.value = 'updated';
-    sortDirection.value = 'desc';
+    sortBy.value = 'custom';
+    sortDirection.value = 'asc';
+  }
+
+  async function reorderPosts() {
+    if (!posts.value || posts.value.length === 0) {
+      return { success: false, error: 'No posts to reorder' };
+    }
+
+    const postIds = posts.value.map(post => post.id);
+    const firstPostId = postIds[0];
+    const campaignId = campaignsStore.currentCampaign?.id;
+
+    if (!campaignId) {
+      return { success: false, error: 'No current campaign' };
+    }
+
+    try {
+      const response = await api.put(`/posts/${firstPostId}/reorder`, { post_ids: postIds });
+      // Refresh posts to get updated order from server
+      await fetchPosts(campaignId);
+      return { success: true };
+    } catch (error) {
+      console.error('Failed to reorder posts:', error);
+      // Refresh posts to revert to server state
+      await fetchPosts(campaignId);
+      return {
+        success: false,
+        error: error.response?.data?.error || 'Failed to reorder posts'
+      };
+    }
   }
 
   async function createComment(postId, content, postTitle, campaignName) {
@@ -202,8 +236,8 @@ export const usePostsStore = defineStore('posts', () => {
     currentPage.value = 1;
     totalPages.value = 1;
     hasMore.value = false;
-    sortBy.value = 'updated';
-    sortDirection.value = 'desc';
+    sortBy.value = 'custom';
+    sortDirection.value = 'asc';
   }
 
   return {
@@ -226,6 +260,7 @@ export const usePostsStore = defineStore('posts', () => {
     setSortBy,
     resetSort,
     clearPosts,
+    reorderPosts,
     $reset
   };
 });

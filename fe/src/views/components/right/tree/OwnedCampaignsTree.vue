@@ -42,17 +42,51 @@
       </div>
 
       <div v-if="expandedCampaignId === campaign.id" class="posts-list">
-        <div
-            v-for="post in getCampaignPosts(campaign.id)"
-            :key="post.id"
-            class="post-item flex-align-center"
-            @click="scrollToPost(post.id)"
+        <draggable
+            v-if="campaignsStore.currentCampaign?.id === campaign.id && isOwner && postsStore.sortBy === 'custom'"
+            v-model="postsStore.posts"
+            item-key="id"
+            :delay="500"
+            :delay-on-touch-only="true"
+            @end="handlePostReorder"
+            class="draggable-posts"
+            :style="{ gap: '0' }"
+            tag="div"
         >
-          <span v-if="!isOwner && !viewedPostIds.has(post.id)" class="checkmark-icon">✓</span>
-          <span class="post-title">{{ post.title }}</span>
+          <template #item="{element: post}">
+            <PostItemTree
+                :post="post"
+                :is-owner="isOwner"
+                :viewed-post-ids="viewedPostIds"
+                @scroll-to-post="scrollToPost"
+                @toggle-post-menu="togglePostMenu"
+            />
+          </template>
+        </draggable>
+        <div v-else class="non-draggable-posts">
+          <PostItemTree
+              v-for="post in getCampaignPosts(campaign.id)"
+              :key="post.id"
+              :post="post"
+              :is-owner="isOwner"
+              :viewed-post-ids="viewedPostIds"
+              @scroll-to-post="scrollToPost"
+              @toggle-post-menu="togglePostMenu"
+          />
         </div>
       </div>
     </div>
+    <Teleport to="body">
+      <div
+          v-if="openMenuPostId"
+          class="post-actions-menu"
+          :style="postMenuPosition"
+      >
+        <button @click="handleEditPost" class="menu-item">
+          <span>{{ t('post.edit') }}</span>
+        </button>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -61,10 +95,15 @@ import {onMounted, onUnmounted, ref} from 'vue';
 import {useI18n} from 'vue-i18n';
 import {useCampaignsStore} from '../../../../stores/campaigns.store.js';
 import {usePostsStore} from '../../../../stores/posts.store.js';
+import {usePermissionsStore} from '../../../../stores/permissions.store.js';
+import draggable from 'vuedraggable';
+import {usePostActionsMenu} from '../../../../composables/usePostActionsMenu.js';
+import PostItemTree from './PostItemTree.vue';
 
 const {t} = useI18n();
 const campaignsStore = useCampaignsStore();
 const postsStore = usePostsStore();
+const permissionsStore = usePermissionsStore();
 const openMenuId = ref(null);
 const menuPosition = ref({});
 const buttonRefs = ref({});
@@ -84,7 +123,8 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['toggle-campaign', 'open-invite-modal', 'open-export-modal', 'scroll-to-post']);
+const emit = defineEmits(['toggle-campaign', 'open-invite-modal', 'open-export-modal', 'scroll-to-post', 'edit-post']);
+const {openMenuPostId, menuPosition: postMenuPosition, togglePostMenu, handleEditPost} = usePostActionsMenu(emit);
 
 async function toggleCampaign(campaign) {
   emit('toggle-campaign', campaign);
@@ -146,6 +186,10 @@ function handleExport(campaignId) {
   openExportModal(campaignId);
 }
 
+async function handlePostReorder() {
+  await postsStore.reorderPosts();
+}
+
 function handleClickOutside(event) {
   const menuContainer = event.target.closest('.campaign-menu-container');
   if (!menuContainer && openMenuId.value !== null) {
@@ -161,16 +205,3 @@ onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside);
 });
 </script>
-
-<style scoped>
-.checkmark-icon {
-  color: var(--success-color, #4caf50);
-  font-weight: bold;
-  font-size: 1em;
-  margin-right: 8px;
-}
-
-.post-title {
-  flex: 1;
-}
-</style>

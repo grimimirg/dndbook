@@ -112,6 +112,10 @@ const props = defineProps({
   post: {
     type: Object,
     required: true
+  },
+  startInEditMode: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -128,7 +132,13 @@ watch(() => props.show, (newValue) => {
   if (newValue) {
     document.body.style.overflow = 'hidden';
     currentImageIndex.value = 0;
-    isEditing.value = false;
+    if (props.startInEditMode && permissionsStore.canEditPost(props.post)) {
+      isEditing.value = true;
+      editedTitle.value = props.post.title;
+      editedContent.value = props.post.content;
+    } else {
+      isEditing.value = false;
+    }
     emit('mark-viewed', props.post.id);
   } else {
     document.body.style.overflow = '';
