@@ -29,26 +29,16 @@
           class="mobile-campaigns-tree"/>
         
         <div v-if="campaignsStore.currentCampaign" class="sort-controls flex-align-center">
-          <span class="sort-label">{{ t('sort.label') }}:</span>
-          <button
-              @click="changeSortBy('created')"
-              :class="{ primary: postsStore.sortBy === 'created', secondary: postsStore.sortBy !== 'created' }"
-          >
-            {{ t('sort.byCreated') }}
-            <span>{{ postsStore.sortDirection === 'desc' ? ' ↓' : ' ↑' }}</span>
-          </button>
-          <button
-              @click="changeSortBy('updated')"
-              :class="{ primary: postsStore.sortBy === 'updated', secondary: postsStore.sortBy !== 'updated' }"
-          >
-            {{ t('sort.byUpdated') }}
-          </button>
-          <button
-              @click="changeSortBy('custom')"
-              :class="{ primary: postsStore.sortBy === 'custom', secondary: postsStore.sortBy !== 'custom' }"
-          >
-            {{ t('sort.byCustom') }}
-          </button>
+          <SortDropdown
+              v-model="currentSortValue"
+              @change="changeSortBy"
+              :options="[
+                { value: 'custom', label: t('sort.byCustom') },
+                { value: 'created_asc', label: t('sort.byCreated') + ' ↑' },
+                { value: 'created_desc', label: t('sort.byCreated') + ' ↓' },
+                { value: 'updated', label: t('sort.byUpdated') }
+              ]"
+          />
           <input
               v-model="searchQuery"
               type="text"
@@ -144,6 +134,7 @@ import draggable from 'vuedraggable';
 import CampaignsTree from './components/right/tree/CampaignsTree.vue';
 import PostCard from './components/middle/PostCard.vue';
 import PostCreator from './components/middle/PostCreator.vue';
+import SortDropdown from './components/middle/SortDropdown.vue';
 import PostDetailModal from './components/modals/PostDetailModal.vue';
 import LanguageSelector from './components/up/LanguageSelector.vue';
 import ThemeToggle from './components/up/ThemeToggle.vue';
@@ -179,6 +170,20 @@ const isCurrentCampaignOwned = computed(() => {
   return campaignsStore.ownedCampaigns.some(
       campaign => campaign.id === campaignsStore.currentCampaign.id
   );
+});
+
+const currentSortValue = computed({
+  get() {
+    if (postsStore.sortBy === 'custom') return 'custom';
+    if (postsStore.sortBy === 'updated') return 'updated';
+    if (postsStore.sortBy === 'created') {
+      return postsStore.sortDirection === 'asc' ? 'created_asc' : 'created_desc';
+    }
+    return 'custom';
+  },
+  set(value) {
+    // The setter is not used since we use @change event
+  }
 });
 
 function isPostOwner(post) {

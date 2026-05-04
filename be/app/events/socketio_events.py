@@ -27,7 +27,6 @@ def handle_connect(auth):
             # Join user's personal room
             join_room(f'user_{user_id}')
 
-            print(f'User {user_id} connected')
             return True
         else:
             return False
@@ -43,7 +42,6 @@ def handle_disconnect():
     for user_id, sid in list(user_sessions.items()):
         if sid == request.sid:
             del user_sessions[user_id]
-            print(f'User {user_id} disconnected')
             break
 
 

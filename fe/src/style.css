@@ -270,7 +270,7 @@ input::placeholder, textarea::placeholder {
     margin: 0 auto;
     padding: 20px 40px;
     display: grid;
-    grid-template-columns: minmax(380px, auto) 1fr minmax(300px, auto);
+    grid-template-columns: minmax(300px, 380px) minmax(500px, 1fr) minmax(280px, 300px);
     gap: 20px;
     align-items: start;
 }
@@ -283,8 +283,8 @@ input::placeholder, textarea::placeholder {
 }
 
 .feed {
-    max-width: 680px;
-    min-width: 0;
+    max-width: 800px;
+    min-width: 500px;
     margin: 0 auto;
 }
 
@@ -308,6 +308,77 @@ input::placeholder, textarea::placeholder {
 .sort-controls button {
     padding: 6px 12px;
     font-size: 12px;
+}
+
+.sort-dropdown-wrapper {
+    position: relative;
+    min-width: 120px;
+    max-width: 150px;
+}
+
+.sort-dropdown-button {
+    width: 100%;
+    padding: 6px 12px;
+    font-size: 12px;
+    border: 2px solid var(--input-border);
+    border-radius: 4px;
+    background: var(--card-bg-1);
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+    font-family: 'Crimson Text', serif;
+}
+
+.sort-dropdown-button:hover {
+    border-color: var(--accent-gold-1);
+}
+
+.sort-dropdown-button.is-open {
+    border-color: var(--accent-gold-1);
+    box-shadow: 0 0 10px rgba(139, 111, 71, 0.3);
+}
+
+.dropdown-arrow {
+    margin-left: 8px;
+    font-size: 10px;
+    color: var(--text-secondary);
+}
+
+.sort-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    background: var(--card-bg-1);
+    border: 2px solid var(--input-border);
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.sort-dropdown-item {
+    padding: 8px 12px;
+    font-size: 12px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background 0.2s ease;
+    font-family: 'Crimson Text', serif;
+}
+
+.sort-dropdown-item:hover {
+    background: var(--accent-gold-1);
+    color: #f5e6d3;
+}
+
+.sort-dropdown-item.is-selected {
+    background: rgba(139, 111, 71, 0.3);
+    color: var(--accent-gold-1);
+    font-weight: 600;
 }
 
 .search-input {

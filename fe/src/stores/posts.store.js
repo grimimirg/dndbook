@@ -123,6 +123,12 @@ export const usePostsStore = defineStore('posts', () => {
     } else if (sort === 'updated') {
       sortBy.value = 'updated';
       sortDirection.value = 'desc';
+    } else if (sort === 'created_asc') {
+      sortBy.value = 'created';
+      sortDirection.value = 'asc';
+    } else if (sort === 'created_desc') {
+      sortBy.value = 'created';
+      sortDirection.value = 'desc';
     } else if (sortBy.value === sort) {
       sortDirection.value = sortDirection.value === 'desc' ? 'asc' : 'desc';
     } else {
