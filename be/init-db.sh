@@ -173,6 +173,16 @@ try:
         else:
             print("✓ post_order column already exists in posts table")
 
+        # Add importance_level column to posts table if it doesn't exist
+        if 'importance_level' not in posts_columns:
+            print("Adding importance_level column to posts table...")
+            with db.engine.connect() as conn:
+                conn.execute(text("ALTER TABLE posts ADD COLUMN importance_level INTEGER DEFAULT 0"))
+                conn.commit()
+            print("✓ importance_level column added to posts table")
+        else:
+            print("✓ importance_level column already exists in posts table")
+
         # Check if admin user exists
         admin_user = User.query.filter_by(username='admin').first()
 

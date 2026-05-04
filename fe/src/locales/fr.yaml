@@ -91,6 +91,10 @@ post:
   editMode: "Mode édition"
   confirmDelete: "Êtes-vous sûr de vouloir supprimer cette publication ?"
   uploadImage: "Télécharger une image"
+  importance: "Importance"
+  importanceLevel: "Niveau d'importance"
+  importancePlaceholder: "Sélectionner le niveau d'importance (0-10)"
+  unviewed: "Non vu"
 
 comment:
   comments: "Commentaires"
@@ -109,6 +113,12 @@ sort:
   byUpdated: "Dernière mise à jour"
   byCustom: "Ordre personnalisé"
   search: "Rechercher des publications..."
+  byImportance: "Filtrer par importance"
+  importanceAll: "Tous"
+  importanceNone: "Aucun"
+  importanceLow: "Faible (1-4)"
+  importanceMedium: "Moyen (5-7)"
+  importanceHigh: "Élevé (8-10)"
 
 invite:
   notifications: "Notifications"

@@ -4,7 +4,10 @@
       <h3 class="post-title" @click="openModal">{{ post.title }}</h3>
       <div class="post-header-actions flex-align-center">
         <span v-if="!isOwner && !isViewed" class="checkmark-icon" :title="t('post.unviewed')">✓</span>
-        <button class="delete-button" @click.stop="showDeletePostConfirm = true" :title="t('post.delete')">
+        <span v-if="post.importance_level > 0" class="importance-indicator" :title="post.importance_level">
+          {{ '!'.repeat(post.importance_level) }}
+        </span>
+        <button v-if="isOwner" class="delete-button" @click.stop="showDeletePostConfirm = true" :title="t('post.delete')">
           ×
         </button>
       </div>

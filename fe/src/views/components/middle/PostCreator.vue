@@ -5,14 +5,26 @@
         <input v-model="title" :placeholder="t('post.title')" required />
       </div>
       <div class="form-group">
-        <textarea 
-          v-model="content" 
-          :placeholder="t('post.content')" 
+        <textarea
+          v-model="content"
+          :placeholder="t('post.content')"
           rows="4"
           required
         ></textarea>
       </div>
-      
+
+      <div class="form-group">
+        <label>{{ t('post.importance') }}</label>
+        <input
+          v-model.number="importanceLevel"
+          type="number"
+          min="0"
+          max="10"
+          :placeholder="t('post.importancePlaceholder')"
+          class="importance-input"
+        />
+      </div>
+
       <div v-if="selectedImages.length > 0" class="image-previews">
         <div v-for="(image, index) in selectedImages" :key="index" class="image-preview">
           <img :src="image.preview" :alt="`Preview ${index + 1}`" />
@@ -53,6 +65,7 @@ const postsStore = usePostsStore();
 
 const title = ref('');
 const content = ref('');
+const importanceLevel = ref(0);
 const loading = ref(false);
 const selectedImages = ref([]);
 const fileInput = ref(null);
@@ -90,7 +103,8 @@ async function handleCreatePost() {
   const result = await postsStore.createPost(
     campaignsStore.currentCampaign.id,
     title.value,
-    content.value
+    content.value,
+    importanceLevel.value
   );
   
   if (result.success && result.post) {
@@ -101,9 +115,10 @@ async function handleCreatePost() {
     }
     
     await postsStore.fetchPosts(campaignsStore.currentCampaign.id);
-    
+
     title.value = '';
     content.value = '';
+    importanceLevel.value = 0;
     selectedImages.value = [];
   }
   

@@ -40,19 +40,20 @@ export const usePostsStore = defineStore('posts', () => {
     }
   }
 
-  async function createPost(campaignId, title, content) {
+  async function createPost(campaignId, title, content, importanceLevel = 0) {
     try {
-      const response = await api.post('/posts', { 
-        campaign_id: campaignId, 
-        title, 
-        content 
+      const response = await api.post('/posts', {
+        campaign_id: campaignId,
+        title,
+        content,
+        importance_level: importanceLevel
       });
       posts.value.unshift(response.data);
       return { success: true, post: response.data };
     } catch (error) {
-      return { 
-        success: false, 
-        error: error.response?.data?.error || 'Failed to create post' 
+      return {
+        success: false,
+        error: error.response?.data?.error || 'Failed to create post'
       };
     }
   }

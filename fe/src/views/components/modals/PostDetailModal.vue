@@ -72,6 +72,18 @@
           />
         </div>
 
+        <div v-if="isEditing" class="edit-importance">
+          <label>{{ t('post.importance') }}</label>
+          <input
+            v-model.number="editedImportanceLevel"
+            type="number"
+            min="0"
+            max="10"
+            :placeholder="t('post.importancePlaceholder')"
+            class="importance-input"
+          />
+        </div>
+
         <div v-if="isEditing" class="edit-actions flex-end" style="margin-top: 1rem;">
           <button class="cancel-button" @click="cancelEditing">
             {{ t('post.cancel') }}
@@ -85,7 +97,7 @@
           <button v-if="!isEditing && permissionsStore.canEditPost(props.post)" class="edit-button" @click="startEditing">
             {{ t('post.edit') }}
           </button>
-          <button class="delete-button-modal" @click="$emit('delete')">
+          <button v-if="isOwner" class="delete-button-modal" @click="$emit('delete')">
             {{ t('post.delete') }}
           </button>
         </div>
@@ -116,6 +128,10 @@ const props = defineProps({
   startInEditMode: {
     type: Boolean,
     default: false
+  },
+  isOwner: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -125,6 +141,7 @@ const currentImageIndex = ref(0);
 const isEditing = ref(false);
 const editedTitle = ref('');
 const editedContent = ref('');
+const editedImportanceLevel = ref(0);
 const saving = ref(false);
 const fileInput = ref(null);
 
@@ -136,6 +153,7 @@ watch(() => props.show, (newValue) => {
       isEditing.value = true;
       editedTitle.value = props.post.title;
       editedContent.value = props.post.content;
+      editedImportanceLevel.value = props.post.importance_level || 0;
     } else {
       isEditing.value = false;
     }
@@ -189,12 +207,14 @@ function startEditing() {
   isEditing.value = true;
   editedTitle.value = props.post.title;
   editedContent.value = props.post.content;
+  editedImportanceLevel.value = props.post.importance_level || 0;
 }
 
 function cancelEditing() {
   isEditing.value = false;
   editedTitle.value = '';
   editedContent.value = '';
+  editedImportanceLevel.value = 0;
 }
 
 async function saveChanges() {
@@ -206,7 +226,8 @@ async function saveChanges() {
   saving.value = true;
   const result = await postsStore.updatePost(props.post.id, {
     title: editedTitle.value,
-    content: editedContent.value
+    content: editedContent.value,
+    importance_level: editedImportanceLevel.value
   });
 
   saving.value = false;

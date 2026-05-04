@@ -1531,6 +1531,13 @@ input::placeholder, textarea::placeholder {
     padding: 0;
 }
 
+.importance-indicator {
+    color: #e74c3c;
+    font-weight: bold;
+    margin-left: 8px;
+    font-size: 1.2em;
+}
+
 .post-image {
     width: 100%;
     height: 300px;

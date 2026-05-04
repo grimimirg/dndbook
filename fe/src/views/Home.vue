@@ -32,12 +32,7 @@
           <SortDropdown
               v-model="currentSortValue"
               @change="changeSortBy"
-              :options="[
-                { value: 'custom', label: t('sort.byCustom') },
-                { value: 'created_asc', label: t('sort.byCreated') + ' ↑' },
-                { value: 'created_desc', label: t('sort.byCreated') + ' ↓' },
-                { value: 'updated', label: t('sort.byUpdated') }
-              ]"
+              :options="sortOptions"
           />
           <input
               v-model="searchQuery"
@@ -114,6 +109,7 @@
         :show="showPostDetailModal"
         :post="selectedPost"
         :start-in-edit-mode="startInEditMode"
+        :is-owner="isCurrentCampaignOwned"
         @close="showPostDetailModal = false; startInEditMode = false"
     />
   </div>
@@ -158,6 +154,7 @@ const playersPanel = ref(null);
 const hamburgerMenu = ref(null);
 const searchQuery = ref('');
 const debouncedSearchQuery = ref('');
+const importanceFilter = ref('importance_all');
 const viewedPostIds = ref(new Set());
 const highlightedCommentId = ref(null);
 const showPostDetailModal = ref(false);
@@ -186,21 +183,56 @@ const currentSortValue = computed({
   }
 });
 
+const sortOptions = computed(() => {
+  const sortChoices = [
+    { value: 'custom', label: t('sort.byCustom') },
+    { value: 'created_asc', label: t('sort.byCreated') + ' ↑' },
+    { value: 'created_desc', label: t('sort.byCreated') + ' ↓' },
+    { value: 'updated', label: t('sort.byUpdated') }
+  ];
+
+  const importanceChoices = [
+    { value: 'importance_all', label: t('sort.importanceAll') },
+    { value: 'importance_none', label: t('sort.importanceNone') },
+    { value: 'importance_low', label: t('sort.importanceLow') },
+    { value: 'importance_medium', label: t('sort.importanceMedium') },
+    { value: 'importance_high', label: t('sort.importanceHigh') }
+  ];
+
+  return [...sortChoices, { value: 'divider', label: '—' }, ...importanceChoices];
+});
+
 function isPostOwner(post) {
   return permissionsStore.isPostOwner(post);
 }
 
 const filteredPosts = computed(() => {
-  if (!debouncedSearchQuery.value.trim()) {
-    return postsStore.posts;
+  let filtered = postsStore.posts;
+
+  // Apply search filter
+  if (debouncedSearchQuery.value.trim()) {
+    const query = debouncedSearchQuery.value.toLowerCase();
+    filtered = filtered.filter(post => {
+      const titleMatch = post.title?.toLowerCase().includes(query);
+      const contentMatch = post.content?.toLowerCase().includes(query);
+      return titleMatch || contentMatch;
+    });
   }
 
-  const query = debouncedSearchQuery.value.toLowerCase();
-  return postsStore.posts.filter(post => {
-    const titleMatch = post.title?.toLowerCase().includes(query);
-    const contentMatch = post.content?.toLowerCase().includes(query);
-    return titleMatch || contentMatch;
-  });
+  // Apply importance filter
+  if (importanceFilter.value !== 'importance_all') {
+    if (importanceFilter.value === 'importance_none') {
+      filtered = filtered.filter(post => post.importance_level === 0);
+    } else if (importanceFilter.value === 'importance_low') {
+      filtered = filtered.filter(post => post.importance_level >= 1 && post.importance_level <= 4);
+    } else if (importanceFilter.value === 'importance_medium') {
+      filtered = filtered.filter(post => post.importance_level >= 5 && post.importance_level <= 7);
+    } else if (importanceFilter.value === 'importance_high') {
+      filtered = filtered.filter(post => post.importance_level >= 8 && post.importance_level <= 10);
+    }
+  }
+
+  return filtered;
 });
 
 watch(searchQuery, (newValue) => {
@@ -284,6 +316,18 @@ function handleLogout() {
 }
 
 async function changeSortBy(sort) {
+  // Ignore divider option
+  if (sort === 'divider') {
+    return;
+  }
+
+  // Handle importance filter selection
+  if (sort.startsWith('importance_')) {
+    importanceFilter.value = sort;
+    return;
+  }
+
+  // Handle sort option selection
   postsStore.setSortBy(sort);
   if (campaignsStore.currentCampaign) {
     await postsStore.fetchPosts(campaignsStore.currentCampaign.id);

@@ -153,13 +153,20 @@ def get_posts(current_user, campaign_id):
     per_page = request.args.get('per_page', current_app.config['POSTS_PER_PAGE'], type=int)
     sort_by = request.args.get('sort', 'order')
     order = request.args.get('order', 'asc')
+    importance_level = request.args.get('importance_level', type=int)
 
     campaign = Campaign.query.get_or_404(campaign_id)
-    
+
     if not can_access_campaign(campaign, current_user):
         return jsonify({'error': 'Unauthorized'}), 403
-    
+
     query = Post.query.filter_by(campaign_id=campaign_id)
+
+    # Apply importance filter if provided
+    if importance_level is not None:
+        if importance_level < 0 or importance_level > 10:
+            return jsonify({'error': 'importance_level must be between 0 and 10'}), 400
+        query = query.filter_by(importance_level=importance_level)
 
     # Determine the sort field
     if sort_by == 'order' or sort_by == 'custom':
@@ -210,7 +217,7 @@ def create_post(current_user):
         - 404: Campaign not found
     """
     data = request.get_json()
-    
+
     if not data or not data.get('campaign_id') or not data.get('title') or not data.get('content'):
         return jsonify({'error': 'Missing required fields'}), 400
 
@@ -218,6 +225,11 @@ def create_post(current_user):
 
     if not can_access_campaign(campaign, current_user):
         return jsonify({'error': 'Unauthorized'}), 403
+
+    # Validate and set importance_level
+    importance_level = data.get('importance_level', 0)
+    if not isinstance(importance_level, int) or importance_level < 0 or importance_level > 10:
+        return jsonify({'error': 'importance_level must be an integer between 0 and 10'}), 400
 
     # Calculate order as max existing order + 1 for this campaign
     max_order = db.session.query(db.func.max(Post.post_order)).filter_by(campaign_id=data['campaign_id']).scalar()
@@ -228,7 +240,8 @@ def create_post(current_user):
         author_id=current_user.id,
         title=data['title'],
         content=data['content'],
-        post_order=new_order
+        post_order=new_order,
+        importance_level=importance_level
     )
 
     db.session.add(post)
@@ -302,11 +315,16 @@ def update_post(current_user, post_id):
         return jsonify({'error': 'Unauthorized'}), 403
     
     data = request.get_json()
-    
+
     if data.get('title'):
         post.title = data['title']
     if data.get('content'):
         post.content = data['content']
+    if data.get('importance_level') is not None:
+        importance_level = data['importance_level']
+        if not isinstance(importance_level, int) or importance_level < 0 or importance_level > 10:
+            return jsonify({'error': 'importance_level must be an integer between 0 and 10'}), 400
+        post.importance_level = importance_level
     
     db.session.commit()
     
@@ -352,6 +370,10 @@ def delete_post(current_user, post_id):
             os.remove(os.path.join(current_app.config['UPLOAD_FOLDER'], image.file_path))
         except:
             pass
+    
+    # Delete related post_viewed_status records
+    from app.models.post_viewed_status import PostViewedStatus
+    db.session.execute(PostViewedStatus.delete().where(PostViewedStatus.c.post_id == post_id))
     
     db.session.delete(post)
     db.session.commit()

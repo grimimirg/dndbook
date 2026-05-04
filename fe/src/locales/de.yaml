@@ -91,6 +91,10 @@ post:
   editMode: "Bearbeitungsmodus"
   confirmDelete: "Sind Sie sicher, dass Sie diesen Beitrag löschen möchten?"
   uploadImage: "Bild hochladen"
+  importance: "Wichtigkeit"
+  importanceLevel: "Wichtigkeitsstufe"
+  importancePlaceholder: "Wichtigkeitsstufe auswählen (0-10)"
+  unviewed: "Ungesehen"
 
 comment:
   comments: "Kommentare"
@@ -109,6 +113,12 @@ sort:
   byUpdated: "Letzter Aktualisierung"
   byCustom: "Benutzerdefinierte Reihenfolge"
   search: "Beiträge suchen..."
+  byImportance: "Nach Wichtigkeit filtern"
+  importanceAll: "Alle"
+  importanceNone: "Keine"
+  importanceLow: "Niedrig (1-4)"
+  importanceMedium: "Mittel (5-7)"
+  importanceHigh: "Hoch (8-10)"
 
 invite:
   notifications: "Benachrichtigungen"

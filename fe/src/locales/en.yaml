@@ -91,6 +91,10 @@ post:
   editMode: "Edit mode"
   confirmDelete: "Are you sure you want to delete this post?"
   uploadImage: "Upload image"
+  importance: "Importance"
+  importanceLevel: "Importance Level"
+  importancePlaceholder: "Select importance level (0-10)"
+  unviewed: "Unviewed"
 
 comment:
   comments: "Comments"
@@ -109,6 +113,12 @@ sort:
   byUpdated: "Last Update"
   byCustom: "Custom Order"
   search: "Search posts..."
+  byImportance: "Filter by Importance"
+  importanceAll: "All"
+  importanceNone: "None"
+  importanceLow: "Low (1-4)"
+  importanceMedium: "Medium (5-7)"
+  importanceHigh: "High (8-10)"
   
 invite:
   notifications: "Notifications"
