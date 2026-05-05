@@ -4,7 +4,7 @@ app:
   settings: "Settings"
   language: "Language"
   theme: "Theme"
-  
+
 auth:
   login: "Login"
   register: "Register"
@@ -81,16 +81,21 @@ post:
   updated: "Updated"
   by: "By"
   readMore: "Read more"
-  addImages: "Add Images"
   removeImage: "Remove image"
   edit: "Edit"
   delete: "Delete"
   deleteTitle: "Delete Post"
   save: "Save"
   cancel: "Cancel"
-  editMode: "Edit mode"
   confirmDelete: "Are you sure you want to delete this post?"
   uploadImage: "Upload image"
+  addImages: "Add images"
+  imageDescription: "Image description"
+  reorderImages: "Reorder images"
+  previousImage: "Previous image"
+  nextImage: "Next image"
+  moreImages: "+{count} more"
+  maxImagesWarning: "Maximum {max} images allowed"
   importance: "Importance"
   importanceLevel: "Importance Level"
   importancePlaceholder: "Select importance level (0-10)"
@@ -136,11 +141,6 @@ notification:
   minutesAgo: "{n}m ago"
   hoursAgo: "{n}h ago"
   daysAgo: "{n}d ago"
-  type:
-    post_created: "New post"
-    post_edited: "Post updated"
-    invite: "Campaign invite"
-    comment_added: "New comment"
 
 common:
   loading: "Loading..."
@@ -172,3 +172,4 @@ character:
   delete: "Delete"
   deleteTitle: "Delete Character"
   confirmDelete: "Are you sure you want to delete this character?"
+  actions: "Actions"

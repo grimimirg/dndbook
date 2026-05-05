@@ -15,21 +15,36 @@
 
       <div class="form-group">
         <label>{{ t('post.importance') }}</label>
-        <input
-          v-model.number="importanceLevel"
-          type="number"
-          min="0"
-          max="10"
-          :placeholder="t('post.importancePlaceholder')"
-          class="importance-input"
-        />
+        <div class="importance-selector">
+          <span
+              v-for="i in 10"
+              :key="i"
+              @click="importanceLevel = i"
+              class="importance-mark"
+              :class="{ active: i <= importanceLevel }"
+          >
+            !
+          </span>
+        </div>
       </div>
 
       <div v-if="selectedImages.length > 0" class="image-previews">
         <div v-for="(image, index) in selectedImages" :key="index" class="image-preview">
           <img :src="image.preview" :alt="`Preview ${index + 1}`" />
+          <button @click="moveImageUp(index)" v-if="index > 0" class="move-image btn-circle btn-circle-sm">↑</button>
+          <button @click="moveImageDown(index)" v-if="index < selectedImages.length - 1" class="move-image btn-circle btn-circle-sm">↓</button>
           <button @click="removeImage(index)" class="remove-image btn-circle btn-circle-sm">×</button>
+          <textarea
+            v-model="image.description"
+            :placeholder="t('post.imageDescription')"
+            class="image-description"
+            rows="2"
+          ></textarea>
         </div>
+      </div>
+
+      <div v-if="selectedImages.length >= 10" class="max-images-warning">
+        {{ t('post.maxImagesWarning', { max: 10 }) }}
       </div>
       
       <div class="actions flex-between">
@@ -72,20 +87,26 @@ const fileInput = ref(null);
 
 function handleImageSelect(event) {
   const files = Array.from(event.target.files);
-  
+
+  if (selectedImages.value.length + files.length > 10) {
+    alert(t('post.maxImagesWarning', { max: 10 }));
+    return;
+  }
+
   files.forEach(file => {
     if (file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = (e) => {
         selectedImages.value.push({
           file: file,
-          preview: e.target.result
+          preview: e.target.result,
+          description: ''
         });
       };
       reader.readAsDataURL(file);
     }
   });
-  
+
   if (fileInput.value) {
     fileInput.value.value = '';
   }
@@ -93,6 +114,22 @@ function handleImageSelect(event) {
 
 function removeImage(index) {
   selectedImages.value.splice(index, 1);
+}
+
+function moveImageUp(index) {
+  if (index > 0) {
+    const temp = selectedImages.value[index];
+    selectedImages.value[index] = selectedImages.value[index - 1];
+    selectedImages.value[index - 1] = temp;
+  }
+}
+
+function moveImageDown(index) {
+  if (index < selectedImages.value.length - 1) {
+    const temp = selectedImages.value[index];
+    selectedImages.value[index] = selectedImages.value[index + 1];
+    selectedImages.value[index + 1] = temp;
+  }
 }
 
 async function handleCreatePost() {
@@ -109,11 +146,11 @@ async function handleCreatePost() {
   
   if (result.success && result.post) {
     const postId = result.post.id;
-    
-    for (const image of selectedImages.value) {
-      await postsStore.uploadImage(postId, image.file);
+
+    for (const [index, image] of selectedImages.value.entries()) {
+      await postsStore.uploadImage(postId, image.file, image.description, index);
     }
-    
+
     await postsStore.fetchPosts(campaignsStore.currentCampaign.id);
 
     title.value = '';
@@ -125,3 +162,29 @@ async function handleCreatePost() {
   loading.value = false;
 }
 </script>
+
+<style scoped>
+.importance-selector {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.importance-mark {
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-color);
+  opacity: 0.3;
+  transition: opacity 0.2s, color 0.2s;
+  user-select: none;
+}
+
+.importance-mark:hover {
+  opacity: 0.6;
+}
+
+.importance-mark.active {
+  color: #e74c3c;
+  opacity: 1;
+}
+</style>

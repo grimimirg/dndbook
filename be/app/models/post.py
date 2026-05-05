@@ -25,6 +25,7 @@ class Post(db.Model):
                              order_by='Image.order_index')
     comments = db.relationship('Comment', backref='post', lazy=True, cascade='all, delete-orphan',
                                order_by='Comment.created_at')
+    notifications = db.relationship('Notification', backref='related_post', lazy=True, cascade='all, delete-orphan')
 
     def to_dict(self, include_images=True, include_comments=True):
         """

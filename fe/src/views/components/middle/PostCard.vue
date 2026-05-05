@@ -21,13 +21,17 @@
     </div>
 
     <div v-if="post.images && post.images.length > 0" class="post-images">
-      <div class="image-container">
-        <img :src="getImageUrl(post.images[currentImageIndex].file_path)" alt="Post image" class="post-image" @click="openLightbox(currentImageIndex)"/>
-
-        <div v-if="post.images.length > 1" class="image-controls flex-align-center">
-          <button @click="previousImage" class="nav-button" :disabled="currentImageIndex === 0">‹</button>
-          <span class="image-counter">{{ currentImageIndex + 1 }} / {{ post.images.length }}</span>
-          <button @click="nextImage" class="nav-button">›</button>
+      <div class="image-grid" :class="`grid-${Math.min(post.images.length, 3)}`">
+        <div
+            v-for="(image, index) in post.images.slice(0, 3)"
+            :key="index"
+            class="grid-image"
+            @click="openModalWithImage(index)"
+        >
+          <img :src="getImageUrl(image.file_path)" :alt="`Post image ${index + 1}`" />
+          <div v-if="index === 2 && post.images.length > 3" class="more-images-overlay">
+            <span>{{ t('post.moreImages', { count: post.images.length - 3 }) }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -130,6 +134,8 @@
     <PostDetailModal
         :show="showModal"
         :post="post"
+        :start-image-index="modalImageIndex"
+        :is-owner="isOwner"
         @close="closeModal"
         @delete="showDeletePostConfirm = true"
         @mark-viewed="emitMarkViewed"
@@ -150,13 +156,6 @@
         @confirm="confirmDeleteComment"
         @cancel="cancelDeleteComment"
     />
-
-    <ImageLightbox
-        :show="showLightbox"
-        :images="post.images"
-        :initial-index="lightboxImageIndex"
-        @close="closeLightbox"
-    />
   </div>
 </template>
 
@@ -168,7 +167,6 @@ import {useAuthStore} from '../../../stores/auth.store.js';
 import {usePermissionsStore} from '../../../stores/permissions.store.js';
 import ConfirmModal from '../modals/ConfirmModal.vue';
 import PostDetailModal from '../modals/PostDetailModal.vue';
-import ImageLightbox from '../modals/ImageLightbox.vue';
 
 const {t} = useI18n();
 const postsStore = usePostsStore();
@@ -198,10 +196,8 @@ const props = defineProps({
 
 const PREVIEW_CHAR_LIMIT = parseInt(import.meta.env.VITE_POST_PREVIEW_LIMIT || '200');
 
-const currentImageIndex = ref(0);
 const showModal = ref(false);
-const showLightbox = ref(false);
-const lightboxImageIndex = ref(0);
+const modalImageIndex = ref(0);
 const newCommentContent = ref('');
 const editingCommentId = ref(null);
 const editedCommentContent = ref('');
@@ -223,6 +219,12 @@ const isContentTruncated = computed(() => {
 });
 
 function openModal() {
+  modalImageIndex.value = 0;
+  showModal.value = true;
+}
+
+function openModalWithImage(index) {
+  modalImageIndex.value = index;
   showModal.value = true;
 }
 
@@ -245,31 +247,6 @@ function getImageUrl(filePath) {
   if (!filePath) return '';
   if (filePath.startsWith('http')) return filePath;
   return filePath;
-}
-
-function previousImage() {
-  if (currentImageIndex.value > 0) {
-    currentImageIndex.value--;
-  } else {
-    currentImageIndex.value = props.post.images.length - 1;
-  }
-}
-
-function nextImage() {
-  if (currentImageIndex.value < props.post.images.length - 1) {
-    currentImageIndex.value++;
-  } else {
-    currentImageIndex.value = 0;
-  }
-}
-
-function openLightbox(index) {
-  lightboxImageIndex.value = index;
-  showLightbox.value = true;
-}
-
-function closeLightbox() {
-  showLightbox.value = false;
 }
 
 async function confirmDeletePost() {
@@ -354,3 +331,54 @@ function emitMarkViewed(postId) {
   emit('mark-viewed', postId);
 }
 </script>
+
+<style scoped>
+.image-grid {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 1rem;
+}
+
+.grid-1 {
+  grid-template-columns: 1fr;
+}
+
+.grid-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.grid-3 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+}
+
+.grid-3 .grid-image:nth-child(3) {
+  grid-column: span 2;
+}
+
+.grid-image {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.grid-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.more-images-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+</style>

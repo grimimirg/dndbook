@@ -15,6 +15,7 @@ class Image(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=False)
     file_path = db.Column(db.String(500), nullable=False)
+    description = db.Column(db.Text, nullable=True)
     order_index = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -34,5 +35,6 @@ class Image(db.Model):
             'id': self.id,
             'post_id': self.post_id,
             'file_path': file_path,
+            'description': self.description,
             'order_index': self.order_index
         }

@@ -183,6 +183,34 @@ try:
         else:
             print("✓ importance_level column already exists in posts table")
 
+        # Add description and order_index columns to images table if they don't exist
+        # First check if the table exists
+        inspector = inspect(db.engine)
+        table_names = inspector.get_table_names()
+
+        if 'images' in table_names:
+            images_columns = [col['name'] for col in inspector.get_columns('images')]
+
+            if 'description' not in images_columns:
+                print("Adding description column to images table...")
+                with db.engine.connect() as conn:
+                    conn.execute(text("ALTER TABLE images ADD COLUMN description TEXT"))
+                    conn.commit()
+                print("✓ description column added to images table")
+            else:
+                print("✓ description column already exists in images table")
+
+            if 'order_index' not in images_columns:
+                print("Adding order_index column to images table...")
+                with db.engine.connect() as conn:
+                    conn.execute(text("ALTER TABLE images ADD COLUMN order_index INTEGER DEFAULT 0"))
+                    conn.commit()
+                print("✓ order_index column added to images table")
+            else:
+                print("✓ order_index column already exists in images table")
+        else:
+            print("✓ images table does not exist yet (will be created by ORM)")
+
         # Check if admin user exists
         admin_user = User.query.filter_by(username='admin').first()
 

@@ -4,10 +4,6 @@
       <div class="modal-content" @click.stop>
         <span class="close-btn btn-circle btn-circle-md" @click="handleClose">×</span>
 
-        <div v-if="isEditing" class="edit-mode-indicator">
-          {{ t('post.editMode') }}
-        </div>
-
         <h2 v-if="!isEditing">{{ post.title }}</h2>
         <textarea
             v-else
@@ -25,41 +21,61 @@
         </div>
 
         <div v-if="(post.images && post.images.length > 0) || isEditing" class="modal-images">
-          <div class="image-container">
-            <img
-                v-if="post.images && post.images.length > 0"
-                :src="getImageUrl(post.images[currentImageIndex].file_path)"
-                alt="Post image"
-                class="modal-image"
-            />
-
-            <div v-if="post.images && post.images.length > 1" class="image-controls flex-align-center">
-              <button @click="previousImage" class="nav-button" :disabled="currentImageIndex === 0">‹</button>
-              <span class="image-counter">{{ currentImageIndex + 1 }} / {{ post.images.length }}</span>
-              <button @click="nextImage" class="nav-button">›</button>
+          <div class="image-gallery">
+            <div class="image-container">
+              <button v-if="post.images && post.images.length > 1" @click="previousImage" class="nav-button nav-left"
+                      :disabled="currentImageIndex === 0">‹
+              </button>
+              <img
+                  v-if="post.images && post.images.length > 0"
+                  :src="getImageUrl(post.images[currentImageIndex].file_path)"
+                  alt="Post image"
+                  class="modal-image"
+              />
+              <button v-if="post.images && post.images.length > 1" @click="nextImage" class="nav-button nav-right">›
+              </button>
             </div>
 
-            <button
-                v-if="isEditing && post.images && post.images.length > 0"
-                class="remove-image-button"
-                @click="removeCurrentImage"
-            >
-              {{ t('post.removeImage') }}
-            </button>
+            <div class="image-description-panel">
+              <p
+                  v-if="!isEditing && post.images && post.images.length > 0"
+                  class="image-description-text-view"
+              >
+                {{ post.images[currentImageIndex].description || '' }}
+              </p>
+              <textarea
+                  v-if="isEditing && post.images && post.images.length > 0"
+                  v-model="editedImageDescriptions[currentImageIndex]"
+                  :placeholder="t('post.imageDescription')"
+                  class="image-description-text"
+              ></textarea>
+            </div>
           </div>
 
-          <div v-if="isEditing" class="image-upload">
+          <div v-if="isEditing" class="image-edit-controls">
             <input
                 type="file"
                 ref="fileInput"
                 @change="handleImageUpload"
                 accept="image/*"
+                multiple
                 class="hidden-file-input"
             />
-            <button class="upload-button" @click="$refs.fileInput.click()">
-              {{ t('post.uploadImage') }}
-            </button>
+            <div class="flex gap-2 pt-2">
+
+              <button class="upload-button" @click="$refs.fileInput.click()">
+                {{ t('post.uploadImage') }}
+              </button>
+              <button
+                  v-if="post.images && post.images.length > 0"
+                  class="remove-image-button"
+                  @click="removeCurrentImage"
+              >
+                {{ t('post.removeImage') }}
+              </button>
+            </div>
           </div>
+
         </div>
 
         <div class="modal-body">
@@ -74,14 +90,17 @@
 
         <div v-if="isEditing" class="edit-importance">
           <label>{{ t('post.importance') }}</label>
-          <input
-            v-model.number="editedImportanceLevel"
-            type="number"
-            min="0"
-            max="10"
-            :placeholder="t('post.importancePlaceholder')"
-            class="importance-input"
-          />
+          <div class="importance-selector">
+            <span
+                v-for="i in 10"
+                :key="i"
+                @click="editedImportanceLevel = i"
+                class="importance-mark"
+                :class="{ active: i <= editedImportanceLevel }"
+            >
+              !
+            </span>
+          </div>
         </div>
 
         <div v-if="isEditing" class="edit-actions flex-end" style="margin-top: 1rem;">
@@ -94,7 +113,8 @@
         </div>
 
         <div v-if="!isEditing" class="modal-actions flex-end">
-          <button v-if="!isEditing && permissionsStore.canEditPost(props.post)" class="edit-button" @click="startEditing">
+          <button v-if="!isEditing && permissionsStore.canEditPost(props.post)" class="edit-button"
+                  @click="startEditing">
             {{ t('post.edit') }}
           </button>
           <button v-if="isOwner" class="delete-button-modal" @click="$emit('delete')">
@@ -107,7 +127,7 @@
 </template>
 
 <script setup>
-import {ref, watch} from 'vue';
+import {onMounted, onUnmounted, ref, watch} from 'vue';
 import {useI18n} from 'vue-i18n';
 import {usePostsStore} from '../../../stores/posts.store.js';
 import {usePermissionsStore} from '../../../stores/permissions.store.js';
@@ -132,6 +152,10 @@ const props = defineProps({
   isOwner: {
     type: Boolean,
     default: false
+  },
+  startImageIndex: {
+    type: Number,
+    default: 0
   }
 });
 
@@ -142,13 +166,35 @@ const isEditing = ref(false);
 const editedTitle = ref('');
 const editedContent = ref('');
 const editedImportanceLevel = ref(0);
+const editedImageDescriptions = ref({});
 const saving = ref(false);
 const fileInput = ref(null);
+
+let touchStartX = 0;
+let touchEndX = 0;
+
+onMounted(() => {
+  document.addEventListener('keydown', handleKeydown);
+  document.addEventListener('touchstart', handleTouchStart);
+  document.addEventListener('touchend', handleTouchEnd);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeydown);
+  document.removeEventListener('touchstart', handleTouchStart);
+  document.removeEventListener('touchend', handleTouchEnd);
+});
 
 watch(() => props.show, (newValue) => {
   if (newValue) {
     document.body.style.overflow = 'hidden';
-    currentImageIndex.value = 0;
+    currentImageIndex.value = props.startImageIndex || 0;
+    if (props.post.images) {
+      editedImageDescriptions.value = props.post.images.reduce((acc, img, idx) => {
+        acc[idx] = img.description || '';
+        return acc;
+      }, {});
+    }
     if (props.startInEditMode && permissionsStore.canEditPost(props.post)) {
       isEditing.value = true;
       editedTitle.value = props.post.title;
@@ -160,6 +206,14 @@ watch(() => props.show, (newValue) => {
     emit('mark-viewed', props.post.id);
   } else {
     document.body.style.overflow = '';
+  }
+});
+
+watch(() => currentImageIndex.value, (newIndex) => {
+  if (props.post && props.post.images && props.post.images[newIndex]) {
+    if (editedImageDescriptions.value[newIndex] === undefined) {
+      editedImageDescriptions.value[newIndex] = props.post.images[newIndex].description || '';
+    }
   }
 });
 
@@ -217,6 +271,40 @@ function cancelEditing() {
   editedImportanceLevel.value = 0;
 }
 
+function handleKeydown(event) {
+  if (!props.show || !props.post.images || props.post.images.length <= 1) return;
+
+  if (event.key === 'ArrowLeft') {
+    previousImage();
+  } else if (event.key === 'ArrowRight') {
+    nextImage();
+  }
+}
+
+function handleTouchStart(event) {
+  touchStartX = event.changedTouches[0].screenX;
+}
+
+function handleTouchEnd(event) {
+  touchEndX = event.changedTouches[0].screenX;
+  handleSwipe();
+}
+
+function handleSwipe() {
+  if (!props.show || !props.post.images || props.post.images.length <= 1) return;
+
+  const swipeThreshold = 50;
+  const diff = touchStartX - touchEndX;
+
+  if (Math.abs(diff) > swipeThreshold) {
+    if (diff > 0) {
+      nextImage();
+    } else {
+      previousImage();
+    }
+  }
+}
+
 async function saveChanges() {
   if (!editedTitle.value.trim() || !editedContent.value.trim()) {
     alert(t('common.error'));
@@ -224,19 +312,34 @@ async function saveChanges() {
   }
 
   saving.value = true;
+
+  const descriptionsToSave = {...editedImageDescriptions.value};
+
+  if (props.post.images) {
+    for (const [index, image] of props.post.images.entries()) {
+      const description = descriptionsToSave[index] ?? '';
+      await postsStore.updateImageDescription(
+          props.post.id,
+          image.id,
+          description,
+          index
+      );
+    }
+  }
+
   const result = await postsStore.updatePost(props.post.id, {
     title: editedTitle.value,
     content: editedContent.value,
     importance_level: editedImportanceLevel.value
   });
 
-  saving.value = false;
-
   if (result.success) {
     isEditing.value = false;
   } else {
     alert(result.error || t('common.error'));
   }
+
+  saving.value = false;
 }
 
 async function removeCurrentImage() {
@@ -256,51 +359,29 @@ async function removeCurrentImage() {
 }
 
 async function handleImageUpload(event) {
-  const file = event.target.files[0];
-  if (!file) return;
+  const files = Array.from(event.target.files);
+  if (files.length === 0) return;
 
-  const result = await postsStore.uploadImage(props.post.id, file);
+  if (props.post.images && props.post.images.length + files.length > 10) {
+    alert(t('post.maxImagesWarning', {max: 10}));
+    return;
+  }
 
-  if (result.success) {
-    if (!props.post.images) {
-      props.post.images = [];
+  for (const file of files) {
+    const result = await postsStore.uploadImage(props.post.id, file, '', props.post.images ? props.post.images.length : 0);
+
+    if (result.success) {
+      if (!props.post.images) {
+        props.post.images = [];
+      }
+      props.post.images.push(result.image);
+      currentImageIndex.value = props.post.images.length - 1;
+    } else {
+      alert(result.error || t('common.error'));
     }
-    props.post.images.push(result.image);
-    currentImageIndex.value = props.post.images.length - 1;
-  } else {
-    alert(result.error || t('common.error'));
   }
 
   event.target.value = '';
 }
+
 </script>
-
-<style scoped>
-.modal-image {
-  max-width: 100%;
-  max-height: 600px;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  display: block;
-  margin: 0 auto;
-}
-
-.modal-content::-webkit-scrollbar {
-  width: 8px;
-}
-
-.modal-content::-webkit-scrollbar-track {
-  background: var(--input-bg);
-  border-radius: 4px;
-}
-
-.modal-content::-webkit-scrollbar-thumb {
-  background: rgba(139, 111, 71, 0.5);
-  border-radius: 4px;
-}
-
-.modal-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 111, 71, 0.7);
-}
-</style>

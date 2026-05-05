@@ -427,12 +427,19 @@ def upload_image(current_user, post_id):
     
     file_path = os.path.join(upload_folder, unique_filename)
     file.save(file_path)
-    
-    order_index = len(post.images)
-    
+
+    # Get optional description and order_index from form data
+    description = request.form.get('description')
+    order_index = request.form.get('order_index', type=int)
+
+    # If order_index not provided, use next available index
+    if order_index is None:
+        order_index = len(post.images)
+
     image = Image(
         post_id=post_id,
         file_path=unique_filename,
+        description=description,
         order_index=order_index
     )
     
@@ -476,8 +483,104 @@ def delete_image(current_user, post_id, image_id):
     
     db.session.delete(image)
     db.session.commit()
-    
+
     return jsonify({'message': 'Image deleted successfully'}), 200
+
+@bp.route('/posts/<int:post_id>/images/<int:image_id>', methods=['POST'])
+@token_required
+def update_image(current_user, post_id, image_id):
+    """
+    Update an image's description and order.
+
+    User must be campaign owner to modify images.
+
+    Expected JSON payload:
+        - description (str): Updated image description (optional)
+        - order_index (int): Updated order index (optional)
+
+    Args:
+        current_user: The authenticated user (injected by token_required decorator)
+        post_id (int): The ID of the post
+        image_id (int): The ID of the image to update
+
+    Returns:
+        JSON response with:
+        - 200: Updated image data
+        - 403: User is not authorized to modify this image
+        - 404: Post or image not found
+    """
+    post = Post.query.get_or_404(post_id)
+    campaign = Campaign.query.get(post.campaign_id)
+
+    if not can_access_campaign(campaign, current_user):
+        return jsonify({'error': 'Unauthorized'}), 403
+
+    image = Image.query.filter_by(id=image_id, post_id=post_id).first_or_404()
+
+    data = request.get_json()
+
+    if data.get('description') is not None:
+        image.description = data['description']
+
+    if data.get('order_index') is not None:
+        image.order_index = data['order_index']
+
+    db.session.commit()
+
+    return jsonify(image.to_dict()), 200
+
+@bp.route('/posts/<int:post_id>/images/reorder', methods=['PUT'])
+@token_required
+def reorder_images(current_user, post_id):
+    """
+    Reorder all images for a post.
+
+    User must be campaign owner to reorder images.
+
+    Expected JSON payload:
+        - image_orders (array): Array of objects with image_id and order_index
+
+    Args:
+        current_user: The authenticated user (injected by token_required decorator)
+        post_id (int): The ID of the post
+
+    Returns:
+        JSON response with:
+        - 200: Success message
+        - 403: User is not authorized to reorder images
+        - 404: Post not found
+        - 400: Invalid payload
+    """
+    post = Post.query.get_or_404(post_id)
+    campaign = Campaign.query.get(post.campaign_id)
+
+    if not can_access_campaign(campaign, current_user):
+        return jsonify({'error': 'Unauthorized'}), 403
+
+    data = request.get_json()
+
+    if not data or 'image_orders' not in data:
+        return jsonify({'error': 'Missing image_orders in payload'}), 400
+
+    image_orders = data['image_orders']
+
+    if not isinstance(image_orders, list):
+        return jsonify({'error': 'image_orders must be an array'}), 400
+
+    for item in image_orders:
+        image_id = item.get('image_id')
+        order_index = item.get('order_index')
+
+        if image_id is None or order_index is None:
+            return jsonify({'error': 'Each image_order must have image_id and order_index'}), 400
+
+        image = Image.query.filter_by(id=image_id, post_id=post_id).first()
+        if image:
+            image.order_index = order_index
+
+    db.session.commit()
+
+    return jsonify({'message': 'Images reordered successfully'}), 200
 
 @bp.route('/posts/<int:post_id>/comments', methods=['POST'])
 @token_required
