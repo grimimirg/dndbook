@@ -18,6 +18,15 @@
           <span v-if="post.updated_at !== post.created_at">
             {{ t('post.updated') }}: {{ formatDate(post.updated_at) }}
           </span>
+          <span v-if="post.importance_level > 0" class="importance-display">
+            <span
+                v-for="i in post.importance_level"
+                :key="i"
+                class="importance-mark active"
+            >
+              !
+            </span>
+          </span>
         </div>
 
         <div v-if="(post.images && post.images.length > 0) || isEditing" class="modal-images">
@@ -121,8 +130,104 @@
             {{ t('post.delete') }}
           </button>
         </div>
+
+        <div v-if="!isEditing" class="comments-section">
+          <div class="comments-header flex-between">
+            <h4>{{ t('comment.comments') }} ({{ post.comments?.length || 0 }})</h4>
+          </div>
+
+          <div v-if="post.comments && post.comments.length > 0" class="comments-list">
+            <div
+                v-for="comment in post.comments"
+                :key="comment.id"
+                :id="`comment-${comment.id}`"
+                :class="{ 'highlighted': highlightedCommentId === comment.id }"
+                class="comment-item flex-between"
+                @mouseenter="hoveredCommentId = comment.id"
+                @mouseleave="hoveredCommentId = null"
+            >
+              <div class="comment-content">
+                <div class="comment-header flex-between">
+                  <div class="comment-info flex-align-baseline">
+                    <span class="comment-author">{{ comment.author }}</span>
+                    <span class="comment-date">{{ formatDate(comment.created_at) }}</span>
+                  </div>
+
+                  <div v-if="permissionsStore.isCommentOwner(comment)" class="comment-actions flex-align-center"
+                       :class="{ 'visible': hoveredCommentId === comment.id }">
+                    <button
+                        v-if="editingCommentId !== comment.id"
+                        @click="startEditComment(comment)"
+                        class="comment-action-btn edit-btn"
+                        :title="t('comment.edit')"
+                    >
+                      ✎
+                    </button>
+                    <button
+                        v-if="editingCommentId !== comment.id"
+                        @click="handleDeleteComment(comment.id)"
+                        class="comment-action-btn edit-btn"
+                        :title="t('comment.delete')"
+                    >
+                      ✕
+                    </button>
+                    <button
+                        v-if="editingCommentId === comment.id"
+                        @click="saveEditComment(comment.id)"
+                        class="comment-action-btn save-btn"
+                        :title="t('comment.save')"
+                    >
+                      ✓
+                    </button>
+                    <button
+                        v-if="editingCommentId === comment.id"
+                        @click="cancelEditComment"
+                        class="comment-action-btn edit-btn"
+                        :title="t('comment.cancel')"
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                </div>
+                <p v-if="editingCommentId !== comment.id" class="comment-text">{{ comment.content }}</p>
+                <textarea
+                    v-else
+                    v-model="editedCommentContent"
+                    class="comment-edit-input"
+                    @keydown.esc="cancelEditComment"
+                />
+              </div>
+
+            </div>
+          </div>
+
+          <div class="comment-input-container flex-align-center">
+            <textarea
+                v-model="newCommentContent"
+                :placeholder="t('comment.writeComment')"
+                class="comment-input"
+            />
+            <span
+                @click="handleAddComment"
+                class="comment-post-btn"
+                :class="{ 'disabled': !newCommentContent.trim() }"
+                :title="t('comment.post')"
+            >
+              🪶
+            </span>
+          </div>
+        </div>
       </div>
     </div>
+
+    <ConfirmModal
+        :show="showDeleteCommentConfirm"
+        :title="t('comment.deleteTitle')"
+        :message="t('comment.confirmDelete')"
+        @confirm="confirmDeleteComment"
+        @cancel="cancelDeleteComment"
+    />
   </Teleport>
 </template>
 
@@ -131,6 +236,7 @@ import {onMounted, onUnmounted, ref, watch} from 'vue';
 import {useI18n} from 'vue-i18n';
 import {usePostsStore} from '../../../stores/posts.store.js';
 import {usePermissionsStore} from '../../../stores/permissions.store.js';
+import ConfirmModal from './ConfirmModal.vue';
 
 const {t} = useI18n();
 const postsStore = usePostsStore();
@@ -169,6 +275,13 @@ const editedImportanceLevel = ref(0);
 const editedImageDescriptions = ref({});
 const saving = ref(false);
 const fileInput = ref(null);
+const newCommentContent = ref('');
+const editingCommentId = ref(null);
+const editedCommentContent = ref('');
+const hoveredCommentId = ref(null);
+const showDeleteCommentConfirm = ref(false);
+const commentToDelete = ref(null);
+const highlightedCommentId = ref(null);
 
 let touchStartX = 0;
 let touchEndX = 0;
@@ -382,6 +495,69 @@ async function handleImageUpload(event) {
   }
 
   event.target.value = '';
+}
+
+async function handleAddComment() {
+  if (!newCommentContent.value.trim()) return;
+
+  const result = await postsStore.createComment(
+    props.post.id,
+    newCommentContent.value,
+    props.post.title,
+    props.post.campaign_name
+  );
+
+  if (result.success) {
+    newCommentContent.value = '';
+  } else {
+    alert(result.error || t('common.error'));
+  }
+}
+
+function startEditComment(comment) {
+  editingCommentId.value = comment.id;
+  editedCommentContent.value = comment.content;
+}
+
+function cancelEditComment() {
+  editingCommentId.value = null;
+  editedCommentContent.value = '';
+}
+
+async function saveEditComment(commentId) {
+  if (!editedCommentContent.value.trim()) {
+    alert(t('common.error'));
+    return;
+  }
+
+  const result = await postsStore.updateComment(props.post.id, commentId, editedCommentContent.value);
+
+  if (result.success) {
+    editingCommentId.value = null;
+    editedCommentContent.value = '';
+  } else {
+    alert(result.error || t('common.error'));
+  }
+}
+
+function handleDeleteComment(commentId) {
+  commentToDelete.value = commentId;
+  showDeleteCommentConfirm.value = true;
+}
+
+async function confirmDeleteComment() {
+  showDeleteCommentConfirm.value = false;
+  const result = await postsStore.deleteComment(props.post.id, commentToDelete.value);
+
+  if (!result.success) {
+    alert(result.error || t('common.error'));
+  }
+  commentToDelete.value = null;
+}
+
+function cancelDeleteComment() {
+  showDeleteCommentConfirm.value = false;
+  commentToDelete.value = null;
 }
 
 </script>

@@ -2977,3 +2977,15 @@ input::placeholder, textarea::placeholder {
     color: #e74c3c;
     opacity: 1;
 }
+
+.importance-display {
+    display: flex;
+    gap: 0.125rem;
+    margin-left: 0.5rem;
+}
+
+.importance-display .importance-mark {
+    font-size: 1rem;
+    cursor: default;
+    opacity: 1;
+}
