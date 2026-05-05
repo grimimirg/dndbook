@@ -49,13 +49,13 @@ if [ -z "$ADMIN_PASSWORD" ]; then
 fi
 
 echo "✓ Environment variables loaded"
-echo "  DATABASE_URL: ${DATABASE_URL//:*@***:****}"  # Hide password
+echo "  DATABASE_URL: ${DATABASE_URL}"
 echo "  Connection parameters:"
-echo "    POSTGRES_HOST: ${POSTGRES_HOST:-localhost}"
-echo "    POSTGRES_PORT: ${POSTGRES_PORT:-5432}"
+echo "    POSTGRES_HOST: ${POSTGRES_HOST}"
+echo "    POSTGRES_PORT: ${POSTGRES_PORT}"
 echo "    POSTGRES_USER: ${POSTGRES_USER}"
 echo "    POSTGRES_DB: ${POSTGRES_DB}"
-echo "    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD//?/***}"  # Hide password
+echo "    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}"
 
 # Activate virtual environment if it exists
 if [ -d "$SCRIPT_DIR/venv" ]; then
