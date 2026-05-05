@@ -4,7 +4,12 @@
       <div class="modal-content" @click.stop>
         <span class="close-btn btn-circle btn-circle-md" @click="handleClose">×</span>
 
-        <h2 v-if="!isEditing">{{ post.title }}</h2>
+        <div class="modal-title-row" v-if="!isEditing">
+          <h2>{{ post.title }}</h2>
+          <span v-if="post.importance_level > 0" class="importance-indicator" :title="post.importance_level">
+              {{ '!'.repeat(post.importance_level) }}
+          </span>
+        </div>
         <textarea
             v-else
             v-model="editedTitle"
@@ -17,15 +22,6 @@
           <span>{{ t('post.created') }}: {{ formatDate(post.created_at) }}</span>
           <span v-if="post.updated_at !== post.created_at">
             {{ t('post.updated') }}: {{ formatDate(post.updated_at) }}
-          </span>
-          <span v-if="post.importance_level > 0" class="importance-display">
-            <span
-                v-for="i in post.importance_level"
-                :key="i"
-                class="importance-mark active"
-            >
-              !
-            </span>
           </span>
         </div>
 

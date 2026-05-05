@@ -589,6 +589,16 @@ input::placeholder, textarea::placeholder {
     color: var(--text-heading);
 }
 
+.post-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.post-title-row h3 {
+    margin: 0;
+}
+
 .delete-button {
     position: absolute;
     top: 0;
@@ -744,6 +754,16 @@ input::placeholder, textarea::placeholder {
     margin: 0 40px 16px 0;
     font-size: 24px;
     color: var(--text-heading);
+}
+
+.modal-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modal-title-row h2 {
+    margin: 0 40px 16px 0;
 }
 
 .modal-meta {
@@ -1611,7 +1631,7 @@ input::placeholder, textarea::placeholder {
     color: #e74c3c;
     font-weight: bold;
     margin-left: auto;
-    margin-right: 10px;
+    margin-right: 70px;
     font-size: 1.5em;
 }
 
