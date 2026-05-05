@@ -436,8 +436,8 @@ input::placeholder, textarea::placeholder {
 }
 
 .feed {
-    max-width: 800px;
-    min-width: 500px;
+    max-width: 600px;
+    min-width: 600px;
     margin: 0 auto;
 }
 
@@ -1610,8 +1610,9 @@ input::placeholder, textarea::placeholder {
 .importance-indicator {
     color: #e74c3c;
     font-weight: bold;
-    margin-left: 8px;
-    font-size: 1.2em;
+    margin-left: auto;
+    margin-right: 10px;
+    font-size: 1.5em;
 }
 
 

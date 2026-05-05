@@ -8,7 +8,7 @@ from datetime import datetime
 from werkzeug.utils import secure_filename
 
 from app import db
-from app.models import Campaign, Post, Comment, Image, Character, campaign_members
+from app.models import Campaign, Post, Comment, Image, Character, CampaignMembers
 
 
 class ImportService:
@@ -156,7 +156,7 @@ class ImportService:
             new_campaign_id = id_mapping['campaigns'].get(old_campaign_id)
             
             if new_campaign_id and item['user_id'] != current_user.id:
-                stmt = campaign_members.insert().values(
+                stmt = CampaignMembers.insert().values(
                     user_id=item['user_id'],
                     campaign_id=new_campaign_id,
                     joined_at=datetime.fromisoformat(item['joined_at']) if item.get('joined_at') else datetime.utcnow()

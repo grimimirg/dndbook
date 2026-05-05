@@ -1,4 +1,4 @@
-from app.models.campaign_members import campaign_members
+from app.models.campaign_members import CampaignMembers
 from app.models.user import User
 from app.models.campaign import Campaign
 from app.models.post import Post
@@ -10,7 +10,7 @@ from app.models.post_viewed_status import PostViewedStatus
 from app.models.notification import Notification
 
 __all__ = [
-    'campaign_members',
+    'CampaignMembers',
     'User',
     'Campaign',
     'Post',

@@ -79,7 +79,7 @@ def create_app():
              },
              r"/uploads/*": {"origins": "*"}
          },
-         automatic_options=True,  # Handle OPTIONS automatically
+         automatic_options=True,
          intercept_exceptions=False)
 
     socketio.init_app(app)

@@ -4,9 +4,6 @@
       <h3 class="post-title" @click="openModal">{{ post.title }}</h3>
       <div class="post-header-actions flex-align-center">
         <span v-if="!isOwner && !isViewed" class="checkmark-icon" :title="t('post.unviewed')">✓</span>
-        <span v-if="post.importance_level > 0" class="importance-indicator" :title="post.importance_level">
-          {{ '!'.repeat(post.importance_level) }}
-        </span>
         <button v-if="isOwner" class="delete-button" @click.stop="showDeletePostConfirm = true" :title="t('post.delete')">
           ×
         </button>
@@ -16,6 +13,9 @@
         <span>{{ t('post.created') }}: {{ formatDate(post.created_at) }}</span>
         <span v-if="post.updated_at !== post.created_at">
           {{ t('post.updated') }}: {{ formatDate(post.updated_at) }}
+        </span>
+        <span v-if="post.importance_level > 0" class="importance-indicator" :title="post.importance_level">
+          {{ '!'.repeat(post.importance_level) }}
         </span>
       </div>
     </div>

@@ -2,7 +2,7 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
-from app.models.campaign_members import campaign_members
+from app.models.campaign_members import CampaignMembers
 
 
 class User(db.Model):
@@ -21,7 +21,7 @@ class User(db.Model):
 
     owned_campaigns = db.relationship('Campaign', backref='owner', lazy=True, cascade='all, delete-orphan',
                                       foreign_keys='Campaign.owner_id')
-    member_campaigns = db.relationship('Campaign', secondary=campaign_members,
+    member_campaigns = db.relationship('Campaign', secondary=CampaignMembers,
                                        backref=db.backref('members', lazy='dynamic'))
     posts = db.relationship('Post', backref='author', lazy=True, cascade='all, delete-orphan')
     comments = db.relationship('Comment', backref='author', lazy=True, cascade='all, delete-orphan')

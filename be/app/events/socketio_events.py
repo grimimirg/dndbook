@@ -11,7 +11,6 @@ user_sessions = {}
 def handle_connect(auth):
     """Handle client connection"""
     try:
-        # Verify JWT token from auth
         if auth and 'token' in auth:
             token = auth['token']
             decoded = jwt.decode(
@@ -21,10 +20,8 @@ def handle_connect(auth):
             )
             user_id = decoded['user_id']
 
-            # Store session
             user_sessions[user_id] = request.sid
 
-            # Join user's personal room
             join_room(f'user_{user_id}')
 
             return True
@@ -38,7 +35,6 @@ def handle_connect(auth):
 @socketio.on('disconnect')
 def handle_disconnect():
     """Handle client disconnection"""
-    # Remove from user_sessions
     for user_id, sid in list(user_sessions.items()):
         if sid == request.sid:
             del user_sessions[user_id]

@@ -1,128 +1,9 @@
-from flask import Blueprint, request, jsonify, current_app
-from werkzeug.utils import secure_filename
-from app import db
-from app.models import Post, Campaign, Image, Comment, Notification
+from flask import Blueprint, request, jsonify
+
 from app.jwt.jwt_utils import token_required
-from app.events.socketio_events import send_notification
-import os
-import uuid
+from app.services.posts_service import PostsService
 
 bp = Blueprint('posts', __name__, url_prefix='/api')
-
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-
-def allowed_file(filename):
-    """
-    Check if a filename has an allowed extension.
-    
-    Args:
-        filename (str): The filename to check
-        
-    Returns:
-        bool: True if the file extension is allowed, False otherwise
-    """
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-def can_access_campaign(campaign, user):
-    """
-    Check if user can access campaign (owner or member).
-    
-    Args:
-        campaign: The campaign object to check access for
-        user: The user object to verify
-        
-    Returns:
-        bool: True if user is owner or member, False otherwise
-    """
-    if campaign.owner_id == user.id:
-        return True
-    is_member = campaign.members.filter_by(id=user.id).first() is not None
-    return is_member
-
-def create_notification_entries(user_id, campaign_id, notification_type, title, message, related_post_id=None):
-    """
-    Create notification entries for all campaign members (excluding owner).
-
-    Args:
-        user_id (int): The ID of the user who triggered the notification (will be excluded)
-        campaign_id (int): The ID of the campaign
-        notification_type (str): Type of notification ('post_created', 'post_edited', 'invite')
-        title (str): Notification title
-        message (str): Notification message
-        related_post_id (int, optional): Related post ID for post notifications
-    """
-    campaign = Campaign.query.get(campaign_id)
-    if not campaign:
-        return
-
-    # Query campaign members excluding the owner
-    members = campaign.members.filter(Campaign.id != campaign.owner_id).all()
-
-    # Create notification entries for all members
-    for member in members:
-        # Skip the user who made the change
-        if member.id == user_id:
-            continue
-
-        notification = Notification(
-            user_id=member.id,
-            campaign_id=campaign_id,
-            notification_type=notification_type,
-            title=title,
-            message=message,
-            related_post_id=related_post_id
-        )
-        db.session.add(notification)
-
-        # Send WebSocket notification to the member
-        send_notification(member.id)
-
-    db.session.commit()
-
-def create_comment_notification_entries(user_id, campaign_id, post_id, comment_id, comment_content, post_title, campaign_name):
-    """
-    Create notification entries for all campaign members when a comment is added.
-
-    Args:
-        user_id (int): The ID of the user who created the comment (will be excluded)
-        campaign_id (int): The ID of the campaign
-        post_id (int): The ID of the post
-        comment_id (int): The ID of the comment
-        comment_content (str): The content of the comment (for preview)
-        post_title (str): The title of the post (passed from FE to avoid extra query)
-        campaign_name (str): The name of the campaign (passed from FE to avoid extra query)
-    """
-    campaign = Campaign.query.get(campaign_id)
-    if not campaign:
-        return
-
-    # Query all campaign members
-    members = campaign.members.all()
-
-    # Create notification entries for all members
-    for member in members:
-        # Skip the user who made the comment
-        if member.id == user_id:
-            continue
-
-        # Truncate comment content for preview (max 100 chars)
-        comment_preview = comment_content[:100] + '...' if len(comment_content) > 100 else comment_content
-
-        notification = Notification(
-            user_id=member.id,
-            campaign_id=campaign_id,
-            notification_type='comment_added',
-            title='New comment',
-            message=f'New comment on "{post_title}" in {campaign_name}: "{comment_preview}"',
-            related_post_id=post_id,
-            related_comment_id=comment_id
-        )
-        db.session.add(notification)
-
-        # Send WebSocket notification to the member
-        send_notification(member.id)
-
-    db.session.commit()
 
 @bp.route('/campaigns/<int:campaign_id>/posts', methods=['GET'])
 @token_required
@@ -150,48 +31,24 @@ def get_posts(current_user, campaign_id):
         - 404: Campaign not found
     """
     page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', current_app.config['POSTS_PER_PAGE'], type=int)
+    per_page = request.args.get('per_page', None, type=int)
     sort_by = request.args.get('sort', 'order')
     order = request.args.get('order', 'asc')
     importance_level = request.args.get('importance_level', type=int)
 
-    campaign = Campaign.query.get_or_404(campaign_id)
-
-    if not can_access_campaign(campaign, current_user):
-        return jsonify({'error': 'Unauthorized'}), 403
-
-    query = Post.query.filter_by(campaign_id=campaign_id)
-
-    # Apply importance filter if provided
-    if importance_level is not None:
-        if importance_level < 0 or importance_level > 10:
-            return jsonify({'error': 'importance_level must be between 0 and 10'}), 400
-        query = query.filter_by(importance_level=importance_level)
-
-    # Determine the sort field
-    if sort_by == 'order' or sort_by == 'custom':
-        order_field = Post.post_order
-    elif sort_by == 'created':
-        order_field = Post.created_at
-    else:  # default to 'updated'
-        order_field = Post.updated_at
-
-    # Apply sort direction
-    if order == 'asc':
-        query = query.order_by(order_field.asc())
-    else:
-        query = query.order_by(order_field.desc())
-    
-    pagination = query.paginate(page=page, per_page=per_page, error_out=False)
-    
-    return jsonify({
-        'posts': [post.to_dict() for post in pagination.items],
-        'total': pagination.total,
-        'page': pagination.page,
-        'pages': pagination.pages,
-        'has_next': pagination.has_next,
-        'has_prev': pagination.has_prev
-    }), 200
+    try:
+        result = PostsService.get_posts(
+            campaign_id=campaign_id,
+            user=current_user,
+            page=page,
+            per_page=per_page,
+            sort_by=sort_by,
+            order=order,
+            importance_level=importance_level
+        )
+        return jsonify(result), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400 if 'importance' in str(e) else 403
 
 @bp.route('/posts', methods=['POST'])
 @token_required
@@ -221,44 +78,17 @@ def create_post(current_user):
     if not data or not data.get('campaign_id') or not data.get('title') or not data.get('content'):
         return jsonify({'error': 'Missing required fields'}), 400
 
-    campaign = Campaign.query.get_or_404(data['campaign_id'])
-
-    if not can_access_campaign(campaign, current_user):
-        return jsonify({'error': 'Unauthorized'}), 403
-
-    # Validate and set importance_level
-    importance_level = data.get('importance_level', 0)
-    if not isinstance(importance_level, int) or importance_level < 0 or importance_level > 10:
-        return jsonify({'error': 'importance_level must be an integer between 0 and 10'}), 400
-
-    # Calculate order as max existing order + 1 for this campaign
-    max_order = db.session.query(db.func.max(Post.post_order)).filter_by(campaign_id=data['campaign_id']).scalar()
-    new_order = (max_order + 1) if max_order is not None else 1
-
-    post = Post(
-        campaign_id=data['campaign_id'],
-        author_id=current_user.id,
-        title=data['title'],
-        content=data['content'],
-        post_order=new_order,
-        importance_level=importance_level
-    )
-
-    db.session.add(post)
-    db.session.commit()
-    db.session.refresh(post)
-    
-    # Create notifications for campaign members (excluding owner and author)
-    create_notification_entries(
-        user_id=current_user.id,
-        campaign_id=data['campaign_id'],
-        notification_type='post_created',
-        title=f'New post: {data["title"]}',
-        message=f'A new post "{data["title"]}" was created in the campaign.',
-        related_post_id=post.id
-    )
-    
-    return jsonify(post.to_dict()), 201
+    try:
+        post = PostsService.create_post(
+            user=current_user,
+            campaign_id=data['campaign_id'],
+            title=data['title'],
+            content=data['content'],
+            importance_level=data.get('importance_level', 0)
+        )
+        return jsonify(post.to_dict()), 201
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400 if 'importance' in str(e) else 403
 
 @bp.route('/posts/<int:post_id>', methods=['GET'])
 @token_required
@@ -278,13 +108,11 @@ def get_post(current_user, post_id):
         - 403: User is not authorized to access this post
         - 404: Post not found
     """
-    post = Post.query.get_or_404(post_id)
-    campaign = Campaign.query.get(post.campaign_id)
-    
-    if not can_access_campaign(campaign, current_user):
-        return jsonify({'error': 'Unauthorized'}), 403
-    
-    return jsonify(post.to_dict()), 200
+    try:
+        post = PostsService.get_post(post_id, current_user)
+        return jsonify(post.to_dict()), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 403
 
 @bp.route('/posts/<int:post_id>', methods=['PUT'])
 @token_required
@@ -308,37 +136,19 @@ def update_post(current_user, post_id):
         - 403: User is not authorized to update this post
         - 404: Post not found
     """
-    post = Post.query.get_or_404(post_id)
-    campaign = Campaign.query.get(post.campaign_id)
-    
-    if not can_access_campaign(campaign, current_user):
-        return jsonify({'error': 'Unauthorized'}), 403
-    
     data = request.get_json()
 
-    if data.get('title'):
-        post.title = data['title']
-    if data.get('content'):
-        post.content = data['content']
-    if data.get('importance_level') is not None:
-        importance_level = data['importance_level']
-        if not isinstance(importance_level, int) or importance_level < 0 or importance_level > 10:
-            return jsonify({'error': 'importance_level must be an integer between 0 and 10'}), 400
-        post.importance_level = importance_level
-    
-    db.session.commit()
-    
-    # Create notifications for campaign members (excluding owner and author)
-    create_notification_entries(
-        user_id=current_user.id,
-        campaign_id=post.campaign_id,
-        notification_type='post_edited',
-        title=f'Post updated: {post.title}',
-        message=f'The post "{post.title}" was edited in the campaign.',
-        related_post_id=post.id
-    )
-    
-    return jsonify(post.to_dict()), 200
+    try:
+        post = PostsService.update_post(
+            post_id=post_id,
+            user=current_user,
+            title=data.get('title'),
+            content=data.get('content'),
+            importance_level=data.get('importance_level')
+        )
+        return jsonify(post.to_dict()), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400 if 'importance' in str(e) else 403
 
 @bp.route('/posts/<int:post_id>', methods=['DELETE'])
 @token_required
@@ -359,26 +169,11 @@ def delete_post(current_user, post_id):
         - 403: User is not authorized to delete this post
         - 404: Post not found
     """
-    post = Post.query.get_or_404(post_id)
-    campaign = Campaign.query.get(post.campaign_id)
-    
-    if not can_access_campaign(campaign, current_user):
-        return jsonify({'error': 'Unauthorized'}), 403
-    
-    for image in post.images:
-        try:
-            os.remove(os.path.join(current_app.config['UPLOAD_FOLDER'], image.file_path))
-        except:
-            pass
-    
-    # Delete related post_viewed_status records
-    from app.models.post_viewed_status import PostViewedStatus
-    db.session.execute(PostViewedStatus.delete().where(PostViewedStatus.c.post_id == post_id))
-    
-    db.session.delete(post)
-    db.session.commit()
-    
-    return jsonify({'message': 'Post deleted successfully'}), 200
+    try:
+        PostsService.delete_post(post_id, current_user)
+        return jsonify({'message': 'Post deleted successfully'}), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 403
 
 @bp.route('/posts/<int:post_id>/images', methods=['POST'])
 @token_required
@@ -401,52 +196,24 @@ def upload_image(current_user, post_id):
         - 403: User is not authorized to upload to this post
         - 404: Post not found
     """
-    post = Post.query.get_or_404(post_id)
-    campaign = Campaign.query.get(post.campaign_id)
-    
-    if not can_access_campaign(campaign, current_user):
-        return jsonify({'error': 'Unauthorized'}), 403
-    
     if 'file' not in request.files:
         return jsonify({'error': 'No file provided'}), 400
     
     file = request.files['file']
-    
-    if file.filename == '':
-        return jsonify({'error': 'No file selected'}), 400
-    
-    if not allowed_file(file.filename):
-        return jsonify({'error': 'File type not allowed'}), 400
-    
-    filename = secure_filename(file.filename)
-    unique_filename = f"{uuid.uuid4()}_{filename}"
-    
-    # Ensure upload directory exists
-    upload_folder = current_app.config['UPLOAD_FOLDER']
-    os.makedirs(upload_folder, mode=0o755, exist_ok=True)
-    
-    file_path = os.path.join(upload_folder, unique_filename)
-    file.save(file_path)
-
-    # Get optional description and order_index from form data
     description = request.form.get('description')
     order_index = request.form.get('order_index', type=int)
-
-    # If order_index not provided, use next available index
-    if order_index is None:
-        order_index = len(post.images)
-
-    image = Image(
-        post_id=post_id,
-        file_path=unique_filename,
-        description=description,
-        order_index=order_index
-    )
     
-    db.session.add(image)
-    db.session.commit()
-    
-    return jsonify(image.to_dict()), 201
+    try:
+        image = PostsService.upload_image(
+            post_id=post_id,
+            user=current_user,
+            file=file,
+            description=description,
+            order_index=order_index
+        )
+        return jsonify(image.to_dict()), 201
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400 if 'file' in str(e) else 403
 
 @bp.route('/posts/<int:post_id>/images/<int:image_id>', methods=['DELETE'])
 @token_required
@@ -468,23 +235,11 @@ def delete_image(current_user, post_id, image_id):
         - 403: User is not authorized to delete this image
         - 404: Post or image not found
     """
-    post = Post.query.get_or_404(post_id)
-    campaign = Campaign.query.get(post.campaign_id)
-    
-    if not can_access_campaign(campaign, current_user):
-        return jsonify({'error': 'Unauthorized'}), 403
-    
-    image = Image.query.filter_by(id=image_id, post_id=post_id).first_or_404()
-    
     try:
-        os.remove(os.path.join(current_app.config['UPLOAD_FOLDER'], image.file_path))
-    except:
-        pass
-    
-    db.session.delete(image)
-    db.session.commit()
-
-    return jsonify({'message': 'Image deleted successfully'}), 200
+        PostsService.delete_image(post_id, image_id, current_user)
+        return jsonify({'message': 'Image deleted successfully'}), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 403
 
 @bp.route('/posts/<int:post_id>/images/<int:image_id>', methods=['POST'])
 @token_required
@@ -509,25 +264,19 @@ def update_image(current_user, post_id, image_id):
         - 403: User is not authorized to modify this image
         - 404: Post or image not found
     """
-    post = Post.query.get_or_404(post_id)
-    campaign = Campaign.query.get(post.campaign_id)
-
-    if not can_access_campaign(campaign, current_user):
-        return jsonify({'error': 'Unauthorized'}), 403
-
-    image = Image.query.filter_by(id=image_id, post_id=post_id).first_or_404()
-
     data = request.get_json()
-
-    if data.get('description') is not None:
-        image.description = data['description']
-
-    if data.get('order_index') is not None:
-        image.order_index = data['order_index']
-
-    db.session.commit()
-
-    return jsonify(image.to_dict()), 200
+    
+    try:
+        image = PostsService.update_image(
+            post_id=post_id,
+            image_id=image_id,
+            user=current_user,
+            description=data.get('description'),
+            order_index=data.get('order_index')
+        )
+        return jsonify(image.to_dict()), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 403
 
 @bp.route('/posts/<int:post_id>/images/reorder', methods=['PUT'])
 @token_required
@@ -551,36 +300,13 @@ def reorder_images(current_user, post_id):
         - 404: Post not found
         - 400: Invalid payload
     """
-    post = Post.query.get_or_404(post_id)
-    campaign = Campaign.query.get(post.campaign_id)
-
-    if not can_access_campaign(campaign, current_user):
-        return jsonify({'error': 'Unauthorized'}), 403
-
     data = request.get_json()
-
-    if not data or 'image_orders' not in data:
-        return jsonify({'error': 'Missing image_orders in payload'}), 400
-
-    image_orders = data['image_orders']
-
-    if not isinstance(image_orders, list):
-        return jsonify({'error': 'image_orders must be an array'}), 400
-
-    for item in image_orders:
-        image_id = item.get('image_id')
-        order_index = item.get('order_index')
-
-        if image_id is None or order_index is None:
-            return jsonify({'error': 'Each image_order must have image_id and order_index'}), 400
-
-        image = Image.query.filter_by(id=image_id, post_id=post_id).first()
-        if image:
-            image.order_index = order_index
-
-    db.session.commit()
-
-    return jsonify({'message': 'Images reordered successfully'}), 200
+    
+    try:
+        PostsService.reorder_images(post_id, current_user, data.get('image_orders', []))
+        return jsonify({'message': 'Images reordered successfully'}), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400 if 'image_orders' in str(e) else 403
 
 @bp.route('/posts/<int:post_id>/comments', methods=['POST'])
 @token_required
@@ -606,43 +332,22 @@ def create_comment(current_user, post_id):
         - 403: User is not authorized to comment on this post
         - 404: Post not found
     """
-    post = Post.query.get_or_404(post_id)
-    campaign = Campaign.query.get(post.campaign_id)
-
-    if not can_access_campaign(campaign, current_user):
-        return jsonify({'error': 'Unauthorized'}), 403
-
     data = request.get_json()
 
     if not data or not data.get('content'):
         return jsonify({'error': 'Missing content'}), 400
 
-    comment = Comment(
-        post_id=post_id,
-        author_id=current_user.id,
-        content=data['content']
-    )
-
-    db.session.add(comment)
-    db.session.commit()
-    db.session.refresh(comment)
-
-    # Get post_title and campaign_name from request if provided (for performance)
-    post_title = data.get('post_title', post.title)
-    campaign_name = data.get('campaign_name', campaign.name)
-
-    # Create notifications for all campaign members (excluding comment author)
-    create_comment_notification_entries(
-        user_id=current_user.id,
-        campaign_id=post.campaign_id,
-        post_id=post_id,
-        comment_id=comment.id,
-        comment_content=data['content'],
-        post_title=post_title,
-        campaign_name=campaign_name
-    )
-
-    return jsonify(comment.to_dict()), 201
+    try:
+        comment = PostsService.create_comment(
+            post_id=post_id,
+            user=current_user,
+            content=data['content'],
+            post_title=data.get('post_title'),
+            campaign_name=data.get('campaign_name')
+        )
+        return jsonify(comment.to_dict()), 201
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 403
 
 @bp.route('/posts/<int:post_id>/comments/<int:comment_id>', methods=['PUT'])
 @token_required
@@ -667,20 +372,16 @@ def update_comment(current_user, post_id, comment_id):
         - 403: User is not the comment author
         - 404: Post or comment not found
     """
-    comment = Comment.query.filter_by(id=comment_id, post_id=post_id).first_or_404()
-    
-    if comment.author_id != current_user.id:
-        return jsonify({'error': 'Unauthorized'}), 403
-    
     data = request.get_json()
-    
+
     if not data or not data.get('content'):
         return jsonify({'error': 'Missing content'}), 400
-    
-    comment.content = data['content']
-    db.session.commit()
-    
-    return jsonify(comment.to_dict()), 200
+
+    try:
+        comment = PostsService.update_comment(post_id, comment_id, current_user, data['content'])
+        return jsonify(comment.to_dict()), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 403
 
 @bp.route('/posts/<int:post_id>/comments/<int:comment_id>', methods=['DELETE'])
 @token_required
@@ -701,15 +402,11 @@ def delete_comment(current_user, post_id, comment_id):
         - 403: User is not the comment author
         - 404: Post or comment not found
     """
-    comment = Comment.query.filter_by(id=comment_id, post_id=post_id).first_or_404()
-    
-    if comment.author_id != current_user.id:
-        return jsonify({'error': 'Unauthorized'}), 403
-    
-    db.session.delete(comment)
-    db.session.commit()
-    
-    return jsonify({'message': 'Comment deleted successfully'}), 200
+    try:
+        PostsService.delete_comment(post_id, comment_id, current_user)
+        return jsonify({'message': 'Comment deleted successfully'}), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 403
 
 @bp.route('/posts/<int:post_id>/reorder', methods=['PUT'])
 @token_required
@@ -736,28 +433,13 @@ def reorder_posts(current_user, post_id):
         - 403: User is not authorized to reorder posts in this campaign
         - 404: Post not found
     """
-    post = Post.query.get_or_404(post_id)
-    campaign = Campaign.query.get(post.campaign_id)
-
-    # Only campaign owner can reorder posts
-    if campaign.owner_id != current_user.id:
-        return jsonify({'error': 'Unauthorized'}), 403
-
     data = request.get_json()
 
     if not data or not data.get('post_ids') or not isinstance(data['post_ids'], list):
         return jsonify({'error': 'Missing or invalid post_ids array'}), 400
 
-    post_ids = data['post_ids']
-
-    # Update order for each post based on its position in the array
-    for idx, pid in enumerate(post_ids, start=1):
-        post_to_update = Post.query.get(pid)
-        if post_to_update and post_to_update.campaign_id == campaign.id:
-            post_to_update.post_order = idx
-        else:
-            return jsonify({'error': f'Post {pid} not found or not in campaign'}), 400
-
-    db.session.commit()
-
-    return jsonify({'message': 'Posts reordered successfully'}), 200
+    try:
+        PostsService.reorder_posts(post_id, current_user, data['post_ids'])
+        return jsonify({'message': 'Posts reordered successfully'}), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400 if 'Post' in str(e) else 403

@@ -8,7 +8,7 @@ from datetime import datetime
 from werkzeug.utils import secure_filename
 
 from app import db
-from app.models import Campaign, Post, Comment, Image, Character, campaign_members
+from app.models import Campaign, Post, Comment, Image, Character, CampaignMembers
 
 
 class ExportService:
@@ -109,7 +109,7 @@ class ExportService:
     def _export_members_data(campaign_id, export_folder_path):
         """Export campaign members data to JSON file."""
         members_data = []
-        stmt = db.select(campaign_members).where(campaign_members.c.campaign_id == campaign_id)
+        stmt = db.select(CampaignMembers).where(CampaignMembers.c.campaign_id == campaign_id)
         members_result = db.session.execute(stmt).fetchall()
         
         for member in members_result:

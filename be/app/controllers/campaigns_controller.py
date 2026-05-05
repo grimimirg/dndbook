@@ -1,9 +1,7 @@
 from flask import Blueprint, request, jsonify
-from sqlalchemy import and_
 
-from app import db
 from app.jwt.jwt_utils import token_required
-from app.models import Campaign, CampaignInvite, campaign_members
+from app.services.campaigns_service import CampaignsService
 
 bp = Blueprint('campaigns', __name__, url_prefix='/api/campaigns')
 
@@ -23,14 +21,8 @@ def get_campaigns(current_user):
         JSON response with:
         - 200: Object containing 'owned' and 'shared' campaign arrays
     """
-    owned_campaigns = Campaign.query.filter_by(owner_id=current_user.id).all()
-
-    member_campaigns = [c for c in current_user.member_campaigns if c.owner_id != current_user.id]
-
-    return jsonify({
-        'owned': [campaign.to_dict() for campaign in owned_campaigns],
-        'shared': [campaign.to_dict() for campaign in member_campaigns]
-    }), 200
+    result = CampaignsService.get_user_campaigns(current_user)
+    return jsonify(result), 200
 
 
 @bp.route('', methods=['POST'])
@@ -56,14 +48,11 @@ def create_campaign(current_user):
     if not data or not data.get('name'):
         return jsonify({'error': 'Campaign name is required'}), 400
 
-    campaign = Campaign(
+    campaign = CampaignsService.create_campaign(
+        user=current_user,
         name=data['name'],
-        description=data.get('description', ''),
-        owner_id=current_user.id
+        description=data.get('description', '')
     )
-
-    db.session.add(campaign)
-    db.session.commit()
 
     return jsonify(campaign.to_dict()), 201
 
@@ -86,22 +75,11 @@ def get_campaign(current_user, campaign_id):
         - 403: User is not authorized to access this campaign
         - 404: Campaign not found
     """
-    if current_app.config['MOCK_DATA']:
-        user_id = current_user if isinstance(current_user, int) else current_user.id
-        campaign = MockDataProvider.get_campaign(campaign_id)
-
-        if not campaign or campaign['owner_id'] != user_id:
-            return jsonify({'error': 'Unauthorized'}), 403
-
-        return jsonify(campaign), 200
-
-    campaign = Campaign.query.get_or_404(campaign_id)
-
-    is_member = campaign.members.filter_by(id=current_user.id).first() is not None
-    if campaign.owner_id != current_user.id and not is_member:
-        return jsonify({'error': 'Unauthorized'}), 403
-
-    return jsonify(campaign.to_dict()), 200
+    try:
+        campaign = CampaignsService.get_campaign(campaign_id, current_user)
+        return jsonify(campaign.to_dict()), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 403
 
 
 @bp.route('/<int:campaign_id>', methods=['PUT'])
@@ -126,21 +104,17 @@ def update_campaign(current_user, campaign_id):
         - 403: User is not the campaign owner
         - 404: Campaign not found
     """
-    campaign = Campaign.query.get_or_404(campaign_id)
-
-    if campaign.owner_id != current_user.id:
-        return jsonify({'error': 'Unauthorized'}), 403
-
     data = request.get_json()
-
-    if data.get('name'):
-        campaign.name = data['name']
-    if 'description' in data:
-        campaign.description = data['description']
-
-    db.session.commit()
-
-    return jsonify(campaign.to_dict()), 200
+    try:
+        campaign = CampaignsService.update_campaign(
+            campaign_id=campaign_id,
+            user=current_user,
+            name=data.get('name'),
+            description=data.get('description')
+        )
+        return jsonify(campaign.to_dict()), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 403
 
 
 @bp.route('/<int:campaign_id>', methods=['DELETE'])
@@ -161,15 +135,11 @@ def delete_campaign(current_user, campaign_id):
         - 403: User is not the campaign owner
         - 404: Campaign not found
     """
-    campaign = Campaign.query.get_or_404(campaign_id)
-
-    if campaign.owner_id != current_user.id:
-        return jsonify({'error': 'Unauthorized'}), 403
-
-    db.session.delete(campaign)
-    db.session.commit()
-
-    return jsonify({'message': 'Campaign deleted successfully'}), 200
+    try:
+        CampaignsService.delete_campaign(campaign_id, current_user)
+        return jsonify({'message': 'Campaign deleted successfully'}), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 403
 
 
 @bp.route('/<int:campaign_id>/members', methods=['GET'])
@@ -191,27 +161,11 @@ def get_campaign_members(current_user, campaign_id):
         - 403: User is not authorized to access this campaign
         - 404: Campaign not found
     """
-    campaign = Campaign.query.get_or_404(campaign_id)
-
-    # Check if user is owner or member
-    is_member = campaign.members.filter_by(id=current_user.id).first() is not None
-    if campaign.owner_id != current_user.id and not is_member:
-        return jsonify({'error': 'Unauthorized'}), 403
-
-    members = [{'id': m.id, 'username': m.username, 'email': m.email} for m in campaign.members.all()]
-
-    pending_invites = []
-    if campaign.owner_id == current_user.id:
-        invites = CampaignInvite.query.filter_by(
-            campaign_id=campaign_id,
-            status='pending'
-        ).all()
-        pending_invites = [invite.to_dict() for invite in invites]
-
-    return jsonify({
-        'members': members,
-        'pending_invites': pending_invites
-    }), 200
+    try:
+        result = CampaignsService.get_campaign_members(campaign_id, current_user)
+        return jsonify(result), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 403
 
 
 @bp.route('/<int:campaign_id>/members/<int:user_id>', methods=['DELETE'])
@@ -235,35 +189,11 @@ def remove_campaign_member(current_user, campaign_id, user_id):
         - 403: User is not the campaign owner
         - 404: Campaign or member not found
     """
-    campaign = Campaign.query.get_or_404(campaign_id)
-
-    if campaign.owner_id != current_user.id:
-        return jsonify({'error': 'Only campaign owner can remove members'}), 403
-
-    if user_id == campaign.owner_id:
-        return jsonify({'error': 'Cannot remove campaign owner'}), 400
-
-    stmt = db.select(campaign_members).where(
-        and_(
-            campaign_members.c.user_id == user_id,
-            campaign_members.c.campaign_id == campaign_id
-        )
-    )
-    existing_member = db.session.execute(stmt).first()
-
-    if not existing_member:
-        return jsonify({'error': 'User is not a member of this campaign'}), 404
-
-    delete_stmt = campaign_members.delete().where(
-        and_(
-            campaign_members.c.user_id == user_id,
-            campaign_members.c.campaign_id == campaign_id
-        )
-    )
-    db.session.execute(delete_stmt)
-    db.session.commit()
-
-    return jsonify({'message': 'Member removed successfully'}), 200
+    try:
+        CampaignsService.remove_campaign_member(campaign_id, user_id, current_user)
+        return jsonify({'message': 'Member removed successfully'}), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400 if 'owner' in str(e) else 403
 
 
 @bp.route('/<int:campaign_id>/invites/<int:invite_id>', methods=['DELETE'])
@@ -287,20 +217,8 @@ def cancel_invite(current_user, campaign_id, invite_id):
         - 403: User is not the campaign owner
         - 404: Campaign or invite not found
     """
-    campaign = Campaign.query.get_or_404(campaign_id)
-
-    if campaign.owner_id != current_user.id:
-        return jsonify({'error': 'Only campaign owner can cancel invites'}), 403
-
-    invite = CampaignInvite.query.get_or_404(invite_id)
-
-    if invite.campaign_id != campaign_id:
-        return jsonify({'error': 'Invite does not belong to this campaign'}), 400
-
-    if invite.status != 'pending':
-        return jsonify({'error': 'Invite is not pending'}), 400
-
-    db.session.delete(invite)
-    db.session.commit()
-
-    return jsonify({'message': 'Invite cancelled successfully'}), 200
+    try:
+        CampaignsService.cancel_invite(campaign_id, invite_id, current_user)
+        return jsonify({'message': 'Invite cancelled successfully'}), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400

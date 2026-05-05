@@ -501,10 +501,10 @@ async function handleAddComment() {
   if (!newCommentContent.value.trim()) return;
 
   const result = await postsStore.createComment(
-    props.post.id,
-    newCommentContent.value,
-    props.post.title,
-    props.post.campaign_name
+      props.post.id,
+      newCommentContent.value,
+      props.post.title,
+      props.post.campaign_name
   );
 
   if (result.success) {
