@@ -6,6 +6,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 
+
 echo "==================================="
 echo "Database Initialization"
 echo "==================================="
@@ -18,6 +19,9 @@ if [ -f "$ROOT_DIR/.env" ]; then
     source "$ROOT_DIR/.env"
     set +a
 fi
+
+# PostgreSQL container name (for standalone mode)
+POSTGRES_CONTAINER_NAME="${POSTGRES_CONTAINER_NAME}"
 
 # 2. Load backend .env second (can override root values)
 if [ -f "$SCRIPT_DIR/.env" ]; then
@@ -56,6 +60,7 @@ echo "    POSTGRES_PORT: ${POSTGRES_PORT}"
 echo "    POSTGRES_USER: ${POSTGRES_USER}"
 echo "    POSTGRES_DB: ${POSTGRES_DB}"
 echo "    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}"
+echo "    POSTGRES_CONTAINER_NAME: ${POSTGRES_CONTAINER_NAME}"
 
 # Activate virtual environment if it exists
 if [ -d "$SCRIPT_DIR/venv" ]; then
@@ -65,11 +70,11 @@ fi
 
 # Check if postgres container is running (standalone mode)
 if command -v docker &> /dev/null; then
-    if docker ps -q -f name=dndbook-postgres | grep -q .; then
+    if docker ps -q -f name="$POSTGRES_CONTAINER_NAME" | grep -q .; then
         echo "✓ PostgreSQL container is running"
-    elif docker ps -a -q -f name=dndbook-postgres | grep -q .; then
+    elif docker ps -a -q -f name="$POSTGRES_CONTAINER_NAME" | grep -q .; then
         echo "Starting PostgreSQL container..."
-        docker start dndbook-postgres
+        docker start "$POSTGRES_CONTAINER_NAME"
         echo "⏳ Waiting for PostgreSQL to be ready..."
         sleep 3
     else
