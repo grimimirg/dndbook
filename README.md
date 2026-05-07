@@ -37,6 +37,9 @@ See D&D Book in action! Here are some screenshots showcasing some features:
   <br/><br/>
   <a href="demo-screenshots/2.png"><img src="demo-screenshots/2.png" alt="D&D Book Screenshot 2" width="400"/></a>
   <a href="demo-screenshots/3.png"><img src="demo-screenshots/3.png" alt="D&D Book Screenshot 3" width="400"/></a>
+  <br/><br/>
+  <a href="demo-screenshots/4.png"><img src="demo-screenshots/4.png" alt="D&D Book Screenshot 4" width="400"/></a>
+  <a href="demo-screenshots/5.png"><img src="demo-screenshots/5.png" alt="D&D Book Screenshot 5" width="400"/></a>
 </div>
 
 ---
