@@ -46,6 +46,14 @@ const emit = defineEmits(['close']);
 
 const {t} = useI18n();
 
+watch(() => props.show, (newVal) => {
+  if (newVal) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
+});
+
 function getImageUrl(imageUrl) {
   if (!imageUrl) return '';
   if (imageUrl.startsWith('http')) return imageUrl;
@@ -55,12 +63,4 @@ function getImageUrl(imageUrl) {
 function handleClose() {
   emit('close');
 }
-
-watch(() => props.show, (newVal) => {
-  if (newVal) {
-    document.body.style.overflow = 'hidden';
-  } else {
-    document.body.style.overflow = '';
-  }
-});
 </script>

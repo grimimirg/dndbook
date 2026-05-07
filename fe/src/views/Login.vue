@@ -87,7 +87,7 @@ async function handleSubmit() {
   loading.value = false;
   
   if (result.success) {
-    router.push('/');
+    await router.push('/');
   } else {
     error.value = result.error;
   }

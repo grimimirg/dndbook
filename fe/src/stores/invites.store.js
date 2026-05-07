@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import api from '../services/api.service.js';
 import socketService from '../services/socket.service.js';
+import { SocketEvents } from '../constants/socketConstants.js';
 
 export const useInvitesStore = defineStore('invites', () => {
   const invites = ref([]);
@@ -104,7 +105,7 @@ export const useInvitesStore = defineStore('invites', () => {
 
   // Setup Socket.IO listener for new invites
   function setupSocketListener() {
-    socketService.on('new_invite', (data) => {
+    socketService.on(SocketEvents.NEW_INVITE, (data) => {
       addInvite({
         id: data.id,
         campaign_id: data.campaign_id,

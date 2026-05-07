@@ -79,6 +79,14 @@ const showActionsMenu = ref(false);
 const menuPosition = ref({});
 const descriptionMenuButton = ref(null);
 
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
+
 const isCurrentCampaignOwned = computed(() => {
   if (!campaignsStore.currentCampaign) return false;
   return campaignsStore.ownedCampaigns.some(
@@ -176,12 +184,4 @@ function handleClickOutside(event) {
     showActionsMenu.value = false;
   }
 }
-
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
-});
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
-});
 </script>

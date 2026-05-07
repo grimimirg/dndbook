@@ -117,6 +117,14 @@ const props = defineProps({
   }
 });
 
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
+
 function toggleActionsMenu() {
   if (showActionsMenu.value) {
     showActionsMenu.value = false;
@@ -263,12 +271,4 @@ function handleClickOutside(event) {
     showActionsMenu.value = false;
   }
 }
-
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
-});
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
-});
 </script>

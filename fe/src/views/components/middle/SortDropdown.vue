@@ -41,6 +41,14 @@ const emit = defineEmits(['update:modelValue', 'change']);
 const isOpen = ref(false);
 const dropdownRef = ref(null);
 
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
+
 const selectedLabel = computed(() => {
   const selected = props.options.find(opt => opt.value === props.modelValue);
   return selected ? selected.label : props.options[0].label;
@@ -61,12 +69,4 @@ function handleClickOutside(event) {
     isOpen.value = false;
   }
 }
-
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
-});
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
-});
 </script>

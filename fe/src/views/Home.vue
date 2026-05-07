@@ -22,12 +22,12 @@
       </div>
 
       <div class="feed">
-        <CampaignsTree 
-          :viewed-post-ids="viewedPostIds" 
-          :is-owner="isCurrentCampaignOwned"
-          @invites-sent="handleInvitesSent"
-          class="mobile-campaigns-tree"/>
-        
+        <CampaignsTree
+            :viewed-post-ids="viewedPostIds"
+            :is-owner="isCurrentCampaignOwned"
+            @invites-sent="handleInvitesSent"
+            class="mobile-campaigns-tree"/>
+
         <div v-if="campaignsStore.currentCampaign" class="sort-controls flex-align-center">
           <SortDropdown
               v-model="currentSortValue"
@@ -96,12 +96,12 @@
         </div>
       </div>
 
-      <CampaignsTree 
-        :viewed-post-ids="viewedPostIds" 
-        :is-owner="isCurrentCampaignOwned"
-        @invites-sent="handleInvitesSent"
-        @edit-post="handleEditPost"
-        class="desktop-only"/>
+      <CampaignsTree
+          :viewed-post-ids="viewedPostIds"
+          :is-owner="isCurrentCampaignOwned"
+          @invites-sent="handleInvitesSent"
+          @edit-post="handleEditPost"
+          class="desktop-only"/>
     </div>
 
     <InviteToast/>
@@ -140,6 +140,9 @@ import CampaignDescriptionPanel from './components/left/CampaignDescriptionPanel
 import CampaignCharactersPanel from './components/left/characters/CampaignCharactersPanel.vue';
 import CampaignPlayersPanel from './components/left/CampaignPlayersPanel.vue';
 import HamburgerMenu from './components/left/HamburgerMenu.vue';
+import {SortTypes} from '../constants/sortConstants.js';
+import {ImportanceTypes} from '../constants/importanceConstants.js';
+import {SocketEvents} from '../constants/socketConstants.js';
 
 const router = useRouter();
 const {t} = useI18n();
@@ -160,80 +163,8 @@ const highlightedCommentId = ref(null);
 const showPostDetailModal = ref(false);
 const selectedPost = ref(null);
 const startInEditMode = ref(false);
+
 let debounceTimeout = null;
-
-const isCurrentCampaignOwned = computed(() => {
-  if (!campaignsStore.currentCampaign) return false;
-  return campaignsStore.ownedCampaigns.some(
-      campaign => campaign.id === campaignsStore.currentCampaign.id
-  );
-});
-
-const currentSortValue = computed({
-  get() {
-    if (postsStore.sortBy === 'custom') return 'custom';
-    if (postsStore.sortBy === 'updated') return 'updated';
-    if (postsStore.sortBy === 'created') {
-      return postsStore.sortDirection === 'asc' ? 'created_asc' : 'created_desc';
-    }
-    return 'custom';
-  },
-  set(value) {
-    // The setter is not used since we use @change event
-  }
-});
-
-const sortOptions = computed(() => {
-  const sortChoices = [
-    { value: 'custom', label: t('sort.byCustom') },
-    { value: 'created_asc', label: t('sort.byCreated') + ' ↑' },
-    { value: 'created_desc', label: t('sort.byCreated') + ' ↓' },
-    { value: 'updated', label: t('sort.byUpdated') }
-  ];
-
-  const importanceChoices = [
-    { value: 'importance_all', label: t('sort.importanceAll') },
-    { value: 'importance_none', label: t('sort.importanceNone') },
-    { value: 'importance_low', label: t('sort.importanceLow') },
-    { value: 'importance_medium', label: t('sort.importanceMedium') },
-    { value: 'importance_high', label: t('sort.importanceHigh') }
-  ];
-
-  return [...sortChoices, { value: 'divider', label: '—' }, ...importanceChoices];
-});
-
-function isPostOwner(post) {
-  return permissionsStore.isPostOwner(post);
-}
-
-const filteredPosts = computed(() => {
-  let filtered = postsStore.posts;
-
-  // Apply search filter
-  if (debouncedSearchQuery.value.trim()) {
-    const query = debouncedSearchQuery.value.toLowerCase();
-    filtered = filtered.filter(post => {
-      const titleMatch = post.title?.toLowerCase().includes(query);
-      const contentMatch = post.content?.toLowerCase().includes(query);
-      return titleMatch || contentMatch;
-    });
-  }
-
-  // Apply importance filter
-  if (importanceFilter.value !== 'importance_all') {
-    if (importanceFilter.value === 'importance_none') {
-      filtered = filtered.filter(post => post.importance_level === 0);
-    } else if (importanceFilter.value === 'importance_low') {
-      filtered = filtered.filter(post => post.importance_level >= 1 && post.importance_level <= 4);
-    } else if (importanceFilter.value === 'importance_medium') {
-      filtered = filtered.filter(post => post.importance_level >= 5 && post.importance_level <= 7);
-    } else if (importanceFilter.value === 'importance_high') {
-      filtered = filtered.filter(post => post.importance_level >= 8 && post.importance_level <= 10);
-    }
-  }
-
-  return filtered;
-});
 
 watch(searchQuery, (newValue) => {
   if (debounceTimeout) {
@@ -245,6 +176,113 @@ watch(searchQuery, (newValue) => {
   }, 500);
 });
 
+watch(() => campaignsStore.currentCampaign, () => {
+  if (campaignsStore.currentCampaign) {
+    fetchViewedStatus();
+  }
+});
+
+watch(() => router.currentRoute.value.query.commentId, (newCommentId) => {
+  if (newCommentId) {
+    highlightedCommentId.value = parseInt(newCommentId);
+    // Scroll to comment after a short delay to allow DOM to update
+    setTimeout(() => {
+      const commentElement = document.getElementById(`comment-${newCommentId}`);
+      if (commentElement) {
+        commentElement.scrollIntoView({behavior: 'smooth', block: 'center'});
+        // Clear highlight after animation
+        setTimeout(() => {
+          highlightedCommentId.value = null;
+        }, 3000);
+      }
+    }, 500);
+  }
+}, {immediate: true});
+
+onMounted(async () => {
+  await campaignsStore.fetchCampaigns();
+  await invitesStore.fetchInvites();
+
+  const token = localStorage.getItem('token');
+  if (token) {
+    socketService.connect(token);
+    invitesStore.setupSocketListener();
+    setupPlayerJoinedListener();
+  }
+});
+
+onUnmounted(() => {
+  socketService.disconnect();
+});
+
+const isCurrentCampaignOwned = computed(() => {
+  if (!campaignsStore.currentCampaign) return false;
+  return campaignsStore.ownedCampaigns.some(
+      campaign => campaign.id === campaignsStore.currentCampaign.id
+  );
+});
+
+const currentSortValue = computed({
+  get() {
+    if (postsStore.sortBy === SortTypes.CUSTOM) return SortTypes.CUSTOM;
+    if (postsStore.sortBy === SortTypes.UPDATED) return SortTypes.UPDATED;
+    if (postsStore.sortBy === SortTypes.CREATED) {
+      return postsStore.sortDirection === 'asc' ? SortTypes.CREATED_ASC : SortTypes.CREATED_DESC;
+    }
+    return SortTypes.CUSTOM;
+  }
+});
+
+const sortOptions = computed(() => {
+  const sortChoices = [
+    {value: SortTypes.CUSTOM, label: t('sort.byCustom')},
+    {value: SortTypes.CREATED_ASC, label: t('sort.byCreated') + ' ↑'},
+    {value: SortTypes.CREATED_DESC, label: t('sort.byCreated') + ' ↓'},
+    {value: SortTypes.UPDATED, label: t('sort.byUpdated')}
+  ];
+
+  const importanceChoices = [
+    {value: ImportanceTypes.ALL, label: t('sort.importanceAll')},
+    {value: ImportanceTypes.NONE, label: t('sort.importanceNone')},
+    {value: ImportanceTypes.LOW, label: t('sort.importanceLow')},
+    {value: ImportanceTypes.MEDIUM, label: t('sort.importanceMedium')},
+    {value: ImportanceTypes.HIGH, label: t('sort.importanceHigh')}
+  ];
+
+  return [...sortChoices, {value: 'divider', label: '—'}, ...importanceChoices];
+});
+
+const filteredPosts = computed(() => {
+  let filtered = postsStore.posts;
+
+  if (debouncedSearchQuery.value.trim()) {
+    const query = debouncedSearchQuery.value.toLowerCase();
+    filtered = filtered.filter(post => {
+      const titleMatch = post.title?.toLowerCase().includes(query);
+      const contentMatch = post.content?.toLowerCase().includes(query);
+      return titleMatch || contentMatch;
+    });
+  }
+
+  if (importanceFilter.value !== ImportanceTypes.ALL) {
+    if (importanceFilter.value === ImportanceTypes.NONE) {
+      filtered = filtered.filter(post => post.importance_level === 0);
+    } else if (importanceFilter.value === ImportanceTypes.LOW) {
+      filtered = filtered.filter(post => post.importance_level >= 1 && post.importance_level <= 4);
+    } else if (importanceFilter.value === ImportanceTypes.MEDIUM) {
+      filtered = filtered.filter(post => post.importance_level >= 5 && post.importance_level <= 7);
+    } else if (importanceFilter.value === ImportanceTypes.HIGH) {
+      filtered = filtered.filter(post => post.importance_level >= 8 && post.importance_level <= 10);
+    }
+  }
+
+  return filtered;
+});
+
+function isPostOwner(post) {
+  return permissionsStore.isPostOwner(post);
+}
+
 function setPostRef(postId, el) {
   if (el) {
     postRefs.value[postId] = el;
@@ -253,12 +291,12 @@ function setPostRef(postId, el) {
 
 async function handlePostReorder() {
   if (!campaignsStore.currentCampaign) return;
-  
+
   await postsStore.reorderPosts();
 }
 
 function setupPlayerJoinedListener() {
-  socketService.on('player_joined', (data) => {
+  socketService.on(SocketEvents.PLAYER_JOINED, (data) => {
     const message = t('campaign.playerJoined', {
       player: data.player_username,
       campaign: data.campaign_name
@@ -293,22 +331,6 @@ function handleEditPost(post) {
   startInEditMode.value = true;
   showPostDetailModal.value = true;
 }
-
-onMounted(async () => {
-  await campaignsStore.fetchCampaigns();
-  await invitesStore.fetchInvites();
-
-  const token = localStorage.getItem('token');
-  if (token) {
-    socketService.connect(token);
-    invitesStore.setupSocketListener();
-    setupPlayerJoinedListener();
-  }
-});
-
-onUnmounted(() => {
-  socketService.disconnect();
-});
 
 function handleLogout() {
   authStore.logout();
@@ -377,29 +399,4 @@ async function markPostAsViewed(postId) {
     }
   }
 }
-
-// Watch for campaign changes to fetch viewed status
-watch(() => campaignsStore.currentCampaign, () => {
-  if (campaignsStore.currentCampaign) {
-    fetchViewedStatus();
-  }
-});
-
-// Watch for route changes to handle comment deep linking
-watch(() => router.currentRoute.value.query.commentId, (newCommentId) => {
-  if (newCommentId) {
-    highlightedCommentId.value = parseInt(newCommentId);
-    // Scroll to comment after a short delay to allow DOM to update
-    setTimeout(() => {
-      const commentElement = document.getElementById(`comment-${newCommentId}`);
-      if (commentElement) {
-        commentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        // Clear highlight after animation
-        setTimeout(() => {
-          highlightedCommentId.value = null;
-        }, 3000);
-      }
-    }, 500);
-  }
-}, { immediate: true });
 </script>

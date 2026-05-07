@@ -98,6 +98,14 @@ const memberToRemove = ref(null);
 const inviteToCancel = ref(null);
 const isCollapsed = ref(true);
 
+watch(() => campaignsStore.currentCampaign, () => {
+  fetchMembers();
+}, {immediate: true});
+
+onMounted(() => {
+  fetchMembers();
+});
+
 const isCurrentCampaignOwned = computed(() => {
   if (!campaignsStore.currentCampaign) return false;
   return campaignsStore.ownedCampaigns.some(
@@ -169,14 +177,6 @@ function cancelCancelInvite() {
 function toggleCollapse() {
   isCollapsed.value = !isCollapsed.value;
 }
-
-watch(() => campaignsStore.currentCampaign, () => {
-  fetchMembers();
-}, {immediate: true});
-
-onMounted(() => {
-  fetchMembers();
-});
 
 defineExpose({
   fetchMembers

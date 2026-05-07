@@ -55,6 +55,7 @@ import {useInvitesStore} from '../../../stores/invites.store.js';
 import {useCampaignsStore} from '../../../stores/campaigns.store.js';
 import apiService from '../../../services/api.service.js';
 import socketService from '../../../services/socket.service.js';
+import {SocketEvents} from '../../../constants/socketConstants.js';
 
 const router = useRouter();
 const {t} = useI18n();
@@ -65,6 +66,28 @@ const showDropdown = ref(false);
 const loading = ref(false);
 const notifications = ref([]);
 const unreadCount = ref(0);
+
+watch(showDropdown, async (newVal) => {
+  if (newVal) {
+    await fetchNotifications();
+  } else {
+    // Delete notifications when popup closes
+    await deleteNotifications();
+  }
+});
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+  fetchUnreadCount();
+
+  // Set up WebSocket listener for notification updates
+  socketService.on(SocketEvents.NOTIFICATION_UPDATE, handleNotificationUpdate);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+  socketService.off(SocketEvents.NOTIFICATION_UPDATE);
+});
 
 function toggleDropdown() {
   showDropdown.value = !showDropdown.value;
@@ -167,27 +190,4 @@ function handleNotificationUpdate() {
   // WebSocket event handler - refresh unread count
   fetchUnreadCount();
 }
-
-// Watch for dropdown open to fetch notifications
-watch(showDropdown, async (newVal) => {
-  if (newVal) {
-    await fetchNotifications();
-  } else {
-    // Delete notifications when popup closes
-    await deleteNotifications();
-  }
-});
-
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
-  fetchUnreadCount();
-
-  // Set up WebSocket listener for notification updates
-  socketService.on('notification_update', handleNotificationUpdate);
-});
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
-  socketService.off('notification_update');
-});
 </script>

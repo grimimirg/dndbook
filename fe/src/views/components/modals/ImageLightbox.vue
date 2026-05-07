@@ -40,6 +40,18 @@ const emit = defineEmits(['close']);
 
 const currentIndex = ref(props.initialIndex);
 
+watch(() => props.initialIndex, (newIndex) => {
+  currentIndex.value = newIndex;
+});
+
+onMounted(() => {
+  document.addEventListener('keydown', handleKeyDown);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeyDown);
+});
+
 function getImageUrl(filePath) {
   if (!filePath) return '';
   if (filePath.startsWith('http')) return filePath;
@@ -71,18 +83,6 @@ function handleKeyDown(event) {
     emit('close');
   }
 }
-
-watch(() => props.initialIndex, (newIndex) => {
-  currentIndex.value = newIndex;
-});
-
-onMounted(() => {
-  document.addEventListener('keydown', handleKeyDown);
-});
-
-onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeyDown);
-});
 </script>
 
 <style scoped>

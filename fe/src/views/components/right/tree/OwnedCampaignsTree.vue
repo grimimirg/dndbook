@@ -126,6 +126,14 @@ const props = defineProps({
 const emit = defineEmits(['toggle-campaign', 'open-invite-modal', 'open-export-modal', 'scroll-to-post', 'edit-post']);
 const {openMenuPostId, menuPosition: postMenuPosition, togglePostMenu, handleEditPost} = usePostActionsMenu(emit);
 
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
+
 async function toggleCampaign(campaign) {
   emit('toggle-campaign', campaign);
 }
@@ -196,12 +204,4 @@ function handleClickOutside(event) {
     openMenuId.value = null;
   }
 }
-
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
-});
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
-});
 </script>

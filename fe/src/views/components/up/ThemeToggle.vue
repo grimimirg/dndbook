@@ -16,6 +16,10 @@ onMounted(() => {
   applyTheme(savedTheme);
 });
 
+watch(currentTheme, (newTheme) => {
+  applyTheme(newTheme);
+});
+
 function toggleTheme() {
   const newTheme = currentTheme.value === 'dark' ? 'light' : 'dark';
   currentTheme.value = newTheme;
@@ -26,8 +30,4 @@ function toggleTheme() {
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
 }
-
-watch(currentTheme, (newTheme) => {
-  applyTheme(newTheme);
-});
 </script>

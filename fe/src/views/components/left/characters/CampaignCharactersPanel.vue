@@ -131,6 +131,22 @@ const openMenuId = ref(null);
 const menuPosition = ref({});
 const buttonRefs = ref({});
 
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
+
+watch(() => campaignsStore.currentCampaign, (newCampaign) => {
+  if (newCampaign) {
+    charactersStore.fetchCharacters(newCampaign.id);
+  } else {
+    charactersStore.$reset();
+  }
+}, {immediate: true});
+
 const isCurrentCampaignOwned = computed(() => {
   if (!campaignsStore.currentCampaign) return false;
   return campaignsStore.ownedCampaigns.some(
@@ -247,20 +263,4 @@ function handleClickOutside(event) {
     openMenuId.value = null;
   }
 }
-
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
-});
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
-});
-
-watch(() => campaignsStore.currentCampaign, (newCampaign) => {
-  if (newCampaign) {
-    charactersStore.fetchCharacters(newCampaign.id);
-  } else {
-    charactersStore.$reset();
-  }
-}, {immediate: true});
 </script>
