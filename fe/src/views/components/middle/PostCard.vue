@@ -4,7 +4,7 @@
       <div class="post-title-row">
         <h3 class="post-title" @click="openModal">{{ post.title }}</h3>
         <span v-if="post.importance_level > 0" class="importance-indicator" :title="post.importance_level">
-            {{ '!'.repeat(post.importance_level) }}
+            {{ '👑'.repeat(post.importance_level) }}
         </span>
       </div>
       <div class="post-header-actions flex-align-center">

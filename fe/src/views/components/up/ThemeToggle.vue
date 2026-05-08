@@ -1,13 +1,14 @@
 <template>
-  <button @click="toggleTheme" class="theme-toggle btn-circle btn-circle-lg" :title="currentTheme === ThemeTypes.DARK ? 'Switch to Light Theme' : 'Switch to Dark Theme'">
+  <button @click="toggleTheme" class="theme-toggle btn-circle btn-circle-lg"
+          :title="currentTheme === ThemeTypes.DARK ? 'Switch to Light Theme' : 'Switch to Dark Theme'">
     <span v-if="currentTheme === ThemeTypes.DARK">☀️</span>
     <span v-else>🌙</span>
   </button>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
-import { ThemeTypes } from '@/constants/themeConstants';
+import {onMounted, ref, watch} from 'vue';
+import {ThemeTypes} from '../../../constants/themeConstants';
 
 const currentTheme = ref(ThemeTypes.DARK);
 

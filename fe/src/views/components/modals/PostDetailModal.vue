@@ -7,7 +7,7 @@
         <div class="modal-title-row" v-if="!isEditing">
           <h2>{{ post.title }}</h2>
           <span v-if="post.importance_level > 0" class="importance-indicator" :title="post.importance_level">
-              {{ '!'.repeat(post.importance_level) }}
+              {{ '👑'.repeat(post.importance_level) }}
           </span>
         </div>
         <textarea
@@ -103,7 +103,7 @@
                 class="importance-mark"
                 :class="{ active: i <= editedImportanceLevel }"
             >
-              !
+              👑
             </span>
           </div>
         </div>

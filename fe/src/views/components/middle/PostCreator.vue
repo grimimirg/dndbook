@@ -23,7 +23,7 @@
               class="importance-mark"
               :class="{ active: i <= importanceLevel }"
           >
-            !
+            👑
           </span>
         </div>
       </div>
