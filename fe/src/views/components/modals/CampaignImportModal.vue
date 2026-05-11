@@ -3,7 +3,7 @@
     <div class="modal-content">
       <div class="modal-header flex-between">
         <h3>{{ t('campaign.importTitle') }}</h3>
-        <button @click="handleClose" class="close-btn btn-circle btn-circle-md">×</button>
+        <span @click="handleClose" class="close-btn btn-circle btn-circle-md">×</span>
       </div>
       
       <div class="modal-body">

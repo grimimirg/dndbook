@@ -2172,6 +2172,7 @@ input::placeholder, textarea::placeholder {
 .campaign-characters-panel .character-info {
     flex: 0 0 150px;
     gap: 4px;
+    text-align: left;
 }
 
 .campaign-characters-panel .character-name {
@@ -3210,8 +3211,26 @@ input::placeholder, textarea::placeholder {
     font-size: 0.85rem;
     color: var(--text-secondary);
     margin-top: 0.25rem;
-    max-height: 60px;
+    max-height: 200px;
     overflow-y: auto;
+}
+
+.character-description::-webkit-scrollbar {
+    width: 6px;
+}
+
+.character-description::-webkit-scrollbar-track {
+    background: var(--input-bg);
+    border-radius: 4px;
+}
+
+.character-description::-webkit-scrollbar-thumb {
+    background: rgba(139, 111, 71, 0.5);
+    border-radius: 4px;
+}
+
+.character-description::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 111, 71, 0.7);
 }
 
 .character-assigned {

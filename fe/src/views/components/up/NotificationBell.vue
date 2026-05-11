@@ -9,7 +9,7 @@
     <div v-if="showDropdown" class="dropdown" @click.stop>
       <div class="dropdown-header flex-between">
         <h3>{{ t('notification.title') }}</h3>
-        <button @click="showDropdown = false" class="close-btn btn-circle btn-circle-md">×</button>
+        <span @click="showDropdown = false" class="close-btn btn-circle btn-circle-md">×</span>
       </div>
 
       <div v-if="loading" class="loading">

@@ -2,7 +2,7 @@
   <Teleport to="body">
     <div v-if="show && character" class="modal-overlay" @click="handleClose">
       <div class="modal-content character-detail-modal" @click.stop>
-        <button class="close-btn btn-circle btn-circle-md" @click="handleClose">×</button>
+        <span class="close-btn btn-circle btn-circle-md" @click="handleClose">×</span>
 
         <div class="character-detail-content">
           <div class="character-header">
