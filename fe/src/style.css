@@ -3374,3 +3374,251 @@ input::placeholder, textarea::placeholder {
 .mode-select-wrapper {
     flex: 0 0 auto;
 }
+
+/* PostCreator.vue styles */
+.post-creator .importance-selector {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.post-creator .importance-mark {
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-color);
+  opacity: 0.3;
+  transition: opacity 0.2s, color 0.2s;
+  user-select: none;
+}
+
+.post-creator .importance-mark:hover {
+  opacity: 0.6;
+}
+
+.post-creator .importance-mark.active {
+  color: #e74c3c;
+  opacity: 1;
+}
+
+.post-creator .visibility-toggle {
+  cursor: pointer;
+  gap: 0.5rem;
+}
+
+.post-creator .hidden-checkbox {
+  display: none;
+}
+
+.post-creator .eye-toggle {
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.post-creator .eye-toggle:hover {
+  transform: scale(1.1);
+}
+
+/* PostCard.vue styles */
+.post-card.hidden-post {
+    filter: blur(1px);
+    opacity: 0.6;
+}
+
+.post-card.hidden-post:hover {
+    filter: none;
+    opacity: 1;
+}
+
+.post-card .hidden-indicator {
+    margin-left: 8px;
+    font-size: 1.2rem;
+}
+
+.post-card .image-grid {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 1rem;
+}
+
+.post-card .grid-1 {
+  grid-template-columns: 1fr;
+}
+
+.post-card .grid-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.post-card .grid-3 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+}
+
+.post-card .grid-3 .grid-image:nth-child(3) {
+  grid-column: span 2;
+}
+
+.post-card .grid-image {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.post-card .grid-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.post-card .more-images-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* PostItemTree.vue styles */
+.post-item {
+  padding: 12px 8px;
+  gap: 8px;
+  line-height: 1.3;
+  min-height: 32px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.post-item span,
+.post-item button {
+  margin: 0;
+  padding: 0;
+  line-height: 1.3;
+}
+
+.post-item .menu-toggle-btn {
+  opacity: 0;
+  margin-left: auto;
+}
+
+.post-item:hover .menu-toggle-btn {
+  opacity: 1;
+}
+
+.post-item.hidden-post-item {
+  filter: blur(1px);
+  opacity: 0.6;
+}
+
+.post-item.hidden-post-item:hover {
+  filter: none;
+  opacity: 1;
+}
+
+/* ImageLightbox.vue styles */
+.lightbox-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10020;
+  padding: 20px;
+}
+
+.lightbox-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-image {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  display: block;
+}
+
+.lightbox-controls {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  gap: 16px;
+  background: var(--card-bg-1);
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(139, 111, 71, 0.3);
+}
+
+.lightbox-nav-button {
+  background: transparent;
+  color: var(--text-heading);
+  font-size: 24px;
+  padding: 0 8px;
+  border: none;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.lightbox-nav-button:hover {
+  background: rgba(139, 111, 71, 0.3);
+  transform: none;
+}
+
+/* PostDetailModal.vue styles */
+.modal-content .importance-selector {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.modal-content .importance-mark {
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-color);
+  opacity: 0.3;
+  transition: opacity 0.2s, color 0.2s;
+  user-select: none;
+}
+
+.modal-content .importance-mark:hover {
+  opacity: 0.6;
+}
+
+.modal-content .importance-mark.active {
+  color: #e74c3c;
+  opacity: 1;
+}
+
+.modal-content .visibility-toggle {
+  cursor: pointer;
+  gap: 0.5rem;
+}
+
+.modal-content .hidden-checkbox {
+  display: none;
+}
+
+.modal-content .eye-toggle {
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.modal-content .eye-toggle:hover {
+  transform: scale(1.1);
+}

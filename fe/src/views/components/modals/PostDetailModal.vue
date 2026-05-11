@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <div v-if="show" class="modal-overlay" @click="handleClose">
-      <div class="modal-content" @click.stop>
+      <div class="modal-content post-detail-modal" @click.stop>
         <span class="close-btn btn-circle btn-circle-md" @click="handleClose">×</span>
 
         <div class="modal-title-row" v-if="!isEditing">
@@ -572,48 +572,3 @@ function cancelDeleteComment() {
 }
 
 </script>
-
-<style scoped>
-.importance-selector {
-  display: flex;
-  gap: 0.25rem;
-  flex-wrap: wrap;
-}
-
-.importance-mark {
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: var(--text-color);
-  opacity: 0.3;
-  transition: opacity 0.2s, color 0.2s;
-  user-select: none;
-}
-
-.importance-mark:hover {
-  opacity: 0.6;
-}
-
-.importance-mark.active {
-  color: #e74c3c;
-  opacity: 1;
-}
-
-.visibility-toggle {
-  cursor: pointer;
-  gap: 0.5rem;
-}
-
-.hidden-checkbox {
-  display: none;
-}
-
-.eye-toggle {
-  font-size: 1.5rem;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.eye-toggle:hover {
-  transform: scale(1.1);
-}
-</style>
