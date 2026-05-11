@@ -1,5 +1,5 @@
 <template>
-  <div class="post-item flex-align-center">
+  <div class="post-item flex-align-center" :class="{ 'hidden-post-item': post.is_hidden && isOwner }">
     <span v-if="!isOwner && !viewedPostIds.has(post.id)" class="checkmark-icon">✓</span>
     <span class="post-title" @click="scrollToPost(post.id)">{{ post.title }}</span>
     <button
@@ -67,6 +67,16 @@ function togglePostMenu(postId, event) {
 }
 
 .post-item:hover .menu-toggle-btn {
+  opacity: 1;
+}
+
+.hidden-post-item {
+  filter: blur(1px);
+  opacity: 0.6;
+}
+
+.hidden-post-item:hover {
+  filter: none;
   opacity: 1;
 }
 </style>
