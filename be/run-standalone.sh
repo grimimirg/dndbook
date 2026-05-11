@@ -134,14 +134,14 @@ echo "✓ Uploads directory ready"
 
 echo ""
 echo "Initializing database..."
-if [ -f "init-db.sh" ]; then
-    ./init-db.sh
+if [ -f "init-db.sql" ]; then
+    PGPASSWORD=$POSTGRES_PASSWORD psql -h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER -d $POSTGRES_DB -f init-db.sql
     if [ $? -ne 0 ]; then
         echo "❌ Database initialization failed"
         exit 1
     fi
 else
-    echo "⚠️  init-db.sh not found, skipping database initialization"
+    echo "⚠️  init-db.sql not found, skipping database initialization"
 fi
 
 echo ""

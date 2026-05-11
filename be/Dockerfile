@@ -21,7 +21,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 RUN mkdir -p uploads && chmod 755 uploads && \
-    chmod +x init-and-start.sh init-db.sh
+    chmod +x init-and-start.sh
 
 EXPOSE 5000
 

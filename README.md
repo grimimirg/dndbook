@@ -3,8 +3,10 @@
   
   ### *Your Campaign's Chronicle Awaits*
   
-  [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+  [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
   [![Docker](https://img.shields.io/badge/docker-ready-brightgreen.svg)](docker-compose.standalone.yaml)
+  [![Issues Welcome](https://img.shields.io/badge/issues-welcome-brightgreen.svg)](https://github.com/grimirg/dndbook/issues)
+  [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/grimirg/dndbook/pulls)
   
 </div>
 
@@ -50,11 +52,14 @@ See D&D Book in action! Here are some screenshots showcasing some features:
   - [Option 1: Docker Standalone](#-option-1-docker-standalone-recommended---easiest)
   - [Option 2: Homelab Deployment](#-option-2-homelab-deployment)
   - [Option 3: Standalone (For Developers)](#-option-3-standalone-for-developers)
+- [User Manual](#-user-manual)
 - [Project Structure](#-project-structure)
 - [Configuration](#️-configuration)
+- [Database Initialization](#️-database-initialization)
 - [Useful Commands](#️-useful-commands)
 - [Common Issues](#-common-issues)
-- [Notes](#-notes)
+- [Contributing](#-contributing)
+- [License](#-license)
 - [Support the Project](#-support-the-project)
 
 ---
@@ -75,6 +80,7 @@ There are **three ways** to run the application. Choose the one that fits your n
 
 **Requirements:**
 - Docker installed on your computer
+- `psql` client installed (for database initialization)
 
 **Steps:**
 
@@ -82,17 +88,26 @@ There are **three ways** to run the application. Choose the one that fits your n
    ```bash
    cp .env.example .env
    ```
-   Then open the `.env` file and modify the values (especially passwords!).
+   Open the `.env` file and modify the values (especially passwords!).
 
-2. **Start everything**
+2. **Start the application**
    ```bash
    ./start-docker.sh
    ```
+   Wait for the script to complete and the database container to be ready.
 
-3. **Open your browser**
+3. **Initialize the database** (REQUIRED)
+   ```bash
+   cd be
+   PGPASSWORD=change-this-password psql -h localhost -p 5432 -U dndbook_user -d dndbook_db -f init-db.sql
+   cd ..
+   ```
+   ⚠️ **Important:** Replace `change-this-password` with the password you set in `.env` (POSTGRES_PASSWORD).
+
+4. **Open your browser**
    - Go to: http://localhost
    - Username: `admin`
-   - Password: the one you set in `.env`
+   - Password: `admin123` (change it immediately after first login!)
 
 **To stop:**
 ```bash
@@ -156,7 +171,12 @@ There are **three ways** to run the application. Choose the one that fits your n
    
    Use `nginx.conf.template` as reference for your reverse proxy configuration.
 
-4. **Start the application**
+4. **Initialize the database**
+   ```bash
+   psql -h your_postgres_host -p 5432 -U dndbook_user -d dndbook_db -f be/init-db.sql
+   ```
+
+5. **Start the application**
    ```bash
    docker-compose up -d
    ```
@@ -176,6 +196,7 @@ There are **three ways** to run the application. Choose the one that fits your n
 - Python 3.8+ installed
 - Node.js 18+ installed
 - Docker (only for PostgreSQL database)
+- `psql` client installed (for database initialization)
 
 **Steps:**
 
@@ -183,9 +204,9 @@ There are **three ways** to run the application. Choose the one that fits your n
    ```bash
    cp .env.example .env
    ```
-   Then open the `.env` file and modify the values.
+   Open the `.env` file and modify the values.
 
-2. **Start everything**
+2. **Start the application**
    ```bash
    ./start-standalone.sh
    ```
@@ -193,17 +214,39 @@ There are **three ways** to run the application. Choose the one that fits your n
    - PostgreSQL database (in Docker)
    - Backend (Python/Flask)
    - Frontend (Vue.js)
+   Wait for the script to complete.
 
-3. **Open your browser**
+3. **Initialize the database** (REQUIRED)
+   ```bash
+   cd be
+   PGPASSWORD=change-this-password psql -h localhost -p 5432 -U dndbook_user -d dndbook_db -f init-db.sql
+   cd ..
+   ```
+   ⚠️ **Important:** Replace `change-this-password` with the password you set in `.env` (POSTGRES_PASSWORD).
+
+4. **Open your browser**
    - Frontend: http://localhost:5173
    - Backend API: http://localhost:5000
    - Username: `admin`
-   - Password: the one you set in `.env`
+   - Password: `admin123` (change it immediately after first login!)
 
 **To stop:**
 ```bash
 ./stop-standalone.sh
 ```
+
+---
+
+## 📖 User Manual
+
+Once you have D&D Book up and running, check out the [User Manual](USER_MANUAL.md) for detailed instructions on how to use all the application features:
+
+- Campaign management and configuration
+- Character creation and management
+- Creating posts with images and importance levels
+- Inviting players and collaborating
+- Import/export functionality
+- And much more!
 
 ---
 
@@ -226,36 +269,58 @@ dndbook/
 
 ## ⚙️ Configuration
 
+The application is configured through environment variables in the `.env` file.
+
 ### Main `.env` File
 
-The `.env` file in the root folder contains **all** the application configuration.
+Copy the example file and customize it:
+```bash
+cp .env.example .env
+```
 
-**Important variables to change:**
-
+**Critical security settings (change these!):**
 ```bash
 # PostgreSQL Database
 POSTGRES_USER=dndbook_user
-POSTGRES_PASSWORD=change-this-password      # ⚠️ IMPORTANT!
+POSTGRES_PASSWORD=change-this-password      # ⚠️ CHANGE THIS!
 POSTGRES_DB=dndbook_db
 
-# Security Keys (generate new keys for production!)
-SECRET_KEY=change-this-key                  # ⚠️ IMPORTANT!
-JWT_SECRET_KEY=change-this-key              # ⚠️ IMPORTANT!
-
-# Admin Password
-ADMIN_PASSWORD=admin123                      # ⚠️ IMPORTANT!
+# Security Keys (generate new random keys for production)
+SECRET_KEY=change-this-key                  # ⚠️ CHANGE THIS!
+JWT_SECRET_KEY=change-this-key              # ⚠️ CHANGE THIS!
 ```
 
-**To generate secure keys:**
+**Generate secure keys:**
 ```bash
 python3 -c "import secrets; print(secrets.token_hex(32))"
 ```
 
 ### Advanced Configuration (Optional)
 
-If you want to customize only the backend or frontend:
-- **Backend**: Create `be/.env` (variables here override those in root `.env`)
-- **Frontend**: Create `fe/.env` (variables here override those in root `.env`)
+You can override settings for specific components:
+- **Backend only**: Create `be/.env` (overrides root `.env` for backend)
+- **Frontend only**: Create `fe/.env` (overrides root `.env` for frontend)
+
+---
+
+## 🗄️ Database Initialization
+
+The database must be initialized manually using the SQL script located in `be/init-db.sql`. This step is **required** after starting the application.
+
+**What the script does:**
+- Creates all necessary database tables
+- Creates the default admin user (username: `admin`, password: `admin123`)
+
+**Important:**
+- Change the admin password immediately after first login
+- The script is safe to run multiple times (it won't duplicate data)
+
+**For Homelab Deployment:**
+If you're using the Homelab deployment option, run the SQL script on your existing PostgreSQL:
+
+```bash
+psql -h your_postgres_host -p 5432 -U dndbook_user -d dndbook_db -f be/init-db.sql
+```
 
 ---
 
@@ -290,10 +355,18 @@ ps aux | grep -E "python|vite"
 ## 🆘 Common Issues
 
 ### "Port already in use"
-Another program is using the port. Stop the other program or change the port in `.env`.
+Another program is using port 80 (Docker Standalone) or 5173/5000 (Standalone). Stop the other program or change the port in `.env`.
 
 ### "Database connection failed"
-Make sure Docker is running and the credentials in `.env` are correct.
+- Make sure Docker is running
+- Verify the database container is started: `docker ps`
+- Check that credentials in `.env` match your database settings
+
+### "psql: command not found"
+Install the PostgreSQL client:
+- **Ubuntu/Debian**: `sudo apt-get install postgresql-client`
+- **macOS**: `brew install postgresql`
+- **Windows**: Download from https://www.postgresql.org/download/
 
 ### "Missing required environment variables"
 You forgot to create the `.env` file. Run: `cp .env.example .env`
@@ -304,17 +377,48 @@ Check that `VITE_API_URL` in `.env` is correct:
 - **Docker Standalone**: `VITE_API_URL=http://localhost:5000`
 - **Standalone Dev**: `VITE_API_URL=http://localhost:5000`
 
-**Note:** The frontend code uses paths like `/auth/login`, `/campaigns`, etc. The `VITE_API_URL` is prepended to these paths, so:
-- With `VITE_API_URL=/api` → calls become `/api/auth/login`
-- With `VITE_API_URL=http://localhost:5000` → calls become `http://localhost:5000/auth/login`
+**How it works:** The frontend prepends `VITE_API_URL` to all API calls. For example:
+- With `VITE_API_URL=/api` → `/auth/login` becomes `/api/auth/login`
+- With `VITE_API_URL=http://localhost:5000` → `/auth/login` becomes `http://localhost:5000/auth/login`
 
 ---
 
-## 📝 Notes
+## 🤝 Contributing
 
-- The `.env` file contains passwords and secret keys: **DO NOT share it** and **DO NOT upload it to Git**
-- For production, always generate new random secret keys
-- The database is saved in a Docker volume, so your data persists even after stopping the application
+We welcome contributions from the community! Whether you're fixing bugs, adding new features, improving documentation, or translating the interface, your help is greatly appreciated.
+
+- **Report a bug**: [Open an Issue](https://github.com/grimirg/dndbook/issues)
+- **Request a feature**: [Open an Issue](https://github.com/grimirg/dndbook/issues)
+- **Submit a pull request**: [Open a Pull Request](https://github.com/grimirg/dndbook/pulls)
+
+### How to Contribute
+
+1. **Fork the repository**
+2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
+3. **Commit your changes** (`git commit -m 'Add amazing feature'`)
+4. **Push to the branch** (`git push origin feature-amazing-feature`)
+5. **Open a Pull Request**
+
+---
+
+## 📄 License
+
+This project is licensed under the **GNU General Public License v3.0 (GPLv3)**.
+
+### What This Means
+
+- ✅ You are free to use, modify, and distribute this software
+- ✅ You can use it for personal and commercial projects
+- ✅ Any modifications must also be released under GPLv3
+- ❌ You cannot use this software in proprietary/closed-source products
+- ❌ You cannot remove the license or attribution
+- ❌ You cannot use this project for profit-making activities without releasing your modifications
+
+### Summary
+
+D&D Book is free and open-source software. We believe in sharing knowledge and building tools that benefit the entire tabletop gaming community. The GPLv3 ensures that any improvements to this project remain free and open for everyone.
+
+For the full license text, see [LICENSE](LICENSE).
 
 ---
 
