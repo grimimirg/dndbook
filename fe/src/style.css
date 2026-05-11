@@ -2172,7 +2172,8 @@ input::placeholder, textarea::placeholder {
 .campaign-characters-panel .character-info {
     flex: 0 0 150px;
     gap: 4px;
-    text-align: left;
+    align-items: flex-start;
+    margin-left: 10px;
 }
 
 .campaign-characters-panel .character-name {
