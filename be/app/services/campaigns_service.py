@@ -31,7 +31,7 @@ class CampaignsService:
         }
 
     @staticmethod
-    def create_campaign(user, name, description=''):
+    def create_campaign(user, name, description='', character_creation_mode='optional'):
         """
         Create a new campaign.
 
@@ -39,14 +39,23 @@ class CampaignsService:
             user: The user who will own the campaign
             name (str): Campaign name
             description (str): Campaign description
+            character_creation_mode (str): Character creation mode ('free', 'predefined', 'optional')
 
         Returns:
             Campaign: The created campaign
+
+        Raises:
+            ValueError: If character_creation_mode is invalid
         """
+        valid_modes = ['free', 'predefined', 'optional']
+        if character_creation_mode not in valid_modes:
+            raise ValueError(f'Invalid character_creation_mode. Must be one of: {valid_modes}')
+
         campaign = Campaign(
             name=name,
             description=description,
-            owner_id=user.id
+            owner_id=user.id,
+            character_creation_mode=character_creation_mode
         )
 
         db.session.add(campaign)
@@ -80,7 +89,7 @@ class CampaignsService:
         return campaign
 
     @staticmethod
-    def update_campaign(campaign_id, user, name=None, description=None):
+    def update_campaign(campaign_id, user, name=None, description=None, character_creation_mode=None):
         """
         Update a campaign.
 
@@ -91,12 +100,13 @@ class CampaignsService:
             user: The user requesting the update
             name (str): Updated campaign name (optional)
             description (str): Updated campaign description (optional)
+            character_creation_mode (str): Updated character creation mode (optional)
 
         Returns:
             Campaign: The updated campaign
 
         Raises:
-            ValueError: If user is not the campaign owner
+            ValueError: If user is not the campaign owner or character_creation_mode is invalid
         """
         campaign = Campaign.query.get_or_404(campaign_id)
 
@@ -107,6 +117,11 @@ class CampaignsService:
             campaign.name = name
         if description is not None:
             campaign.description = description
+        if character_creation_mode:
+            valid_modes = ['free', 'predefined', 'optional']
+            if character_creation_mode not in valid_modes:
+                raise ValueError(f'Invalid character_creation_mode. Must be one of: {valid_modes}')
+            campaign.character_creation_mode = character_creation_mode
 
         db.session.commit()
 

@@ -68,6 +68,13 @@ campaign:
   importError: "Erreur lors de l'importation"
   exportSuccess: "Campagne exportée avec succès"
   exportError: "Erreur lors de l'exportation"
+  characterCreationMode: "Mode de Création de Personnage"
+  modeOptional: "Optionnel"
+  modeOptionalDesc: "Les joueurs peuvent créer ou ignorer la création de personnage"
+  modeFree: "Création Libre"
+  modeFreeDesc: "Les joueurs doivent créer leur propre personnage pour rejoindre"
+  modePredefined: "Personnages Prédéfinis"
+  modePredefinedDesc: "Les joueurs sélectionnent parmi les personnages prédéfinis créés par le maître"
 
 post:
   createPost: "Créer une publication"
@@ -147,6 +154,7 @@ common:
   error: "Erreur"
   confirm: "Confirmer"
   cancel: "Annuler"
+  later: "Plus tard"
 
 character:
   characters: "Personnages"
@@ -173,3 +181,15 @@ character:
   deleteTitle: "Supprimer le personnage"
   confirmDelete: "Êtes-vous sûr de vouloir supprimer ce personnage ?"
   actions: "Actions"
+  predefinedCharacter: "Personnage Prédéfini"
+  predefinedHelp: "Ce personnage peut être sélectionné par les joueurs lorsqu'ils rejoignent la campagne"
+  chooseCharacter: "Choisir un Personnage"
+  chooseYourCharacter: "Choisissez Votre Personnage"
+  chooseYourCharacterDesc: "Sélectionnez un personnage prédéfini pour commencer votre aventure"
+  selectCharacter: "Sélectionner un Personnage"
+  noPredefinedCharacters: "Aucun personnage prédéfini disponible"
+  createYourCharacter: "Créez Votre Personnage"
+  createYourCharacterDesc: "Créez votre propre personnage unique pour commencer votre aventure"
+  noCharacter: "Aucun personnage"
+  remind: "Rappeler"
+  reminderSent: "Rappel envoyé"

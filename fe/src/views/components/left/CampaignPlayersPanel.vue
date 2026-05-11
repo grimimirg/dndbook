@@ -23,15 +23,30 @@
             </div>
             <div v-else class="players-list flex-col">
               <div v-for="member in members" :key="member.id" class="player-item flex-between">
-                <span class="player-name">{{ member.username }}</span>
-                <button
-                    v-if="isCurrentCampaignOwned"
-                    @click="handleRemoveMember(member)"
-                    class="remove-btn btn-circle btn-circle-sm"
-                    :title="t('campaign.removePlayer')"
-                >
-                  ×
-                </button>
+                <div class="player-info">
+                  <span class="player-name">{{ member.username }}</span>
+                  <span v-if="!hasCharacter(member.id)" class="no-character-badge" :title="t('character.noCharacter')">
+                     - {{ t('character.noCharacter') }}
+                  </span>
+                </div>
+                <div class="player-actions flex-align-center">
+                  <button
+                      v-if="isCurrentCampaignOwned && !hasCharacter(member.id)"
+                      @click="handleSendReminder(member)"
+                      class="reminder-btn btn-sm"
+                      :title="t('character.sendReminder')"
+                  >
+                    {{ t('character.remind') }}
+                  </button>
+                  <button
+                      v-if="isCurrentCampaignOwned"
+                      @click="handleRemoveMember(member)"
+                      class="remove-btn btn-circle btn-circle-sm"
+                      :title="t('campaign.removePlayer')"
+                  >
+                    ×
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -81,16 +96,19 @@
 import {computed, onMounted, ref, watch} from 'vue';
 import {useI18n} from 'vue-i18n';
 import {useCampaignsStore} from '../../../stores/campaigns.store.js';
+import {useCharactersStore} from '../../../stores/characters.store.js';
 import {useAuthStore} from '../../../stores/auth.store.js';
 import api from '../../../services/api.service.js';
 import ConfirmModal from '../modals/ConfirmModal.vue';
 
 const {t} = useI18n();
 const campaignsStore = useCampaignsStore();
+const charactersStore = useCharactersStore();
 const authStore = useAuthStore();
 
 const members = ref([]);
 const pendingInvites = ref([]);
+const characters = ref([]);
 const loading = ref(false);
 const showRemoveMemberConfirm = ref(false);
 const showCancelInviteConfirm = ref(false);
@@ -117,6 +135,7 @@ async function fetchMembers() {
   if (!campaignsStore.currentCampaign) {
     members.value = [];
     pendingInvites.value = [];
+    characters.value = [];
     return;
   }
 
@@ -125,6 +144,12 @@ async function fetchMembers() {
     const response = await api.get(`/campaigns/${campaignsStore.currentCampaign.id}/members`);
     members.value = response.data.members || [];
     pendingInvites.value = response.data.pending_invites || [];
+    
+    // Fetch characters to check assignments
+    const charsResponse = await charactersStore.fetchCharacters(campaignsStore.currentCampaign.id);
+    if (charsResponse) {
+      characters.value = charactersStore.characters;
+    }
   } catch (error) {
     console.error('Failed to fetch campaign members:', error);
   } finally {
@@ -176,6 +201,16 @@ function cancelCancelInvite() {
 
 function toggleCollapse() {
   isCollapsed.value = !isCollapsed.value;
+}
+
+function hasCharacter(userId) {
+  return characters.value.some(c => c.assigned_to_user_id === userId);
+}
+
+function handleSendReminder(member) {
+  // This would ideally send a notification to the player
+  // For now, we'll just show a message
+  alert(`${t('character.reminderSent')} ${member.username}`);
 }
 
 defineExpose({

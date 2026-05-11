@@ -34,6 +34,7 @@ def create_campaign(current_user):
     Expected JSON payload:
         - name (str): Campaign name (required)
         - description (str): Campaign description (optional)
+        - character_creation_mode (str): Character creation mode (optional, default: 'optional')
         
     Args:
         current_user: The authenticated user (injected by token_required decorator)
@@ -41,7 +42,7 @@ def create_campaign(current_user):
     Returns:
         JSON response with:
         - 201: Created campaign data
-        - 400: Missing campaign name
+        - 400: Missing campaign name or invalid mode
     """
     data = request.get_json()
 
@@ -51,7 +52,8 @@ def create_campaign(current_user):
     campaign = CampaignsService.create_campaign(
         user=current_user,
         name=data['name'],
-        description=data.get('description', '')
+        description=data.get('description', ''),
+        character_creation_mode=data.get('character_creation_mode', 'optional')
     )
 
     return jsonify(campaign.to_dict()), 201
@@ -93,6 +95,7 @@ def update_campaign(current_user, campaign_id):
     Expected JSON payload:
         - name (str): Updated campaign name (optional)
         - description (str): Updated campaign description (optional)
+        - character_creation_mode (str): Updated character creation mode (optional)
         
     Args:
         current_user: The authenticated user (injected by token_required decorator)
@@ -101,6 +104,7 @@ def update_campaign(current_user, campaign_id):
     Returns:
         JSON response with:
         - 200: Updated campaign data
+        - 400: Invalid character_creation_mode
         - 403: User is not the campaign owner
         - 404: Campaign not found
     """
@@ -110,11 +114,12 @@ def update_campaign(current_user, campaign_id):
             campaign_id=campaign_id,
             user=current_user,
             name=data.get('name'),
-            description=data.get('description')
+            description=data.get('description'),
+            character_creation_mode=data.get('character_creation_mode')
         )
         return jsonify(campaign.to_dict()), 200
     except ValueError as e:
-        return jsonify({'error': str(e)}), 403
+        return jsonify({'error': str(e)}), 400 if 'Invalid' in str(e) else 403
 
 
 @bp.route('/<int:campaign_id>', methods=['DELETE'])

@@ -15,6 +15,7 @@ class Campaign(db.Model):
     name = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text)
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    character_creation_mode = db.Column(db.String(20), nullable=False, default='optional')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -36,6 +37,7 @@ class Campaign(db.Model):
             'name': self.name,
             'description': self.description,
             'owner_id': self.owner_id,
+            'character_creation_mode': self.character_creation_mode,
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat(),
             'post_count': len(self.posts)

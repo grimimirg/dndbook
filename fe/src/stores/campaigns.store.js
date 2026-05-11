@@ -21,9 +21,13 @@ export const useCampaignsStore = defineStore('campaigns', () => {
     }
   }
 
-  async function createCampaign(name, description) {
+  async function createCampaign(name, description, characterCreationMode = 'optional') {
     try {
-      const response = await api.post('/campaigns', { name, description });
+      const response = await api.post('/campaigns', { 
+        name, 
+        description,
+        character_creation_mode: characterCreationMode
+      });
       ownedCampaigns.value.push(response.data);
       return { success: true, campaign: response.data };
     } catch (error) {
@@ -50,7 +54,7 @@ export const useCampaignsStore = defineStore('campaigns', () => {
         currentCampaign.value = response.data;
       }
       
-      return { success: true };
+      return { success: true, campaign: response.data };
     } catch (error) {
       return { 
         success: false, 

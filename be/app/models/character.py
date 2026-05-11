@@ -19,6 +19,8 @@ class Character(db.Model):
     character_class = db.Column(db.String(50), nullable=False)
     description = db.Column(db.Text)
     image_url = db.Column(db.String(500))
+    is_predefined = db.Column(db.Boolean, default=False, nullable=False)
+    assigned_to_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -45,6 +47,8 @@ class Character(db.Model):
             'character_class': self.character_class,
             'description': self.description,
             'image_url': image_url,
+            'is_predefined': self.is_predefined,
+            'assigned_to_user_id': self.assigned_to_user_id,
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat()
         }

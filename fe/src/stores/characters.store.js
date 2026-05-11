@@ -41,6 +41,52 @@ export const useCharactersStore = defineStore('characters', () => {
     }
   }
 
+  async function fetchPredefinedCharacters(campaignId) {
+    try {
+      const response = await api.get(`/campaigns/${campaignId}/characters/predefined`);
+      return { success: true, characters: response.data };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.error || 'Failed to fetch predefined characters'
+      };
+    }
+  }
+
+  async function assignCharacterToUser(campaignId, characterId, userId) {
+    try {
+      const response = await api.post(`/campaigns/${campaignId}/characters/${characterId}/assign`, {
+        user_id: userId
+      });
+      const index = characters.value.findIndex(c => c.id === characterId);
+      if (index !== -1) {
+        characters.value[index] = response.data;
+      }
+      return { success: true, character: response.data };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.error || 'Failed to assign character'
+      };
+    }
+  }
+
+  async function unassignCharacter(characterId) {
+    try {
+      const response = await api.post(`/campaigns/${characterId}/unassign`);
+      const index = characters.value.findIndex(c => c.id === characterId);
+      if (index !== -1) {
+        characters.value[index] = response.data;
+      }
+      return { success: true, character: response.data };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.error || 'Failed to unassign character'
+      };
+    }
+  }
+
   async function updateCharacter(campaignId, characterId, formData) {
     try {
       const response = await api.put(`/campaigns/${campaignId}/characters/${characterId}`, formData, {
@@ -86,6 +132,9 @@ export const useCharactersStore = defineStore('characters', () => {
     createCharacter,
     updateCharacter,
     deleteCharacter,
+    fetchPredefinedCharacters,
+    assignCharacterToUser,
+    unassignCharacter,
     $reset
   };
 });

@@ -6,6 +6,12 @@
         <h1>{{ t('app.title') }}</h1>
         <div class="user-info flex-align-center">
           <span class="username-label">{{ authStore.user?.username }}</span>
+<!--          <div v-if="campaignsStore.currentCampaign" class="test-controls flex-align-center">-->
+<!--            <button @click="testFreeModeNotification" class="test-btn" title="Test Free Mode Notification">Test Free</button>-->
+<!--            <button @click="testPredefinedModeNotification" class="test-btn" title="Test Predefined Mode Notification">Test Predefined</button>-->
+<!--            <button @click="testCreateModal" class="test-btn" title="Test Create Character Modal">Test Create</button>-->
+<!--            <button @click="testSelectionModal" class="test-btn" title="Test Character Selection Modal">Test Select</button>-->
+<!--          </div>-->
           <NotificationBell/>
           <button @click="handleLogout" class="secondary desktop-only">{{ t('auth.logout') }}</button>
           <LanguageSelector class="desktop-only"/>
@@ -105,6 +111,26 @@
     </div>
 
     <InviteToast/>
+    <CharacterCreationNotification
+        :show="showCharacterNotification"
+        :mode="notificationMode"
+        :campaign-id="campaignsStore.currentCampaign?.id"
+        @dismiss="handleNotificationDismiss"
+        @create="handleNotificationCreate"
+        @choose="handleNotificationChoose"
+    />
+    <CreateCharacterModal
+        :show="showCreateCharacterModal"
+        :campaign-id="campaignsStore.currentCampaign?.id"
+        @close="showCreateCharacterModal = false"
+        @success="showCreateCharacterModal = false"
+    />
+    <CharacterSelectionModal
+        :show="showCharacterSelectionModal"
+        :campaign-id="campaignsStore.currentCampaign?.id"
+        @close="showCharacterSelectionModal = false"
+        @success="showCharacterSelectionModal = false"
+    />
     <PostDetailModal
         :show="showPostDetailModal"
         :post="selectedPost"
@@ -140,6 +166,9 @@ import CampaignDescriptionPanel from './components/left/CampaignDescriptionPanel
 import CampaignCharactersPanel from './components/left/characters/CampaignCharactersPanel.vue';
 import CampaignPlayersPanel from './components/left/CampaignPlayersPanel.vue';
 import HamburgerMenu from './components/left/HamburgerMenu.vue';
+import CharacterCreationNotification from './components/notifications/CharacterCreationNotification.vue';
+import CreateCharacterModal from './components/left/characters/CreateCharacterModal.vue';
+import CharacterSelectionModal from './components/modals/CharacterSelectionModal.vue';
 import {SortTypes} from '../constants/sortConstants.js';
 import {ImportanceTypes} from '../constants/importanceConstants.js';
 import {SocketEvents} from '../constants/socketConstants.js';
@@ -163,6 +192,10 @@ const highlightedCommentId = ref(null);
 const showPostDetailModal = ref(false);
 const selectedPost = ref(null);
 const startInEditMode = ref(false);
+const showCharacterNotification = ref(false);
+const notificationMode = ref('free');
+const showCreateCharacterModal = ref(false);
+const showCharacterSelectionModal = ref(false);
 
 let debounceTimeout = null;
 
@@ -176,9 +209,12 @@ watch(searchQuery, (newValue) => {
   }, 500);
 });
 
-watch(() => campaignsStore.currentCampaign, () => {
-  if (campaignsStore.currentCampaign) {
+watch(() => campaignsStore.currentCampaign, async (newCampaign) => {
+  if (newCampaign) {
     fetchViewedStatus();
+    checkPendingCharacterCreation();
+  } else {
+    showCharacterNotification.value = false;
   }
 });
 
@@ -209,6 +245,8 @@ onMounted(async () => {
     invitesStore.setupSocketListener();
     setupPlayerJoinedListener();
   }
+
+  checkPendingCharacterCreation();
 });
 
 onUnmounted(() => {
@@ -338,18 +376,15 @@ function handleLogout() {
 }
 
 async function changeSortBy(sort) {
-  // Ignore divider option
   if (sort === 'divider') {
     return;
   }
 
-  // Handle importance filter selection
   if (sort.startsWith('importance_')) {
     importanceFilter.value = sort;
     return;
   }
 
-  // Handle sort option selection
   postsStore.setSortBy(sort);
   if (campaignsStore.currentCampaign) {
     await postsStore.fetchPosts(campaignsStore.currentCampaign.id);
@@ -386,17 +421,59 @@ async function markPostAsViewed(postId) {
 
   const wasViewed = viewedPostIds.value.has(postId);
 
-  // Optimistic update
   viewedPostIds.value.add(postId);
 
   try {
     await apiService.post(`/posts/${postId}/mark-viewed`);
   } catch (error) {
     console.error('Failed to mark post as viewed:', error);
-    // Revert on error
     if (!wasViewed) {
       viewedPostIds.value.delete(postId);
     }
   }
+}
+
+function checkPendingCharacterCreation() {
+  const pending = sessionStorage.getItem('pendingCharacterCreation');
+  if (pending && campaignsStore.currentCampaign) {
+    const data = JSON.parse(pending);
+    if (data.campaignId === campaignsStore.currentCampaign.id) {
+      notificationMode.value = data.mode;
+      showCharacterNotification.value = true;
+      sessionStorage.removeItem('pendingCharacterCreation');
+    }
+  }
+}
+
+function handleNotificationDismiss() {
+  showCharacterNotification.value = false;
+}
+
+function handleNotificationCreate() {
+  showCharacterNotification.value = false;
+  showCreateCharacterModal.value = true;
+}
+
+function handleNotificationChoose() {
+  showCharacterNotification.value = false;
+  showCharacterSelectionModal.value = true;
+}
+
+function testFreeModeNotification() {
+  notificationMode.value = 'free';
+  showCharacterNotification.value = true;
+}
+
+function testPredefinedModeNotification() {
+  notificationMode.value = 'predefined';
+  showCharacterNotification.value = true;
+}
+
+function testCreateModal() {
+  showCreateCharacterModal.value = true;
+}
+
+function testSelectionModal() {
+  showCharacterSelectionModal.value = true;
 }
 </script>

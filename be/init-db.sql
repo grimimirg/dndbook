@@ -200,6 +200,48 @@ BEGIN
     END IF;
 END $$;
 
+-- Add character_creation_mode to campaigns if it doesn't exist
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'campaigns' AND column_name = 'character_creation_mode'
+    ) THEN
+        ALTER TABLE campaigns ADD COLUMN character_creation_mode VARCHAR(20) NOT NULL DEFAULT 'optional';
+        RAISE NOTICE 'Added character_creation_mode column to campaigns table';
+    ELSE
+        RAISE NOTICE 'character_creation_mode column already exists in campaigns table';
+    END IF;
+END $$;
+
+-- Add is_predefined to characters if it doesn't exist
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'characters' AND column_name = 'is_predefined'
+    ) THEN
+        ALTER TABLE characters ADD COLUMN is_predefined BOOLEAN NOT NULL DEFAULT FALSE;
+        RAISE NOTICE 'Added is_predefined column to characters table';
+    ELSE
+        RAISE NOTICE 'is_predefined column already exists in characters table';
+    END IF;
+END $$;
+
+-- Add assigned_to_user_id to characters if it doesn't exist
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'characters' AND column_name = 'assigned_to_user_id'
+    ) THEN
+        ALTER TABLE characters ADD COLUMN assigned_to_user_id INTEGER REFERENCES users(id);
+        RAISE NOTICE 'Added assigned_to_user_id column to characters table';
+    ELSE
+        RAISE NOTICE 'assigned_to_user_id column already exists in characters table';
+    END IF;
+END $$;
+
 -- ============================================
 -- Backfill post_order values for existing posts
 -- ============================================

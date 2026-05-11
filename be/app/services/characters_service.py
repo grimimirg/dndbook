@@ -46,11 +46,12 @@ class CharactersService:
         return [character.to_dict() for character in characters]
 
     @staticmethod
-    def create_character(campaign_id, user, name, race, character_class, description='', image_file=None):
+    def create_character(campaign_id, user, name, race, character_class, description='', image_file=None, is_predefined=False):
         """
         Create a new character for a campaign.
 
         Only the campaign owner can create characters.
+        Only the campaign owner can create predefined characters.
 
         Args:
             campaign_id (int): The ID of the campaign
@@ -60,17 +61,21 @@ class CharactersService:
             character_class (str): Character class
             description (str): Character description
             image_file: File object for character portrait (optional)
+            is_predefined (bool): Whether this is a predefined character (optional)
 
         Returns:
             Character: The created character
 
         Raises:
-            ValueError: If user is not the campaign owner or missing required fields
+            ValueError: If user is not the campaign owner, trying to create predefined without being owner, or missing required fields
         """
         campaign = Campaign.query.get_or_404(campaign_id)
 
         if campaign.owner_id != user.id:
             raise ValueError('Only campaign owner can create characters')
+
+        if is_predefined and campaign.owner_id != user.id:
+            raise ValueError('Only campaign owner can create predefined characters')
 
         if not name or not race or not character_class:
             raise ValueError('Name, race, and class are required')
@@ -83,7 +88,8 @@ class CharactersService:
             race=race,
             character_class=character_class,
             description=description,
-            image_url=image_url
+            image_url=image_url,
+            is_predefined=is_predefined
         )
 
         db.session.add(character)
@@ -237,3 +243,103 @@ class CharactersService:
                                      image_url.replace('/uploads/', ''))
         if os.path.exists(old_image_path):
             os.remove(old_image_path)
+
+    @staticmethod
+    def get_predefined_characters(campaign_id, user):
+        """
+        Get all predefined characters for a campaign.
+
+        User must be either the campaign owner or a member to access.
+
+        Args:
+            campaign_id (int): The ID of the campaign
+            user: The user requesting access
+
+        Returns:
+            list: Array of predefined character objects
+
+        Raises:
+            ValueError: If user is not authorized
+        """
+        campaign = Campaign.query.get_or_404(campaign_id)
+
+        is_member = campaign.members.filter_by(id=user.id).first() is not None
+        if campaign.owner_id != user.id and not is_member:
+            raise ValueError('Unauthorized')
+
+        characters = Character.query.filter_by(
+            campaign_id=campaign_id,
+            is_predefined=True
+        ).order_by(Character.created_at.desc()).all()
+
+        return [character.to_dict() for character in characters]
+
+    @staticmethod
+    def assign_character_to_user(campaign_id, character_id, user_id, requesting_user):
+        """
+        Assign a predefined character to a user.
+
+        Only the campaign owner can assign characters.
+        Only unassigned predefined characters can be assigned.
+        Users can assign unassigned predefined characters to themselves.
+
+        Args:
+            campaign_id (int): The ID of the campaign
+            character_id (int): The ID of the character
+            user_id (int): The ID of the user to assign the character to
+            requesting_user: The user requesting the assignment
+
+        Returns:
+            Character: The updated character
+
+        Raises:
+            ValueError: If user is not authorized, character is not predefined, or already assigned
+        """
+        campaign = Campaign.query.get_or_404(campaign_id)
+
+        # Only campaign owner can assign to others, users can assign to themselves
+        if campaign.owner_id != requesting_user.id and requesting_user.id != user_id:
+            raise ValueError('Unauthorized')
+
+        character = Character.query.filter_by(id=character_id, campaign_id=campaign_id).first_or_404()
+
+        if not character.is_predefined:
+            raise ValueError('Only predefined characters can be assigned')
+
+        if character.assigned_to_user_id is not None:
+            raise ValueError('Character is already assigned')
+
+        character.assigned_to_user_id = user_id
+        db.session.commit()
+
+        return character
+
+    @staticmethod
+    def unassign_character(character_id, requesting_user):
+        """
+        Unassign a character from a user.
+
+        Only the campaign owner can unassign characters.
+        Users can unassign characters assigned to themselves.
+
+        Args:
+            character_id (int): The ID of the character
+            requesting_user: The user requesting the unassignment
+
+        Returns:
+            Character: The updated character
+
+        Raises:
+            ValueError: If user is not authorized
+        """
+        character = Character.query.get_or_404(character_id)
+        campaign = Campaign.query.get_or_404(character.campaign_id)
+
+        # Only campaign owner can unassign, or user can unassign their own character
+        if campaign.owner_id != requesting_user.id and character.assigned_to_user_id != requesting_user.id:
+            raise ValueError('Unauthorized')
+
+        character.assigned_to_user_id = None
+        db.session.commit()
+
+        return character

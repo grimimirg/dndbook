@@ -63,6 +63,7 @@ def create_character(current_user, campaign_id):
     character_class = request.form.get('character_class')
     description = request.form.get('description', '')
     image_file = request.files.get('image') if 'image' in request.files else None
+    is_predefined = request.form.get('is_predefined') == 'true'
     
     try:
         character = CharactersService.create_character(
@@ -72,7 +73,8 @@ def create_character(current_user, campaign_id):
             race=race,
             character_class=character_class,
             description=description,
-            image_file=image_file
+            image_file=image_file,
+            is_predefined=is_predefined
         )
         return jsonify(character.to_dict()), 201
     except ValueError as e:
@@ -179,5 +181,99 @@ def delete_character(current_user, campaign_id, character_id):
     try:
         CharactersService.delete_character(campaign_id, character_id, current_user)
         return jsonify({'message': 'Character deleted successfully'}), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 403
+
+
+@bp.route('/predefined', methods=['GET'])
+@token_required
+def get_predefined_characters(current_user, campaign_id):
+    """
+    Get all predefined characters for a campaign.
+    
+    User must be either the campaign owner or a member to access.
+    
+    Args:
+        current_user: The authenticated user (injected by token_required decorator)
+        campaign_id (int): The ID of the campaign
+        
+    Returns:
+        JSON response with:
+        - 200: Array of predefined character objects
+        - 403: User is not authorized to access this campaign
+        - 404: Campaign not found
+    """
+    try:
+        characters = CharactersService.get_predefined_characters(campaign_id, current_user)
+        return jsonify(characters), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 403
+
+
+@bp.route('/<int:character_id>/assign', methods=['POST'])
+@token_required
+def assign_character(current_user, campaign_id, character_id):
+    """
+    Assign a predefined character to a user.
+    
+    Only the campaign owner can assign characters to others.
+    Users can assign unassigned predefined characters to themselves.
+    
+    Expected JSON payload:
+        - user_id (int): The ID of the user to assign the character to (optional, defaults to current user)
+        
+    Args:
+        current_user: The authenticated user (injected by token_required decorator)
+        campaign_id (int): The ID of the campaign
+        character_id (int): The ID of the character to assign
+        
+    Returns:
+        JSON response with:
+        - 200: Updated character data
+        - 400: Character is not predefined or already assigned
+        - 403: User is not authorized
+        - 404: Campaign or character not found
+    """
+    data = request.get_json()
+    user_id = data.get('user_id', current_user.id) if data else current_user.id
+    
+    try:
+        character = CharactersService.assign_character_to_user(
+            campaign_id=campaign_id,
+            character_id=character_id,
+            user_id=user_id,
+            requesting_user=current_user
+        )
+        return jsonify(character.to_dict()), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400 if 'predefined' in str(e) or 'assigned' in str(e) else 403
+
+
+@bp.route('/<int:character_id>/unassign', methods=['POST'])
+@token_required
+def unassign_character(current_user, campaign_id, character_id):
+    """
+    Unassign a character from a user.
+    
+    Only the campaign owner can unassign characters.
+    Users can unassign characters assigned to themselves.
+    
+    Args:
+        current_user: The authenticated user (injected by token_required decorator)
+        campaign_id (int): The ID of the campaign
+        character_id (int): The ID of the character to unassign
+        
+    Returns:
+        JSON response with:
+        - 200: Updated character data
+        - 403: User is not authorized
+        - 404: Character not found
+    """
+    try:
+        character = CharactersService.unassign_character(
+            character_id=character_id,
+            requesting_user=current_user
+        )
+        return jsonify(character.to_dict()), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 403

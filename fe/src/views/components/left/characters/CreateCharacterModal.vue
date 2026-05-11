@@ -71,6 +71,14 @@
             </div>
           </div>
 
+          <div v-if="canCreatePredefined" class="form-group">
+            <label>
+              <input type="checkbox" v-model="isPredefined" />
+              {{ t('character.predefinedCharacter') }}
+            </label>
+            <small class="form-help">{{ t('character.predefinedHelp') }}</small>
+          </div>
+
           <div class="modal-actions">
             <button type="button" @click="handleClose" class="secondary">
               {{ t('common.cancel') }}
@@ -89,6 +97,8 @@
 import {computed, ref, watch} from 'vue';
 import {useI18n} from 'vue-i18n';
 import {useCharactersStore} from '../../../../stores/characters.store.js';
+import {useCampaignsStore} from '../../../../stores/campaigns.store.js';
+import {useAuthStore} from '../../../../stores/auth.store.js';
 import config from '../../../../config/config.js';
 
 const props = defineProps({
@@ -101,6 +111,8 @@ const emit = defineEmits(['close', 'success']);
 
 const {t} = useI18n();
 const charactersStore = useCharactersStore();
+const campaignsStore = useCampaignsStore();
+const authStore = useAuthStore();
 
 const formData = ref({
   name: '',
@@ -114,8 +126,14 @@ const imagePreview = ref(null);
 const fileInput = ref(null);
 const saving = ref(false);
 const removeExistingImage = ref(false);
+const isPredefined = ref(false);
 
 const isEditing = computed(() => !!props.character);
+const canCreatePredefined = computed(() => {
+  if (!props.campaignId) return false;
+  const campaign = campaignsStore.ownedCampaigns.find(c => c.id === props.campaignId);
+  return !!campaign;
+});
 
 watch(() => props.show, (newVal) => {
   if (newVal) {
@@ -126,6 +144,7 @@ watch(() => props.show, (newVal) => {
         character_class: props.character.character_class || '',
         description: props.character.description || ''
       };
+      isPredefined.value = props.character.is_predefined || false;
       if (props.character.image_url) {
         const imageUrl = props.character.image_url.startsWith('http')
             ? props.character.image_url
@@ -151,6 +170,7 @@ function resetForm() {
   imageFile.value = null;
   imagePreview.value = null;
   removeExistingImage.value = false;
+  isPredefined.value = false;
 }
 
 function handleFileChange(event) {
@@ -183,6 +203,7 @@ async function handleSubmit() {
   submitData.append('race', formData.value.race);
   submitData.append('character_class', formData.value.character_class);
   submitData.append('description', formData.value.description || '');
+  submitData.append('is_predefined', isPredefined.value ? 'true' : 'false');
 
   if (imageFile.value) {
     submitData.append('image', imageFile.value);

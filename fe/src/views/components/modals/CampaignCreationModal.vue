@@ -9,6 +9,17 @@
         <div class="form-group">
           <textarea v-model="localDescription" :placeholder="t('campaign.description')" rows="4"></textarea>
         </div>
+        <div class="form-group mode-group">
+          <div class="mode-select-wrapper">
+            <label>{{ t('campaign.characterCreationMode') }}</label>
+            <select v-model="localCharacterCreationMode" class="form-select">
+              <option value="optional">{{ t('campaign.modeOptional') }}</option>
+              <option value="free">{{ t('campaign.modeFree') }}</option>
+              <option value="predefined">{{ t('campaign.modePredefined') }}</option>
+            </select>
+          </div>
+          <p class="mode-description">{{ getModeDescription(localCharacterCreationMode) }}</p>
+        </div>
         <div class="modal-actions" style="display: flex; justify-content: flex-end; gap: 1rem;">
           <button type="button" @click="$emit('close')" class="secondary">{{ t('campaign.cancel') }}</button>
           <button type="submit" class="primary">{{ t('campaign.createButton') }}</button>
@@ -35,18 +46,34 @@ const emit = defineEmits(['close', 'create']);
 
 const localName = ref('');
 const localDescription = ref('');
+const localCharacterCreationMode = ref('optional');
 
 watch(() => props.show, (newValue) => {
   if (!newValue) {
     localName.value = '';
     localDescription.value = '';
+    localCharacterCreationMode.value = 'optional';
   }
 });
+
+function getModeDescription(mode) {
+  switch (mode) {
+    case 'optional':
+      return t('campaign.modeOptionalDesc');
+    case 'free':
+      return t('campaign.modeFreeDesc');
+    case 'predefined':
+      return t('campaign.modePredefinedDesc');
+    default:
+      return '';
+  }
+}
 
 function handleSubmit() {
   emit('create', {
     name: localName.value,
-    description: localDescription.value
+    description: localDescription.value,
+    characterCreationMode: localCharacterCreationMode.value
   });
 }
 </script>

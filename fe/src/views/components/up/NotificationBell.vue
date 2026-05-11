@@ -71,7 +71,6 @@ watch(showDropdown, async (newVal) => {
   if (newVal) {
     await fetchNotifications();
   } else {
-    // Delete notifications when popup closes
     await deleteNotifications();
   }
 });
@@ -80,7 +79,6 @@ onMounted(() => {
   document.addEventListener('click', handleClickOutside);
   fetchUnreadCount();
 
-  // Set up WebSocket listener for notification updates
   socketService.on(SocketEvents.NOTIFICATION_UPDATE, handleNotificationUpdate);
 });
 
@@ -129,15 +127,20 @@ async function deleteNotifications() {
 }
 
 async function handleAccept(notification) {
-  // For invite notifications, we need to find the corresponding invite
-  // and use the existing invites store logic
-  const inviteId = notification.related_invite_id; // This would need to be stored in notification
+  const inviteId = notification.related_invite_id;
   if (inviteId) {
     const result = await invitesStore.acceptInvite(inviteId);
     if (result.success) {
       campaignsStore.addSharedCampaign(result.campaign);
-      // Remove notification from list
       notifications.value = notifications.value.filter(n => n.id !== notification.id);
+      
+      const mode = result.campaign.character_creation_mode;
+      if (mode === 'free' || mode === 'predefined') {
+        sessionStorage.setItem('pendingCharacterCreation', JSON.stringify({
+          campaignId: result.campaign.id,
+          mode: mode
+        }));
+      }
     }
   }
 }
@@ -146,7 +149,6 @@ async function handleReject(notification) {
   const inviteId = notification.related_invite_id;
   if (inviteId) {
     await invitesStore.rejectInvite(inviteId);
-    // Remove notification from list
     notifications.value = notifications.value.filter(n => n.id !== notification.id);
   }
 }
@@ -155,10 +157,9 @@ function handleNotificationClick(notification) {
   showDropdown.value = false;
 
   if (notification.related_post_id) {
-    // Navigate to the post with optional comment anchor
-    const route = { name: 'home' };
+    const route = {name: 'home'};
     if (notification.related_comment_id) {
-      route.query = { commentId: notification.related_comment_id };
+      route.query = {commentId: notification.related_comment_id};
     }
     router.push(route);
   }
@@ -187,7 +188,6 @@ function handleClickOutside(event) {
 }
 
 function handleNotificationUpdate() {
-  // WebSocket event handler - refresh unread count
   fetchUnreadCount();
 }
 </script>

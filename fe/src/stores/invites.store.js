@@ -25,10 +25,9 @@ export const useInvitesStore = defineStore('invites', () => {
     try {
       const response = await api.post(`/invites/${inviteId}/accept`);
       
-      // Remove from invites list
       invites.value = invites.value.filter(inv => inv.id !== inviteId);
       
-      return { success: true, campaign: response.data.campaign };
+      return { success: true, campaign: response.data };
     } catch (error) {
       return { 
         success: false, 
@@ -41,7 +40,6 @@ export const useInvitesStore = defineStore('invites', () => {
     try {
       await api.post(`/invites/${inviteId}/reject`);
       
-      // Remove from invites list
       invites.value = invites.value.filter(inv => inv.id !== inviteId);
       
       return { success: true };
@@ -80,7 +78,6 @@ export const useInvitesStore = defineStore('invites', () => {
   }
 
   function addInvite(invite) {
-    // Check if invite already exists
     const exists = invites.value.find(inv => inv.id === invite.id);
     if (!exists) {
       invites.value.push(invite);
@@ -93,7 +90,6 @@ export const useInvitesStore = defineStore('invites', () => {
       ...toast
     });
     
-    // Auto-remove after 5 seconds
     setTimeout(() => {
       toastQueue.value.shift();
     }, 5000);
@@ -103,7 +99,6 @@ export const useInvitesStore = defineStore('invites', () => {
     toastQueue.value = toastQueue.value.filter(t => t.id !== toastId);
   }
 
-  // Setup Socket.IO listener for new invites
   function setupSocketListener() {
     socketService.on(SocketEvents.NEW_INVITE, (data) => {
       addInvite({
@@ -115,7 +110,6 @@ export const useInvitesStore = defineStore('invites', () => {
         status: 'pending'
       });
       
-      // Show toast notification
       showToast({
         inviter: data.inviter_username,
         campaign: data.campaign_name

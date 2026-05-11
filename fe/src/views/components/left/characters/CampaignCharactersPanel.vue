@@ -38,12 +38,18 @@
                   :alt="character.name"
               />
               <div v-else class="no-image">?</div>
+              <div v-if="character.is_predefined" class="predefined-badge" :title="t('character.predefinedCharacter')">
+                ★
+              </div>
             </div>
 
             <div class="character-info flex-col">
               <span class="character-name">{{ character.name }}</span>
               <span class="character-race">{{ character.race }}</span>
               <span class="character-class">{{ character.character_class }}</span>
+              <span v-if="character.assigned_to_user_id" class="character-assigned">
+                {{ t('character.assignedTo') }}
+              </span>
             </div>
 
             <div v-if="isCurrentCampaignOwned" class="character-actions" @click.stop>
@@ -64,6 +70,10 @@
                   <button @click="handleEditCharacter(character)" class="menu-item">
                     <span class="menu-icon">🪶</span>
                     <span>{{ t('character.edit') }}</span>
+                  </button>
+                  <button v-if="character.is_predefined && character.assigned_to_user_id" @click="handleUnassignCharacter(character)" class="menu-item">
+                    <span class="menu-icon">🔓</span>
+                    <span>{{ t('character.unassign') }}</span>
                   </button>
                   <button @click="handleDeleteCharacter(character)" class="menu-item">
                     <span class="menu-icon">💀</span>
@@ -241,6 +251,19 @@ function handleDeleteCharacter(character) {
   openMenuId.value = null;
   characterToDelete.value = character;
   showDeleteConfirm.value = true;
+}
+
+async function handleUnassignCharacter(character) {
+  openMenuId.value = null;
+  if (!confirm(t('character.confirmUnassign'))) {
+    return;
+  }
+  const result = await charactersStore.unassignCharacter(character.id);
+  if (result.success) {
+    charactersStore.fetchCharacters(campaignsStore.currentCampaign.id);
+  } else {
+    alert(result.error || t('common.error'));
+  }
 }
 
 async function confirmDelete() {
