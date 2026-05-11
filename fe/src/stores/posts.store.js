@@ -40,13 +40,14 @@ export const usePostsStore = defineStore('posts', () => {
         }
     }
 
-    async function createPost(campaignId, title, content, importanceLevel = 0) {
+    async function createPost(campaignId, title, content, importanceLevel = 0, isHidden = false) {
         try {
             const response = await api.post('/posts', {
                 campaign_id: campaignId,
                 title,
                 content,
-                importance_level: importanceLevel
+                importance_level: importanceLevel,
+                is_hidden: isHidden
             });
             posts.value.unshift(response.data);
             return {success: true, post: response.data};
@@ -271,6 +272,26 @@ export const usePostsStore = defineStore('posts', () => {
         }
     }
 
+    async function togglePostVisibility(campaignId, postId, isHidden) {
+        try {
+            const response = await api.post(`/campaigns/${campaignId}/posts/${postId}/visibility`, {
+                is_hidden: isHidden
+            });
+            const post = posts.value.find(p => p.id === postId);
+            if (post) {
+                post.is_hidden = response.data.is_hidden;
+            }
+            return {success: true};
+        } catch (error) {
+            console.error('Failed to toggle post visibility:', error);
+            console.error('Error response:', error.response?.data);
+            return {
+                success: false,
+                error: error.response?.data?.error || 'Failed to toggle post visibility'
+            };
+        }
+    }
+
     function $reset() {
         posts.value = [];
         loading.value = false;
@@ -300,6 +321,7 @@ export const usePostsStore = defineStore('posts', () => {
         createComment,
         updateComment,
         deleteComment,
+        togglePostVisibility,
         setSortBy,
         resetSort,
         clearPosts,

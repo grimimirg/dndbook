@@ -18,6 +18,7 @@ class Post(db.Model):
     content = db.Column(db.Text, nullable=False)
     post_order = db.Column(db.Integer, nullable=True, index=True)
     importance_level = db.Column(db.Integer, nullable=False, default=0)
+    is_hidden = db.Column(db.Boolean, nullable=False, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -47,6 +48,7 @@ class Post(db.Model):
             'content': self.content,
             'order': self.post_order,
             'importance_level': self.importance_level,
+            'is_hidden': self.is_hidden,
             'created_at': self.created_at.isoformat() + 'Z',
             'updated_at': self.updated_at.isoformat() + 'Z'
         }

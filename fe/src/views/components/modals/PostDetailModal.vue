@@ -108,6 +108,16 @@
           </div>
         </div>
 
+        <div v-if="isEditing && isOwner" class="edit-visibility">
+          <div class="visibility-toggle flex-align-center" @click="editedIsHidden = !editedIsHidden" style="cursor: pointer;">
+            <input type="checkbox" v-model="editedIsHidden" class="hidden-checkbox" @click.stop />
+            <span class="eye-toggle" :title="t('post.hideFromPlayers')">
+              {{ editedIsHidden ? '🔒' : '👁️' }}
+            </span>
+            <span>{{ t('post.hideFromPlayers') }}</span>
+          </div>
+        </div>
+
         <div v-if="isEditing" class="edit-actions flex-end" style="margin-top: 1rem;">
           <button class="cancel-button" @click="cancelEditing">
             {{ t('post.cancel') }}
@@ -268,6 +278,7 @@ const isEditing = ref(false);
 const editedTitle = ref('');
 const editedContent = ref('');
 const editedImportanceLevel = ref(0);
+const editedIsHidden = ref(false);
 const editedImageDescriptions = ref({});
 const saving = ref(false);
 const fileInput = ref(null);
@@ -309,6 +320,7 @@ watch(() => props.show, (newValue) => {
       editedTitle.value = props.post.title;
       editedContent.value = props.post.content;
       editedImportanceLevel.value = props.post.importance_level || 0;
+      editedIsHidden.value = props.post.is_hidden || false;
     } else {
       isEditing.value = false;
     }
@@ -371,6 +383,7 @@ function startEditing() {
   editedTitle.value = props.post.title;
   editedContent.value = props.post.content;
   editedImportanceLevel.value = props.post.importance_level || 0;
+  editedIsHidden.value = props.post.is_hidden || false;
 }
 
 function cancelEditing() {
@@ -378,6 +391,7 @@ function cancelEditing() {
   editedTitle.value = '';
   editedContent.value = '';
   editedImportanceLevel.value = 0;
+  editedIsHidden.value = false;
 }
 
 function handleKeydown(event) {
@@ -439,7 +453,8 @@ async function saveChanges() {
   const result = await postsStore.updatePost(props.post.id, {
     title: editedTitle.value,
     content: editedContent.value,
-    importance_level: editedImportanceLevel.value
+    importance_level: editedImportanceLevel.value,
+    is_hidden: editedIsHidden.value
   });
 
   if (result.success) {
@@ -557,3 +572,48 @@ function cancelDeleteComment() {
 }
 
 </script>
+
+<style scoped>
+.importance-selector {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.importance-mark {
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-color);
+  opacity: 0.3;
+  transition: opacity 0.2s, color 0.2s;
+  user-select: none;
+}
+
+.importance-mark:hover {
+  opacity: 0.6;
+}
+
+.importance-mark.active {
+  color: #e74c3c;
+  opacity: 1;
+}
+
+.visibility-toggle {
+  cursor: pointer;
+  gap: 0.5rem;
+}
+
+.hidden-checkbox {
+  display: none;
+}
+
+.eye-toggle {
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.eye-toggle:hover {
+  transform: scale(1.1);
+}
+</style>

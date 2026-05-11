@@ -77,6 +77,10 @@ class PostsService:
 
         query = Post.query.filter_by(campaign_id=campaign_id)
 
+        # Filter hidden posts for non-owners
+        if campaign.owner_id != user.id:
+            query = query.filter_by(is_hidden=False)
+
         if importance_level is not None:
             if importance_level < 0 or importance_level > 10:
                 raise ValueError('importance_level must be between 0 and 10')
@@ -662,3 +666,38 @@ class PostsService:
             send_notification(member.id)
 
         db.session.commit()
+
+    @staticmethod
+    def toggle_post_visibility(post_id, user, is_hidden):
+        """
+        Toggle post visibility (hide/unhide from players).
+
+        Only campaign owners can toggle post visibility.
+
+        Args:
+            post_id (int): The ID of the post
+            user: The user requesting the toggle
+            is_hidden (bool): New visibility state (True = hidden, False = visible)
+
+        Returns:
+            Post: The updated post
+
+        Raises:
+            ValueError: If user is not authorized
+        """
+        post = Post.query.get_or_404(post_id)
+        campaign = Campaign.query.get(post.campaign_id)
+
+        if campaign.owner_id != user.id:
+            raise ValueError('Unauthorized')
+
+        post.is_hidden = is_hidden
+        db.session.commit()
+
+        # Log visibility toggle action
+        action = 'hidden' if is_hidden else 'unhidden'
+        current_app.logger.info(
+            f'Post {post_id} {action} by user {user.id} in campaign {campaign.id}'
+        )
+
+        return post

@@ -443,3 +443,40 @@ def reorder_posts(current_user, post_id):
         return jsonify({'message': 'Posts reordered successfully'}), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 400 if 'Post' in str(e) else 403
+
+@bp.route('/campaigns/<int:campaign_id>/posts/<int:post_id>/visibility', methods=['POST'])
+@token_required
+def toggle_post_visibility(current_user, campaign_id, post_id):
+    """
+    Toggle post visibility (hide/unhide from players).
+
+    Only campaign owners can toggle post visibility.
+
+    Expected JSON payload:
+        - is_hidden (bool): New visibility state (True = hidden, False = visible)
+
+    Args:
+        current_user: The authenticated user (injected by token_required decorator)
+        campaign_id (int): The ID of the campaign
+        post_id (int): The ID of the post
+
+    Returns:
+        JSON response with:
+        - 200: Updated post data
+        - 400: Missing or invalid is_hidden field
+        - 403: User is not authorized to toggle visibility
+        - 404: Post not found
+    """
+    data = request.get_json()
+
+    if not data or 'is_hidden' not in data:
+        return jsonify({'error': 'Missing is_hidden field'}), 400
+
+    if not isinstance(data['is_hidden'], bool):
+        return jsonify({'error': 'is_hidden must be a boolean'}), 400
+
+    try:
+        post = PostsService.toggle_post_visibility(post_id, current_user, data['is_hidden'])
+        return jsonify(post.to_dict()), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 403

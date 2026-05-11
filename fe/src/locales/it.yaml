@@ -107,6 +107,11 @@ post:
   importanceLevel: "Livello di importanza"
   importancePlaceholder: "Seleziona il livello di importanza (0-10)"
   unviewed: "Non visualizzato"
+  hideFromPlayers: "Nascondi ai giocatori"
+  unhideFromPlayers: "Mostra ai giocatori"
+  hiddenFromPlayers: "Nascosto ai giocatori"
+  confirmHide: "Sei sicuro di voler nascondere questo post ai giocatori?"
+  confirmUnhide: "Sei sicuro di voler mostrare questo post ai giocatori?"
 
 comment:
   comments: "Commenti"

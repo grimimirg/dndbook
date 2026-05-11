@@ -242,6 +242,20 @@ BEGIN
     END IF;
 END $$;
 
+-- Add is_hidden to posts if it doesn't exist
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'posts' AND column_name = 'is_hidden'
+    ) THEN
+        ALTER TABLE posts ADD COLUMN is_hidden BOOLEAN NOT NULL DEFAULT FALSE;
+        RAISE NOTICE 'Added is_hidden column to posts table';
+    ELSE
+        RAISE NOTICE 'is_hidden column already exists in posts table';
+    END IF;
+END $$;
+
 -- ============================================
 -- Backfill post_order values for existing posts
 -- ============================================

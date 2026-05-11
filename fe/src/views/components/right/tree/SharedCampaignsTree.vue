@@ -59,8 +59,18 @@
         <button @click="handleEditPost" class="menu-item">
           <span>{{ t('post.edit') }}</span>
         </button>
+        <button v-if="isOwner" @click="showToggleVisibilityConfirm" class="menu-item">
+          <span>{{ getVisibilityLabel() }}</span>
+        </button>
       </div>
     </Teleport>
+    <ConfirmModal
+        :show="showVisibilityConfirm"
+        :title="getVisibilityConfirmTitle()"
+        :message="getVisibilityConfirmMessage()"
+        @confirm="confirmToggleVisibility"
+        @cancel="cancelToggleVisibility"
+    />
   </div>
 </template>
 
@@ -72,6 +82,7 @@ import {usePermissionsStore} from '../../../../stores/permissions.store.js';
 import draggable from 'vuedraggable';
 import {usePostActionsMenu} from '../../../../composables/usePostActionsMenu.js';
 import PostItemTree from './PostItemTree.vue';
+import ConfirmModal from '../../modals/ConfirmModal.vue';
 
 const {t} = useI18n();
 const campaignsStore = useCampaignsStore();
@@ -79,7 +90,7 @@ const postsStore = usePostsStore();
 const permissionsStore = usePermissionsStore();
 
 const emit = defineEmits(['toggle-campaign', 'scroll-to-post', 'edit-post']);
-const {openMenuPostId, menuPosition, togglePostMenu, handleEditPost} = usePostActionsMenu(emit);
+const {openMenuPostId, menuPosition, togglePostMenu, handleEditPost, showToggleVisibilityConfirm, confirmToggleVisibility, cancelToggleVisibility, showVisibilityConfirm} = usePostActionsMenu(emit);
 
 const props = defineProps({
   expandedCampaignId: {
@@ -113,5 +124,29 @@ function scrollToPost(postId) {
 
 async function handlePostReorder() {
   await postsStore.reorderPosts();
+}
+
+function getVisibilityLabel() {
+  const post = postsStore.posts.find(p => p.id === openMenuPostId.value);
+  if (post?.is_hidden) {
+    return t('post.unhideFromPlayers');
+  }
+  return t('post.hideFromPlayers');
+}
+
+function getVisibilityConfirmTitle() {
+  const post = postsStore.posts.find(p => p.id === openMenuPostId.value);
+  if (post?.is_hidden) {
+    return t('post.unhideFromPlayers');
+  }
+  return t('post.hideFromPlayers');
+}
+
+function getVisibilityConfirmMessage() {
+  const post = postsStore.posts.find(p => p.id === openMenuPostId.value);
+  if (post?.is_hidden) {
+    return t('post.confirmUnhide');
+  }
+  return t('post.confirmHide');
 }
 </script>

@@ -1,11 +1,12 @@
 <template>
-  <div :id="`post-${post.id}`" class="post-card card">
+  <div :id="`post-${post.id}`" class="post-card card" :class="{ 'hidden-post': post.is_hidden }">
     <div class="post-header">
       <div class="post-title-row">
         <h3 class="post-title" @click="openModal">{{ post.title }}</h3>
         <span v-if="post.importance_level > 0" class="importance-indicator" :title="post.importance_level">
             {{ '👑'.repeat(post.importance_level) }}
         </span>
+        <span v-if="post.is_hidden && isOwner" class="hidden-indicator" :title="t('post.hiddenFromPlayers')">🔒</span>
       </div>
       <div class="post-header-actions flex-align-center">
         <span v-if="!isOwner && !isViewed" class="checkmark-icon" :title="t('post.unviewed')">✓</span>
@@ -335,6 +336,21 @@ function emitMarkViewed(postId) {
 </script>
 
 <style scoped>
+.hidden-post {
+    filter: blur(1px);
+    opacity: 0.6;
+}
+
+.hidden-post:hover {
+    filter: none;
+    opacity: 1;
+}
+
+.hidden-indicator {
+    margin-left: 8px;
+    font-size: 1.2rem;
+}
+
 .image-grid {
   display: grid;
   gap: 4px;

@@ -28,6 +28,16 @@
         </div>
       </div>
 
+      <div v-if="isOwner" class="form-group">
+        <div class="visibility-toggle flex-align-center" @click="isHidden = !isHidden" style="cursor: pointer;">
+          <input type="checkbox" v-model="isHidden" class="hidden-checkbox" @click.stop />
+          <span class="eye-toggle" :title="t('post.hideFromPlayers')">
+            {{ isHidden ? '🔒' : '👁️' }}
+          </span>
+          <span>{{ t('post.hideFromPlayers') }}</span>
+        </div>
+      </div>
+
       <div v-if="selectedImages.length > 0" class="image-previews">
         <div v-for="(image, index) in selectedImages" :key="index" class="image-preview">
           <img :src="image.preview" :alt="`Preview ${index + 1}`" />
@@ -69,21 +79,28 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useCampaignsStore } from '../../../stores/campaigns.store.js';
 import { usePostsStore } from '../../../stores/posts.store.js';
+import { useAuthStore } from '../../../stores/auth.store.js';
 
 const { t } = useI18n();
 const campaignsStore = useCampaignsStore();
 const postsStore = usePostsStore();
+const authStore = useAuthStore();
 
 const title = ref('');
 const content = ref('');
 const importanceLevel = ref(0);
+const isHidden = ref(false);
 const loading = ref(false);
 const selectedImages = ref([]);
 const fileInput = ref(null);
+
+const isOwner = computed(() => {
+  return campaignsStore.currentCampaign?.owner_id === authStore.user?.id;
+});
 
 function handleImageSelect(event) {
   const files = Array.from(event.target.files);
@@ -141,7 +158,8 @@ async function handleCreatePost() {
     campaignsStore.currentCampaign.id,
     title.value,
     content.value,
-    importanceLevel.value
+    importanceLevel.value,
+    isHidden.value
   );
   
   if (result.success && result.post) {
@@ -156,6 +174,7 @@ async function handleCreatePost() {
     title.value = '';
     content.value = '';
     importanceLevel.value = 0;
+    isHidden.value = false;
     selectedImages.value = [];
   }
   
@@ -186,5 +205,24 @@ async function handleCreatePost() {
 .importance-mark.active {
   color: #e74c3c;
   opacity: 1;
+}
+
+.visibility-toggle {
+  cursor: pointer;
+  gap: 0.5rem;
+}
+
+.hidden-checkbox {
+  display: none;
+}
+
+.eye-toggle {
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.eye-toggle:hover {
+  transform: scale(1.1);
 }
 </style>
