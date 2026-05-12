@@ -5,7 +5,7 @@
   
   [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
   [![Docker](https://img.shields.io/badge/docker-ready-brightgreen.svg)](docker-compose.standalone.yaml)
-  [![CI](https://github.com/grimirg/dndbook/workflows/CI/badge.svg)](https://github.com/grimirg/dndbook/actions)
+  [![CI](https://img.shields.io/badge/CI-Pending-lightgrey.svg)](https://github.com/grimirg/dndbook/actions)
   [![Issues Welcome](https://img.shields.io/badge/issues-welcome-brightgreen.svg)](https://github.com/grimirg/dndbook/issues)
   [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/grimirg/dndbook/pulls)
   
