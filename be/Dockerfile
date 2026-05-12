@@ -21,7 +21,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 RUN mkdir -p uploads && chmod 755 uploads && \
-    chmod +x init-and-start.sh
+    chmod +x init-and-start.sh && \
+    chmod -R 755 docker-entrypoint-initdb.d
 
 EXPOSE 5000
 

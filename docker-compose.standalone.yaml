@@ -10,6 +10,7 @@ services:
       - "5432:5432"
     volumes:
       - dndbook-postgres-data:/var/lib/postgresql/data
+      - ./be/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 5s

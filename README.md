@@ -5,6 +5,7 @@
   
   [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
   [![Docker](https://img.shields.io/badge/docker-ready-brightgreen.svg)](docker-compose.standalone.yaml)
+  [![CI](https://github.com/grimirg/dndbook/workflows/CI/badge.svg)](https://github.com/grimirg/dndbook/actions)
   [![Issues Welcome](https://img.shields.io/badge/issues-welcome-brightgreen.svg)](https://github.com/grimirg/dndbook/issues)
   [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/grimirg/dndbook/pulls)
   
@@ -80,7 +81,6 @@ There are **three ways** to run the application. Choose the one that fits your n
 
 **Requirements:**
 - Docker installed on your computer
-- `psql` client installed (for database initialization)
 
 **Steps:**
 
@@ -90,21 +90,13 @@ There are **three ways** to run the application. Choose the one that fits your n
    ```
    Open the `.env` file and modify the values (especially passwords!).
 
-2. **Start the application**
+2. **Start everything**
    ```bash
    ./start-docker.sh
    ```
-   Wait for the script to complete and the database container to be ready.
+   The database will be automatically initialized on first startup.
 
-3. **Initialize the database** (REQUIRED)
-   ```bash
-   cd be
-   PGPASSWORD=change-this-password psql -h localhost -p 5432 -U dndbook_user -d dndbook_db -f init-db.sql
-   cd ..
-   ```
-   ⚠️ **Important:** Replace `change-this-password` with the password you set in `.env` (POSTGRES_PASSWORD).
-
-4. **Open your browser**
+3. **Open your browser**
    - Go to: http://localhost
    - Username: `admin`
    - Password: `admin123` (change it immediately after first login!)
@@ -196,7 +188,6 @@ There are **three ways** to run the application. Choose the one that fits your n
 - Python 3.8+ installed
 - Node.js 18+ installed
 - Docker (only for PostgreSQL database)
-- `psql` client installed (for database initialization)
 
 **Steps:**
 
@@ -206,7 +197,7 @@ There are **three ways** to run the application. Choose the one that fits your n
    ```
    Open the `.env` file and modify the values.
 
-2. **Start the application**
+2. **Start everything**
    ```bash
    ./start-standalone.sh
    ```
@@ -214,17 +205,9 @@ There are **three ways** to run the application. Choose the one that fits your n
    - PostgreSQL database (in Docker)
    - Backend (Python/Flask)
    - Frontend (Vue.js)
-   Wait for the script to complete.
+   The database will be automatically initialized on first startup.
 
-3. **Initialize the database** (REQUIRED)
-   ```bash
-   cd be
-   PGPASSWORD=change-this-password psql -h localhost -p 5432 -U dndbook_user -d dndbook_db -f init-db.sql
-   cd ..
-   ```
-   ⚠️ **Important:** Replace `change-this-password` with the password you set in `.env` (POSTGRES_PASSWORD).
-
-4. **Open your browser**
+3. **Open your browser**
    - Frontend: http://localhost:5173
    - Backend API: http://localhost:5000
    - Username: `admin`
@@ -305,7 +288,7 @@ You can override settings for specific components:
 
 ## 🗄️ Database Initialization
 
-The database must be initialized manually using the SQL script located in `be/init-db.sql`. This step is **required** after starting the application.
+The database is automatically initialized on first startup using the SQL script located in `be/docker-entrypoint-initdb.d/init-db.sql`. No manual steps are required.
 
 **What the script does:**
 - Creates all necessary database tables
@@ -316,10 +299,10 @@ The database must be initialized manually using the SQL script located in `be/in
 - The script is safe to run multiple times (it won't duplicate data)
 
 **For Homelab Deployment:**
-If you're using the Homelab deployment option, run the SQL script on your existing PostgreSQL:
+If you're using the Homelab deployment option with an existing PostgreSQL, you'll need to manually run the initialization script once:
 
 ```bash
-psql -h your_postgres_host -p 5432 -U dndbook_user -d dndbook_db -f be/init-db.sql
+psql -h your_postgres_host -p 5432 -U dndbook_user -d dndbook_db -f be/docker-entrypoint-initdb.d/init-db.sql
 ```
 
 ---
