@@ -1,6 +1,7 @@
 """
 Basic authentication tests for D&D Book backend.
 """
+import os
 import pytest
 from app import create_app, db
 
@@ -8,9 +9,13 @@ from app import create_app, db
 @pytest.fixture
 def app():
     """Create and configure a test application instance."""
+    # Set environment variables before creating app to override .env
+    os.environ['DATABASE_URL'] = 'sqlite:///:memory:'
+    os.environ['SECRET_KEY'] = 'test-secret-key'
+    os.environ['JWT_SECRET_KEY'] = 'test-jwt-secret-key'
+    
     app = create_app()
     app.config['TESTING'] = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
     
     with app.app_context():
         db.create_all()
