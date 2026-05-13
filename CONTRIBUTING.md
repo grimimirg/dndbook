@@ -2,7 +2,7 @@
 
 Thank you for your interest in contributing to D&D Book! This document provides technical instructions for developers who want to contribute to the project.
 
-## Table of Contentsa
+## Table of Contents
 
 - [Development Setup](#development-setup)
 - [Project Architecture](#project-architecture)
