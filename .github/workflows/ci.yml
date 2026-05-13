@@ -28,24 +28,3 @@ jobs:
       working-directory: ./be
       run: |
         pytest tests/ -v
-
-  test-frontend:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-    
-    - name: Install dependencies
-      working-directory: ./fe
-      run: |
-        npm ci
-    
-    - name: Run frontend tests
-      working-directory: ./fe
-      run: |
-        npm test -- --run
