@@ -17,7 +17,7 @@
 
 In the realm of tabletop role-playing, every campaign tells a story—of heroes forged in battle, of kingdoms saved or lost, of friendships tested and legends born. But as any seasoned Dungeon Master knows, keeping track of these epic tales can be as challenging as facing a dragon in its lair.
 
-**D&D Book** is your digital grimoire, a powerful web platform designed to chronicle your Dungeons & Dragons campaigns with the care they deserve. Whether you're a DM weaving intricate plots or a player documenting your character's journey, this tool transforms chaos into order, scattered notes into organized lore.
+**D&D Book** is your digital grimoire, a powerful web platform designed to chronicle your Dungeons & Dragons campaigns with the care they deserve. Whether you're a DM weaving intricate plots or a player documenting your character's journey, this tool transforms chaos into order, scattered notes into organized lore. Is more than just a management tool; it’s the living chronicle of your journey. While most apps focus on the math of the game, we focus on the story. Designed to reflect the look and feel of a campaign journal, it transforms scattered notes into a structured digital book. Built with usability at its core and designed for the homelab community, it gives you total ownership of your lore. Whether you're a DM or a player, your campaign's legacy finally has a home that is easy to use and entirely yours to host.
 
 ### Features
 
