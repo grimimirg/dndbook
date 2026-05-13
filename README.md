@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="fe/images/dnd-book-logo.png" alt="D&D Book Logo" width="500"/>
+  <img src="fe/images/dnd-book-logo.jpg" alt="D&D Book Logo" width="500"/>
   
   ### *Your Campaign's Chronicle Awaits*
   
@@ -36,13 +36,13 @@ In the realm of tabletop role-playing, every campaign tells a story—of heroes 
 See D&D Book in action! Here are some screenshots showcasing some features:
 
 <div align="center">
-  <img src="demo-screenshots/1.png" alt="D&D Book Screenshot 1" width="800"/>
+  <img src="demo-screenshots/2.jpg" alt="D&D Book Screenshot 1" width="800"/>
   <br/><br/>
-  <a href="demo-screenshots/2.png"><img src="demo-screenshots/2.png" alt="D&D Book Screenshot 2" width="400"/></a>
-  <a href="demo-screenshots/3.png"><img src="demo-screenshots/3.png" alt="D&D Book Screenshot 3" width="400"/></a>
+  <a href="demo-screenshots/1.jpg"><img src="demo-screenshots/1.jpg" alt="D&D Book Screenshot 2" width="400"/></a>
+  <a href="demo-screenshots/3.jpg"><img src="demo-screenshots/3.jpg" alt="D&D Book Screenshot 3" width="400"/></a>
   <br/><br/>
-  <a href="demo-screenshots/4.png"><img src="demo-screenshots/4.png" alt="D&D Book Screenshot 4" width="400"/></a>
-  <a href="demo-screenshots/5.png"><img src="demo-screenshots/5.png" alt="D&D Book Screenshot 5" width="400"/></a>
+  <a href="demo-screenshots/4.jpg"><img src="demo-screenshots/4.jpg" alt="D&D Book Screenshot 4" width="400"/></a>
+  <a href="demo-screenshots/5.jpg"><img src="demo-screenshots/5.jpg" alt="D&D Book Screenshot 5" width="400"/></a>
 </div>
 
 ---
@@ -54,6 +54,7 @@ See D&D Book in action! Here are some screenshots showcasing some features:
   - [Option 2: Homelab Deployment](#-option-2-homelab-deployment)
   - [Option 3: Standalone (For Developers)](#-option-3-standalone-for-developers)
 - [User Manual](#-user-manual)
+- [Roadmap](#-roadmap)
 - [Project Structure](#-project-structure)
 - [Configuration](#️-configuration)
 - [Database Initialization](#️-database-initialization)
@@ -230,6 +231,12 @@ Once you have D&D Book up and running, check out the [User Manual](USER_MANUAL.m
 - Inviting players and collaborating
 - Import/export functionality
 - And much more!
+
+---
+
+## 🗺️ Roadmap
+
+Curious about what's coming next? Check out the [Roadmap](ROADMAP.md) for planned features and future improvements. For detailed specifications and acceptance criteria, please refer to the [GitHub Issues](https://github.com/grimirg/dndbook/issues) section.
 
 ---
 
