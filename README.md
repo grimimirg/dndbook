@@ -54,6 +54,7 @@ See D&D Book in action! Here are some screenshots showcasing some features:
   - [Option 2: Homelab Deployment](#-option-2-homelab-deployment)
   - [Option 3: Standalone (For Developers)](#-option-3-standalone-for-developers)
 - [User Manual](#-user-manual)
+- [Roadmap](#-roadmap)
 - [Project Structure](#-project-structure)
 - [Configuration](#️-configuration)
 - [Database Initialization](#️-database-initialization)
@@ -230,6 +231,12 @@ Once you have D&D Book up and running, check out the [User Manual](USER_MANUAL.m
 - Inviting players and collaborating
 - Import/export functionality
 - And much more!
+
+---
+
+## 🗺️ Roadmap
+
+Curious about what's coming next? Check out the [Roadmap](ROADMAP.md) for planned features and future improvements. For detailed specifications and acceptance criteria, please refer to the [GitHub Issues](https://github.com/grimirg/dndbook/issues) section.
 
 ---
 
