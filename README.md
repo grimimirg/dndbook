@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="fe/images/dnd-book-logo.jpg" alt="D&D Book Logo" width="500"/>
+  <img src="fe/images/dnd-book-logo.png" alt="D&D Book Logo" width="500"/>
   
   ### *Your Campaign's Chronicle Awaits*
   
