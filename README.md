@@ -370,17 +370,18 @@ Check that `VITE_API_URL` in `.env` is correct:
 
 We welcome contributions from the community! Whether you're fixing bugs, adding new features, improving documentation, or translating the interface, your help is greatly appreciated.
 
+For detailed technical instructions on how to contribute, including:
+- Development setup
+- Project architecture
+- Adding new languages
+- Creating API endpoints
+- Writing tests
+
+Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+
 - **Report a bug**: [Open an Issue](https://github.com/grimirg/dndbook/issues)
 - **Request a feature**: [Open an Issue](https://github.com/grimirg/dndbook/issues)
 - **Submit a pull request**: [Open a Pull Request](https://github.com/grimirg/dndbook/pulls)
-
-### How to Contribute
-
-1. **Fork the repository**
-2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
-3. **Commit your changes** (`git commit -m 'Add amazing feature'`)
-4. **Push to the branch** (`git push origin feature-amazing-feature`)
-5. **Open a Pull Request**
 
 ---
 
