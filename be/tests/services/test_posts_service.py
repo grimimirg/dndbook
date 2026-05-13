@@ -2,6 +2,7 @@
 Unit tests for PostsService using GIVEN-WHEN-THEN pattern.
 """
 import pytest
+from app import db
 from app.services.posts_service import PostsService
 from app.models import Campaign, User, Post
 

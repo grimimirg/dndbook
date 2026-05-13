@@ -37,6 +37,7 @@ def test_get_notifications_with_notifications(app):
         user = User(username='testuser', email='test@example.com')
         user.set_password('password123')
         db.session.add(user)
+        db.session.commit()
         
         campaign = Campaign(
             name='Test Campaign',
@@ -76,6 +77,7 @@ def test_get_unread_count(app):
         user = User(username='testuser', email='test@example.com')
         user.set_password('password123')
         db.session.add(user)
+        db.session.commit()
         
         campaign = Campaign(
             name='Test Campaign',
@@ -132,6 +134,7 @@ def test_delete_notifications(app):
         user = User(username='testuser', email='test@example.com')
         user.set_password('password123')
         db.session.add(user)
+        db.session.commit()
         
         campaign = Campaign(
             name='Test Campaign',
