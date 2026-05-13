@@ -1,6 +1,7 @@
 """
 Unit tests for ImportService using GIVEN-WHEN-THEN pattern.
 """
+import os
 import pytest
 from app import db
 from app.services.import_service import ImportService
