@@ -107,6 +107,12 @@ post:
   importanceLevel: "Wichtigkeitsstufe"
   importancePlaceholder: "Wichtigkeitsstufe auswählen (0-10)"
   unviewed: "Ungesehen"
+  hideFromPlayers: "Vor Spielern verstecken"
+  unhideFromPlayers: "Für Spieler sichtbar machen"
+  hiddenFromPlayers: "Vor Spielern versteckt"
+  confirmHide: "Möchten Sie diesen Beitrag wirklich vor Spielern verstecken?"
+  confirmUnhide: "Möchten Sie diesen Beitrag wirklich für Spieler sichtbar machen?"
+  noImages: "Keine Bilder"
 
 comment:
   comments: "Kommentare"
