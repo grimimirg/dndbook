@@ -3916,3 +3916,24 @@ input::placeholder, textarea::placeholder {
 .user-profile-customization .modal-content::-webkit-scrollbar-thumb:hover {
   background: var(--accent-gold-3);
 }
+
+/* Character mention styles */
+.character-mention {
+  display: inline-block;
+  background-color: #e3f2fd;
+  color: #1976d2;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.9em;
+  transition: background-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.character-mention:hover {
+  background-color: #bbdefb;
+  color: #0d47a1;
+  text-decoration: none;
+}

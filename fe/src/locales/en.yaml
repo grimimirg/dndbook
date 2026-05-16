@@ -113,6 +113,7 @@ post:
   confirmHide: "Are you sure you want to hide this post from players?"
   confirmUnhide: "Are you sure you want to unhide this post?"
   noImages: "No images"
+  noCharactersFound: "No characters found"
 
 comment:
   comments: "Comments"

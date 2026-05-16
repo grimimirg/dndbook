@@ -113,6 +113,7 @@ post:
   confirmHide: "Sei sicuro di voler nascondere questo post ai giocatori?"
   confirmUnhide: "Sei sicuro di voler mostrare questo post ai giocatori?"
   noImages: "Nessuna immagine"
+  noCharactersFound: "Nessun personaggio trovato"
 
 comment:
   comments: "Commenti"

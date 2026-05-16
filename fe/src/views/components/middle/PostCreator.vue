@@ -6,12 +6,26 @@
       </div>
       <div class="form-group">
         <textarea
+          ref="contentTextarea"
           v-model="content"
           :placeholder="t('post.content')"
           rows="4"
           required
+          @input="handleContentInput"
+          @keydown="handleKeydown"
+          @click="handleClick"
         ></textarea>
       </div>
+
+      <MentionAutocomplete
+        :show="showMentionAutocomplete"
+        :query="mentionQuery"
+        :campaign-id="campaignsStore.currentCampaign?.id"
+        :textarea-ref="contentTextarea"
+        @select="handleMentionSelect"
+        @close="closeMentionAutocomplete"
+        ref="mentionAutocomplete"
+      />
 
       <div class="form-group">
         <label>{{ t('post.importance') }}</label>
@@ -56,13 +70,13 @@
       <div v-if="selectedImages.length >= 10" class="max-images-warning">
         {{ t('post.maxImagesWarning', { max: 10 }) }}
       </div>
-      
+
       <div class="actions flex-between">
         <label class="image-upload-btn flex-align-center">
-          <input 
-            type="file" 
+          <input
+            type="file"
             ref="fileInput"
-            @change="handleImageSelect" 
+            @change="handleImageSelect"
             accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
             multiple
             class="hidden-file-input"
@@ -84,6 +98,7 @@ import { useI18n } from 'vue-i18n';
 import { useCampaignsStore } from '../../../stores/campaigns.store.js';
 import { usePostsStore } from '../../../stores/posts.store.js';
 import { useAuthStore } from '../../../stores/auth.store.js';
+import MentionAutocomplete from '../MentionAutocomplete.vue';
 
 const { t } = useI18n();
 const campaignsStore = useCampaignsStore();
@@ -97,6 +112,13 @@ const isHidden = ref(false);
 const loading = ref(false);
 const selectedImages = ref([]);
 const fileInput = ref(null);
+const contentTextarea = ref(null);
+const mentionAutocomplete = ref(null);
+
+// Mention autocomplete state
+const showMentionAutocomplete = ref(false);
+const mentionQuery = ref('');
+const mentionStartIndex = ref(0);
 
 const isOwner = computed(() => {
   return campaignsStore.currentCampaign?.owner_id === authStore.user?.id;
@@ -149,11 +171,73 @@ function moveImageDown(index) {
   }
 }
 
+function handleContentInput(event) {
+  const textarea = event.target;
+  const cursorPosition = textarea.selectionStart;
+  const textBeforeCursor = content.value.substring(0, cursorPosition);
+
+  // Check if we just typed @
+  const lastChar = textBeforeCursor.slice(-1);
+  if (lastChar === '@') {
+    showMentionAutocomplete.value = true;
+    mentionQuery.value = '';
+    mentionStartIndex.value = cursorPosition - 1;
+  } else if (showMentionAutocomplete.value) {
+    // Extract the word after @
+    const atIndex = textBeforeCursor.lastIndexOf('@');
+    if (atIndex !== -1) {
+      const wordAfterAt = textBeforeCursor.substring(atIndex + 1);
+      // Check if there's a space after @
+      if (wordAfterAt.includes(' ')) {
+        closeMentionAutocomplete();
+      } else {
+        mentionQuery.value = wordAfterAt;
+      }
+    } else {
+      closeMentionAutocomplete();
+    }
+  }
+}
+
+function handleKeydown(event) {
+  if (showMentionAutocomplete.value && mentionAutocomplete.value) {
+    mentionAutocomplete.value.handleKeydown(event);
+  }
+}
+
+function handleClick() {
+  closeMentionAutocomplete();
+}
+
+function handleMentionSelect(character) {
+  if (!contentTextarea.value) return;
+
+  const textarea = contentTextarea.value;
+  const cursorPosition = textarea.selectionStart;
+  const textBeforeMention = content.value.substring(0, mentionStartIndex.value);
+  const textAfterCursor = content.value.substring(cursorPosition);
+
+  // Replace @query with @character_name
+  content.value = textBeforeMention + `@${character.name}` + textAfterCursor;
+
+  // Set cursor position after the mention
+  const newCursorPosition = mentionStartIndex.value + character.name.length + 1;
+  textarea.setSelectionRange(newCursorPosition, newCursorPosition);
+  textarea.focus();
+
+  closeMentionAutocomplete();
+}
+
+function closeMentionAutocomplete() {
+  showMentionAutocomplete.value = false;
+  mentionQuery.value = '';
+}
+
 async function handleCreatePost() {
   if (!campaignsStore.currentCampaign) return;
-  
+
   loading.value = true;
-  
+
   const result = await postsStore.createPost(
     campaignsStore.currentCampaign.id,
     title.value,
@@ -161,7 +245,7 @@ async function handleCreatePost() {
     importanceLevel.value,
     isHidden.value
   );
-  
+
   if (result.success && result.post) {
     const postId = result.post.id;
 
@@ -177,7 +261,7 @@ async function handleCreatePost() {
     isHidden.value = false;
     selectedImages.value = [];
   }
-  
+
   loading.value = false;
 }
 </script>

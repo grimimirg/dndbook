@@ -84,13 +84,27 @@
         </div>
 
         <div class="modal-body">
-          <p v-if="!isEditing">{{ post.content }}</p>
-          <textarea
-              v-else
-              v-model="editedContent"
-              class="edit-content"
-              :placeholder="t('post.content')"
-          />
+          <div v-if="!isEditing" v-html="renderedContent" @click="handleContentClick"></div>
+          <div v-else>
+            <textarea
+                ref="editContentTextarea"
+                v-model="editedContent"
+                class="edit-content"
+                :placeholder="t('post.content')"
+                @input="handleEditContentInput"
+                @keydown="handleEditKeydown"
+                @click="handleEditClick"
+            />
+            <MentionAutocomplete
+                :show="showMentionAutocomplete"
+                :query="mentionQuery"
+                :campaign-id="post.campaign_id"
+                :textarea-ref="editContentTextarea"
+                @select="handleMentionSelect"
+                @close="closeMentionAutocomplete"
+                ref="mentionAutocomplete"
+            />
+          </div>
         </div>
 
         <div v-if="isEditing" class="edit-importance">
@@ -234,19 +248,31 @@
         @confirm="confirmDeleteComment"
         @cancel="cancelDeleteComment"
     />
+
+    <CharacterDetailModal
+        :show="showCharacterDetail"
+        :character="selectedCharacter"
+        @close="showCharacterDetail = false"
+    />
   </Teleport>
 </template>
 
 <script setup>
-import {onMounted, onUnmounted, ref, watch} from 'vue';
+import {onMounted, onUnmounted, ref, watch, computed} from 'vue';
 import {useI18n} from 'vue-i18n';
 import {usePostsStore} from '../../../stores/posts.store.js';
 import {usePermissionsStore} from '../../../stores/permissions.store.js';
+import {useCampaignsStore} from '../../../stores/campaigns.store.js';
+import {useMentionRenderer} from '../../../composables/useMentionRenderer.js';
 import ConfirmModal from './ConfirmModal.vue';
+import CharacterDetailModal from '../left/characters/CharacterDetailModal.vue';
+import MentionAutocomplete from '../MentionAutocomplete.vue';
 
 const {t} = useI18n();
+const {renderContentWithMentions} = useMentionRenderer();
 const postsStore = usePostsStore();
 const permissionsStore = usePermissionsStore();
+const campaignsStore = useCampaignsStore();
 
 const props = defineProps({
   show: {
@@ -289,9 +315,22 @@ const hoveredCommentId = ref(null);
 const showDeleteCommentConfirm = ref(false);
 const commentToDelete = ref(null);
 const highlightedCommentId = ref(null);
+const showCharacterDetail = ref(false);
+const selectedCharacter = ref(null);
+const editContentTextarea = ref(null);
+const mentionAutocomplete = ref(null);
+
+// Mention autocomplete state
+const showMentionAutocomplete = ref(false);
+const mentionQuery = ref('');
+const mentionStartIndex = ref(0);
 
 let touchStartX = 0;
 let touchEndX = 0;
+
+const renderedContent = computed(() => {
+  return renderContentWithMentions(props.post.content, props.post.character_mentions || []);
+});
 
 onMounted(() => {
   document.addEventListener('keydown', handleKeydown);
@@ -571,4 +610,77 @@ function cancelDeleteComment() {
   commentToDelete.value = null;
 }
 
+function handleContentClick(event) {
+  const target = event.target;
+  if (target.classList.contains('character-mention')) {
+    const characterId = parseInt(target.dataset.characterId);
+    const mention = props.post.character_mentions?.find(m => m.character_id === characterId);
+    if (mention && mention.character) {
+      selectedCharacter.value = mention.character;
+      showCharacterDetail.value = true;
+    }
+  }
+}
+
+function handleEditContentInput(event) {
+  const textarea = event.target;
+  const cursorPosition = textarea.selectionStart;
+  const textBeforeCursor = editedContent.value.substring(0, cursorPosition);
+
+  // Check if we just typed @
+  const lastChar = textBeforeCursor.slice(-1);
+  if (lastChar === '@') {
+    showMentionAutocomplete.value = true;
+    mentionQuery.value = '';
+    mentionStartIndex.value = cursorPosition - 1;
+  } else if (showMentionAutocomplete.value) {
+    // Extract the word after @
+    const atIndex = textBeforeCursor.lastIndexOf('@');
+    if (atIndex !== -1) {
+      const wordAfterAt = textBeforeCursor.substring(atIndex + 1);
+      // Check if there's a space after @
+      if (wordAfterAt.includes(' ')) {
+        closeMentionAutocomplete();
+      } else {
+        mentionQuery.value = wordAfterAt;
+      }
+    } else {
+      closeMentionAutocomplete();
+    }
+  }
+}
+
+function handleEditKeydown(event) {
+  if (showMentionAutocomplete.value && mentionAutocomplete.value) {
+    mentionAutocomplete.value.handleKeydown(event);
+  }
+}
+
+function handleEditClick() {
+  closeMentionAutocomplete();
+}
+
+function handleMentionSelect(character) {
+  if (!editContentTextarea.value) return;
+
+  const textarea = editContentTextarea.value;
+  const cursorPosition = textarea.selectionStart;
+  const textBeforeMention = editedContent.value.substring(0, mentionStartIndex.value);
+  const textAfterCursor = editedContent.value.substring(cursorPosition);
+
+  // Replace @query with @character_name
+  editedContent.value = textBeforeMention + `@${character.name}` + textAfterCursor;
+
+  // Set cursor position after the mention
+  const newCursorPosition = mentionStartIndex.value + character.name.length + 1;
+  textarea.setSelectionRange(newCursorPosition, newCursorPosition);
+  textarea.focus();
+
+  closeMentionAutocomplete();
+}
+
+function closeMentionAutocomplete() {
+  showMentionAutocomplete.value = false;
+  mentionQuery.value = '';
+}
 </script>

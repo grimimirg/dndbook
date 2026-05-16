@@ -113,6 +113,7 @@ post:
   confirmHide: "Êtes-vous sûr de vouloir masquer cette publication aux joueurs ?"
   confirmUnhide: "Êtes-vous sûr de vouloir afficher cette publication aux joueurs ?"
   noImages: "Aucune image"
+  noCharactersFound: "Aucun personnage trouvé"
 
 comment:
   comments: "Commentaires"
