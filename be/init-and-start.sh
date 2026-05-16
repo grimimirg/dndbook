@@ -56,31 +56,28 @@ done
 
 echo "✓ Database connection successful"
 
-# Initialize database
 echo ""
-echo "Initializing database..."
+echo "Initializing database with migrations..."
 
 python3 << 'PYTHON_SCRIPT'
 import os
 import sys
 from app import create_app, db
-from app.models import User, Campaign, Post, CampaignInvite, Character
+from app.models import User
 from werkzeug.security import generate_password_hash
 
 try:
     app = create_app()
     
     with app.app_context():
-        # Check if tables exist
-        inspector = db.inspect(db.engine)
-        existing_tables = inspector.get_table_names()
-        
-        if existing_tables:
-            print(f"✓ Database tables already exist: {', '.join(existing_tables)}")
-        else:
-            # Create all tables
-            db.create_all()
-            print("✓ Database tables created successfully")
+        # Run database migrations
+        from flask_migrate import upgrade as migrate_upgrade
+        try:
+            migrate_upgrade()
+            print("✓ Database migrations applied successfully")
+        except Exception as e:
+            print(f"⚠️  Migration warning: {e}")
+            print("Continuing with database initialization...")
         
         # Check if admin user exists
         admin_user = User.query.filter_by(username='admin').first()
