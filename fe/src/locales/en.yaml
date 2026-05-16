@@ -112,6 +112,7 @@ post:
   hiddenFromPlayers: "Hidden from players"
   confirmHide: "Are you sure you want to hide this post from players?"
   confirmUnhide: "Are you sure you want to unhide this post?"
+  noImages: "No images"
 
 comment:
   comments: "Comments"
