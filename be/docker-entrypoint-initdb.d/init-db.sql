@@ -12,6 +12,9 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(80) UNIQUE NOT NULL,
     email VARCHAR(120) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
+    nickname VARCHAR(80),
+    biography TEXT,
+    avatar_url VARCHAR(500),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -253,6 +256,48 @@ BEGIN
         RAISE NOTICE 'Added is_hidden column to posts table';
     ELSE
         RAISE NOTICE 'is_hidden column already exists in posts table';
+    END IF;
+END $$;
+
+-- Add nickname to users if it doesn't exist
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'users' AND column_name = 'nickname'
+    ) THEN
+        ALTER TABLE users ADD COLUMN nickname VARCHAR(80);
+        RAISE NOTICE 'Added nickname column to users table';
+    ELSE
+        RAISE NOTICE 'nickname column already exists in users table';
+    END IF;
+END $$;
+
+-- Add biography to users if it doesn't exist
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'users' AND column_name = 'biography'
+    ) THEN
+        ALTER TABLE users ADD COLUMN biography TEXT;
+        RAISE NOTICE 'Added biography column to users table';
+    ELSE
+        RAISE NOTICE 'biography column already exists in users table';
+    END IF;
+END $$;
+
+-- Add avatar_url to users if it doesn't exist
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'users' AND column_name = 'avatar_url'
+    ) THEN
+        ALTER TABLE users ADD COLUMN avatar_url VARCHAR(500);
+        RAISE NOTICE 'Added avatar_url column to users table';
+    ELSE
+        RAISE NOTICE 'avatar_url column already exists in users table';
     END IF;
 END $$;
 
