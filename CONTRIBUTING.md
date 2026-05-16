@@ -6,6 +6,7 @@ Thank you for your interest in contributing to D&D Book! This document provides 
 
 - [Development Setup](#development-setup)
 - [Project Architecture](#project-architecture)
+- [Database Migrations](#database-migrations)
 - [Adding a New Language](#adding-a-new-language)
 - [Creating a New API Endpoint](#creating-a-new-api-endpoint)
 - [Writing Tests](#writing-tests)
@@ -136,6 +137,162 @@ fe/
 - Represent data structures
 - Include relationships between entities
 - Provide helper methods (e.g., `to_dict()`, password hashing)
+
+---
+
+## Database Migrations
+
+D&D Book uses Flask-Migrate (a wrapper around Alembic) for database schema management. This approach provides version control for your database schema, allowing for safe and reversible schema changes in production environments.
+
+### Why Flask-Migrate?
+
+- **Version Control**: Track every schema change over time
+- **Safe Upgrades**: Apply changes incrementally without data loss
+- **Rollback Capability**: Revert changes if something goes wrong
+- **Team Collaboration**: Multiple developers can work on schema changes safely
+- **Production Ready**: Essential for managing database changes in production
+
+### Migration Workflow
+
+When you modify database models (add/remove columns, change relationships, etc.), you must create and apply a migration:
+
+#### Step 1: Modify the Model
+
+Make your changes to the model files in `be/app/models/`. For example, adding a new column:
+
+```python
+# In be/app/models/user.py
+class User(db.Model):
+    # ... existing fields ...
+    bio = db.Column(db.Text)  # New field
+```
+
+#### Step 2: Generate a Migration
+
+Create a migration file that captures the schema changes:
+
+```bash
+cd /dndbook/be
+source venv/bin/activate  # Activate virtual environment
+flask db migrate -m "Add bio field to users table"
+```
+
+This will create a new migration file in `migrations/versions/` with a descriptive name.
+
+**Important**: Always review the generated migration file to ensure it captures your intended changes correctly.
+
+#### Step 3: Apply the Migration
+
+Apply the migration to your database:
+
+```bash
+flask db upgrade
+```
+
+This runs the SQL commands to update your database schema.
+
+#### Step 4: Test Locally
+
+Verify that your application works with the new schema:
+
+```bash
+./run-standalone.sh  # Or your preferred development startup method
+```
+
+### Migration Commands
+
+| Command | Purpose |
+|---------|---------|
+| `flask db migrate -m "message"` | Generate a new migration based on model changes |
+| `flask db upgrade` | Apply pending migrations to the database |
+| `flask db downgrade` | Revert the last migration |
+| `flask db current` | Show the current migration version |
+| `flask db history` | Show migration history |
+| `flask db revision -m "message"` | Create an empty migration file (for manual SQL) |
+
+### Rollback Procedure
+
+If you need to revert a migration:
+
+```bash
+# Revert the last migration
+flask db downgrade
+
+# Revert multiple migrations
+flask db downgrade -2  # Revert last 2 migrations
+```
+
+**Warning**: Only rollback migrations in development. In production, create a new migration to fix issues instead of rolling back.
+
+### Docker and Migrations
+
+When running with Docker, migrations are automatically applied during container startup:
+
+1. **init-and-start.sh** applies migrations on container initialization
+2. **main.py** applies migrations as a safety check before starting the application
+
+This ensures that the database schema is always up-to-date, even if you skip the init script.
+
+### Best Practices
+
+1. **Review Generated Migrations**: Always check the generated migration file to ensure it matches your intentions
+2. **Descriptive Messages**: Use clear, descriptive migration messages (e.g., "Add email uniqueness constraint" not "Update user model")
+3. **One Change Per Migration**: Keep migrations focused on a single schema change
+4. **Test Before Deploying**: Always test migrations locally before deploying to production
+5. **Never Modify Applied Migrations**: Once a migration is applied, don't modify it - create a new one instead
+6. **Backup Before Production**: Always backup your database before applying migrations in production
+7. **Use Transactions**: Flask-Migrate runs migrations in transactions by default - keep this enabled
+
+### Troubleshooting
+
+#### Migration Fails with "No changes in schema detected"
+
+This means your model changes don't require a schema change (e.g., you only modified a method, not a column). No migration is needed.
+
+#### Migration Fails with "Database is locked"
+
+Ensure no other processes are using the database. Stop your application and try again.
+
+#### Need to Reset Database (Development Only)
+
+In development, you can reset the database:
+
+```bash
+# Drop all tables
+flask db downgrade base
+
+# Reapply all migrations
+flask db upgrade
+```
+
+**Warning**: This will delete all data. Never do this in production!
+
+### Example: Complete Migration Workflow
+
+Here's a complete example of adding a new field to the User model:
+
+```bash
+# 1. Modify the model
+# Edit be/app/models/user.py and add: bio = db.Column(db.Text)
+
+# 2. Generate migration
+cd /dndbook/be
+source venv/bin/activate
+flask db migrate -m "Add bio field to users table"
+
+# 3. Review the migration
+cat migrations/versions/<latest_migration_file>.py
+
+# 4. Apply the migration
+flask db upgrade
+
+# 5. Test the application
+./run-standalone.sh
+
+# 6. Commit the migration file
+git add migrations/versions/<latest_migration_file>.py
+git commit -m "feat(be) [feature/user-bio] Add bio field to users table"
+```
 
 ---
 
