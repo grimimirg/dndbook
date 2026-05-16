@@ -40,7 +40,7 @@
     </div>
 
     <div class="post-content">
-      {{ truncatedContent }}
+      <div v-html="renderedContent" @click="handleContentClick"></div>
       <span v-if="isContentTruncated" class="read-more" @click="openModal">
         {{ t('post.readMore') }}
       </span>
@@ -159,6 +159,12 @@
         @confirm="confirmDeleteComment"
         @cancel="cancelDeleteComment"
     />
+
+    <CharacterDetailModal
+        :show="showCharacterDetail"
+        :character="selectedCharacter"
+        @close="showCharacterDetail = false"
+    />
   </div>
 </template>
 
@@ -168,10 +174,13 @@ import {useI18n} from 'vue-i18n';
 import {usePostsStore} from '../../../stores/posts.store.js';
 import {useAuthStore} from '../../../stores/auth.store.js';
 import {usePermissionsStore} from '../../../stores/permissions.store.js';
+import {useMentionRenderer} from '../../../composables/useMentionRenderer.js';
 import ConfirmModal from '../modals/ConfirmModal.vue';
 import PostDetailModal from '../modals/PostDetailModal.vue';
+import CharacterDetailModal from '../left/characters/CharacterDetailModal.vue';
 
 const {t} = useI18n();
+const {renderContentWithMentions} = useMentionRenderer();
 const postsStore = usePostsStore();
 const authStore = useAuthStore();
 const permissionsStore = usePermissionsStore();
@@ -209,6 +218,8 @@ const showComments = ref(false);
 const showDeletePostConfirm = ref(false);
 const showDeleteCommentConfirm = ref(false);
 const commentToDelete = ref(null);
+const showCharacterDetail = ref(false);
+const selectedCharacter = ref(null);
 
 const currentUserId = computed(() => authStore.user?.id);
 const truncatedContent = computed(() => {
@@ -219,6 +230,11 @@ const truncatedContent = computed(() => {
 });
 const isContentTruncated = computed(() => {
   return props.post.content.length > PREVIEW_CHAR_LIMIT;
+});
+
+const renderedContent = computed(() => {
+  const contentToRender = isContentTruncated.value ? truncatedContent.value : props.post.content;
+  return renderContentWithMentions(contentToRender, props.post.character_mentions || []);
 });
 
 function openModal() {
@@ -332,5 +348,17 @@ function toggleComments() {
 
 function emitMarkViewed(postId) {
   emit('mark-viewed', postId);
+}
+
+function handleContentClick(event) {
+  const target = event.target;
+  if (target.classList.contains('character-mention')) {
+    const characterId = parseInt(target.dataset.characterId);
+    const mention = props.post.character_mentions?.find(m => m.character_id === characterId);
+    if (mention && mention.character) {
+      selectedCharacter.value = mention.character;
+      showCharacterDetail.value = true;
+    }
+  }
 }
 </script>

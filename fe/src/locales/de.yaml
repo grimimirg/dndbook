@@ -113,6 +113,7 @@ post:
   confirmHide: "Möchten Sie diesen Beitrag wirklich vor Spielern verstecken?"
   confirmUnhide: "Möchten Sie diesen Beitrag wirklich für Spieler sichtbar machen?"
   noImages: "Keine Bilder"
+  noCharactersFound: "Keine Charaktere gefunden"
 
 comment:
   comments: "Kommentare"

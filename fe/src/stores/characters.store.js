@@ -125,6 +125,20 @@ export const useCharactersStore = defineStore('characters', () => {
     loading.value = false;
   }
 
+  async function searchCharacters(campaignId, query) {
+    try {
+      const response = await api.get(`/campaigns/${campaignId}/characters/search`, {
+        params: { q: query }
+      });
+      return { success: true, characters: response.data };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.error || 'Failed to search characters'
+      };
+    }
+  }
+
   return {
     characters,
     loading,
@@ -135,6 +149,7 @@ export const useCharactersStore = defineStore('characters', () => {
     fetchPredefinedCharacters,
     assignCharacterToUser,
     unassignCharacter,
+    searchCharacters,
     $reset
   };
 });

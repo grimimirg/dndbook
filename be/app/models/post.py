@@ -28,16 +28,17 @@ class Post(db.Model):
                                order_by='Comment.created_at')
     notifications = db.relationship('Notification', backref='related_post', lazy=True, cascade='all, delete-orphan')
 
-    def to_dict(self, include_images=True, include_comments=True):
+    def to_dict(self, include_images=True, include_comments=True, include_mentions=True):
         """
         Convert post object to dictionary representation.
-        
+
         Args:
             include_images (bool): Whether to include images in output
             include_comments (bool): Whether to include comments in output
-            
+            include_mentions (bool): Whether to include character mentions in output
+
         Returns:
-            dict: Post data with optional images and comments
+            dict: Post data with optional images, comments, and mentions
         """
         result = {
             'id': self.id,
@@ -56,4 +57,6 @@ class Post(db.Model):
             result['images'] = [img.to_dict() for img in self.images]
         if include_comments:
             result['comments'] = [comment.to_dict() for comment in self.comments]
+        if include_mentions:
+            result['character_mentions'] = [mention.to_dict() for mention in self.character_mentions]
         return result
