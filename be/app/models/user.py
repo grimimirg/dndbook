@@ -17,6 +17,9 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
+    nickname = db.Column(db.String(80), nullable=True)
+    biography = db.Column(db.Text, nullable=True)
+    avatar_url = db.Column(db.String(500), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     owned_campaigns = db.relationship('Campaign', backref='owner', lazy=True, cascade='all, delete-orphan',
@@ -62,5 +65,8 @@ class User(db.Model):
             'id': self.id,
             'username': self.username,
             'email': self.email,
+            'nickname': self.nickname,
+            'biography': self.biography,
+            'avatar_url': self.avatar_url,
             'created_at': self.created_at.isoformat()
         }

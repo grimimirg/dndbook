@@ -133,6 +133,12 @@ chmod 755 uploads
 echo "✓ Uploads directory ready"
 
 echo ""
+echo "Running database migrations..."
+export FLASK_APP=main.py
+flask db upgrade || echo "⚠️  Migration failed or no migrations to apply"
+echo "✓ Database migrations complete"
+
+echo ""
 echo "==================================="
 echo "Starting application..."
 echo "==================================="
