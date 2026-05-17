@@ -110,7 +110,6 @@ const authStore = useAuthStore();
 
 const members = ref([]);
 const pendingInvites = ref([]);
-const characters = ref([]);
 const loading = ref(false);
 const showRemoveMemberConfirm = ref(false);
 const showCancelInviteConfirm = ref(false);
@@ -147,11 +146,7 @@ async function fetchMembers() {
     members.value = response.data.members || [];
     pendingInvites.value = response.data.pending_invites || [];
     
-    // Fetch characters to check assignments
-    const charsResponse = await charactersStore.fetchCharacters(campaignsStore.currentCampaign.id);
-    if (charsResponse) {
-      characters.value = charactersStore.characters;
-    }
+    await charactersStore.fetchCharacters(campaignsStore.currentCampaign.id);
   } catch (error) {
     console.error('Failed to fetch campaign members:', error);
   } finally {
@@ -206,7 +201,7 @@ function toggleCollapse() {
 }
 
 function hasCharacter(userId) {
-  return characters.value.some(c => c.assigned_to_user_id === userId);
+  return charactersStore.characters.some(c => c.assigned_to_user_id === userId);
 }
 
 async function handleSendReminder(member) {
