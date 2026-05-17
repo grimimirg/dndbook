@@ -173,7 +173,7 @@ import HamburgerMenu from './components/left/HamburgerMenu.vue';
 import CharacterCreationNotification from './components/notifications/CharacterCreationNotification.vue';
 import CreateCharacterModal from './components/left/characters/CreateCharacterModal.vue';
 import CharacterSelectionModal from './components/modals/CharacterSelectionModal.vue';
-import UserProfileCustomization from './UserProfileCustomization.vue';
+import UserProfileCustomization from './components/up/UserProfileCustomization.vue';
 import {SortTypes} from '../constants/sortConstants.js';
 import {ImportanceTypes} from '../constants/importanceConstants.js';
 import {SocketEvents} from '../constants/socketConstants.js';

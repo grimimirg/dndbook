@@ -206,6 +206,7 @@ profile:
   avatar: "Avatar"
   uploadAvatar: "Subir Avatar"
   removeAvatar: "Eliminar Avatar"
+  applicationLanguage: "Idioma de la aplicación"
   nickname: "Apodo"
   nicknamePlaceholder: "Introduce tu nombre visible..."
   biography: "Biografía"

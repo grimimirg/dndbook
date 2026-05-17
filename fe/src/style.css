@@ -1246,6 +1246,15 @@ input::placeholder, textarea::placeholder {
     font-size: 12px;
 }
 
+/* NotificationBell responsive - adapt to window width on small screens */
+@media (max-width: 500px) {
+    .notification-bell .dropdown {
+        width: calc(100vw - 40px);
+        max-width: none;
+        right: -10px;
+    }
+}
+
 /* InviteToast.vue styles */
 .toast-container {
     position: fixed;
@@ -1755,6 +1764,22 @@ input::placeholder, textarea::placeholder {
 
 .campaign-players-panel .player-name {
     color: var(--text-primary);
+}
+
+.campaign-players-panel .player-name-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.campaign-players-panel .player-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.campaign-players-panel .reminder-btn {
+    margin-top: 0.25rem;
 }
 
 .campaign-players-panel .remove-btn {
@@ -3679,6 +3704,27 @@ input::placeholder, textarea::placeholder {
 
 .user-profile-customization .modal-content::-webkit-scrollbar-thumb:hover {
   background: var(--accent-gold-3);
+}
+
+/* UserProfileCustomization responsive - stack layout on small screens */
+@media (max-width: 500px) {
+  .user-profile-customization .avatar-section {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .user-profile-customization .avatar-actions {
+    align-items: center;
+  }
+
+  .user-profile-customization .modal-footer {
+    flex-direction: column;
+  }
+
+  .user-profile-customization .modal-footer button {
+    width: 100%;
+  }
 }
 
 /* Character mention styles */
