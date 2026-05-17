@@ -2588,20 +2588,27 @@ input::placeholder, textarea::placeholder {
     width: 100%;
 }
 
-/* Responsive design - Tablet: right sidebar wraps below feed */
+/* Responsive design - Tablet: campaigns sidebar moves above feed in col 2 */
 @media (max-width: 1300px) {
     .main-content {
         grid-template-columns: minmax(240px, 320px) 1fr;
         padding: 20px 24px;
     }
 
-    /* Instead of hiding, keep the sidebar in column 2 so it wraps below the feed */
+    /* Campaigns sidebar: column 2, row 1 (above feed) */
     .main-content > .sidebar.desktop-only {
         grid-column: 2;
+        grid-row: 1;
+    }
+
+    /* Feed moves to column 2, row 2 (below campaigns) */
+    .feed {
+        grid-column: 2;
+        grid-row: 2;
     }
 }
 
-/* Single-column: stack all panels below the feed */
+/* Single-column: campaigns on top, feed in middle, left panel at bottom */
 @media (max-width: 1024px) {
     .main-content {
         display: flex;
@@ -2610,20 +2617,20 @@ input::placeholder, textarea::placeholder {
         gap: 20px;
     }
 
-    .feed {
+    .main-content > .sidebar.desktop-only {
         order: 1;
+        display: flex; /* campaigns on top */
+    }
+
+    .feed {
+        order: 2;
         max-width: 100%;
         min-width: unset;
     }
 
     .campaign-info-column {
-        order: 2;
-        display: flex; /* keep visible, stacked below feed */
-    }
-
-    .main-content > .sidebar.desktop-only {
         order: 3;
-        display: flex; /* keep visible, stacked last */
+        display: flex; /* left panel at bottom */
     }
 }
 
