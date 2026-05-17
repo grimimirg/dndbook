@@ -71,11 +71,16 @@ class CharactersService:
         """
         campaign = Campaign.query.get_or_404(campaign_id)
 
-        if campaign.owner_id != user.id:
-            raise ValueError('Only campaign owner can create characters')
+        is_member = campaign.members.filter_by(id=user.id).first() is not None
+        if campaign.owner_id != user.id and not is_member:
+            raise ValueError('Unauthorized')
 
         if is_predefined and campaign.owner_id != user.id:
             raise ValueError('Only campaign owner can create predefined characters')
+
+        if not is_predefined and campaign.owner_id != user.id:
+            if campaign.character_creation_mode not in ('free', 'optional'):
+                raise ValueError('Only campaign owner can create characters in this campaign')
 
         if not name or not race or not character_class:
             raise ValueError('Name, race, and class are required')

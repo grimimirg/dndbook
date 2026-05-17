@@ -235,7 +235,7 @@ def assign_character(current_user, campaign_id, character_id):
         - 404: Campaign or character not found
     """
     data = request.get_json()
-    user_id = data.get('user_id', current_user.id) if data else current_user.id
+    user_id = (data.get('user_id') or current_user.id) if data else current_user.id
     
     try:
         character = CharactersService.assign_character_to_user(
