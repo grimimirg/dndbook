@@ -84,7 +84,7 @@ class InvitesService:
             'player_username': user.username
         })
 
-        return campaign.to_dict()
+        return campaign
 
     @staticmethod
     def reject_invite(invite_id, user):
@@ -185,7 +185,7 @@ class InvitesService:
                 notification_type='invite',
                 title=f'Campaign invite: {campaign.name}',
                 message=f'{inviter.username} invited you to join the campaign "{campaign.name}".',
-                related_post_id=None
+                related_invite_id=invite.id
             )
             db.session.add(notification)
 

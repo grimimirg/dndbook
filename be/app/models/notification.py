@@ -3,7 +3,7 @@ from app import db
 
 class Notification(db.Model):
     __tablename__ = 'notifications'
-    
+
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     campaign_id = db.Column(db.Integer, db.ForeignKey('campaigns.id'), nullable=True)
@@ -12,6 +12,5 @@ class Notification(db.Model):
     message = db.Column(db.Text, nullable=False)
     related_post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=True)
     related_comment_id = db.Column(db.Integer, db.ForeignKey('comments.id'), nullable=True)
+    related_invite_id = db.Column(db.Integer, db.ForeignKey('campaign_invites.id', ondelete='CASCADE'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-
-
