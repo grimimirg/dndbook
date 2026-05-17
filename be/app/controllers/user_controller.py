@@ -31,12 +31,14 @@ def update_profile(current_user):
         return jsonify({'error': 'No data provided'}), 400
 
     try:
-        user = UserService.update_profile(
-            user_id=current_user.id,
-            nickname=data.get('nickname'),
-            biography=data.get('biography'),
-            avatar_url=data.get('avatar_url')
-        )
+        kwargs = {
+            'user_id': current_user.id,
+            'nickname': data.get('nickname'),
+            'biography': data.get('biography'),
+        }
+        if 'avatar_url' in data:
+            kwargs['avatar_url'] = data['avatar_url']
+        user = UserService.update_profile(**kwargs)
         return jsonify({
             'message': 'Profile updated successfully',
             'user': user.to_dict()
