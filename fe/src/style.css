@@ -2595,8 +2595,12 @@ input::placeholder, textarea::placeholder {
         padding: 20px 24px;
     }
 
+    /* sidebar wraps to col 2 row 2 — disable sticky so it doesn't float over content */
     .main-content > .sidebar.desktop-only {
         grid-column: 2;
+        position: static;
+        max-height: none;
+        overflow-y: visible;
     }
 }
 
@@ -2615,14 +2619,19 @@ input::placeholder, textarea::placeholder {
         min-width: unset;
     }
 
+    /* disable sticky on both panels when stacking */
     .campaign-info-column {
         order: 2;
         display: flex;
+        position: static;
     }
 
     .main-content > .sidebar.desktop-only {
         order: 3;
         display: flex;
+        position: static;
+        max-height: none;
+        overflow-y: visible;
     }
 }
 
