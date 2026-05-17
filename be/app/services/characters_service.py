@@ -1,6 +1,7 @@
 """Service for character operations."""
 
 import os
+import time
 from flask import current_app
 from werkzeug.utils import secure_filename
 
@@ -231,7 +232,7 @@ class CharactersService:
             return None
 
         filename = secure_filename(image_file.filename)
-        timestamp = str(int(os.path.getmtime(__file__) * 1000))
+        timestamp = str(int(time.time() * 1000))
         unique_filename = f"character_{campaign_id}_{timestamp}_{filename}"
         filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
         image_file.save(filepath)

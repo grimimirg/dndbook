@@ -2588,32 +2588,42 @@ input::placeholder, textarea::placeholder {
     width: 100%;
 }
 
-/* Responsive design - Tablet */
+/* Responsive design - Tablet: right sidebar wraps below feed */
 @media (max-width: 1300px) {
     .main-content {
         grid-template-columns: minmax(240px, 320px) 1fr;
         padding: 20px 24px;
     }
 
+    /* Instead of hiding, keep the sidebar in column 2 so it wraps below the feed */
     .main-content > .sidebar.desktop-only {
-        display: none;
+        grid-column: 2;
     }
 }
 
+/* Single-column: stack all panels below the feed */
 @media (max-width: 1024px) {
     .main-content {
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
         padding: 20px;
-    }
-
-    .campaign-info-column,
-    .sidebar.desktop-only {
-        display: none;
+        gap: 20px;
     }
 
     .feed {
+        order: 1;
         max-width: 100%;
         min-width: unset;
+    }
+
+    .campaign-info-column {
+        order: 2;
+        display: flex; /* keep visible, stacked below feed */
+    }
+
+    .main-content > .sidebar.desktop-only {
+        order: 3;
+        display: flex; /* keep visible, stacked last */
     }
 }
 
