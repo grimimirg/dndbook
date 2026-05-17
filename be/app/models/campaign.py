@@ -20,6 +20,7 @@ class Campaign(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    members = db.relationship('User', secondary=CampaignMembers, lazy='dynamic')
     posts = db.relationship('Post', backref='campaign', lazy=True, cascade='all, delete-orphan')
     characters = db.relationship('Character', backref='campaign', lazy=True, cascade='all, delete-orphan')
 
