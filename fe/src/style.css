@@ -2103,6 +2103,23 @@ input::placeholder, textarea::placeholder {
     font-style: italic;
 }
 
+/* CharacterDetailModal responsive - stack layout on small screens */
+@media (max-width: 500px) {
+    .character-detail-modal .character-header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .character-detail-modal .character-image {
+        width: 150px;
+        height: 225px;
+    }
+
+    .character-detail-modal .character-title {
+        text-align: center;
+    }
+}
+
 /* CreateCharacterModal.vue styles */
 .character-modal {
     max-width: 600px;
@@ -2206,6 +2223,22 @@ input::placeholder, textarea::placeholder {
     justify-content: flex-end;
     gap: 1rem;
     margin-top: 1rem;
+}
+
+/* CreateCharacterModal responsive - stack layout on small screens */
+@media (max-width: 500px) {
+    .character-modal .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .character-modal .image-preview {
+        flex-direction: column;
+    }
+
+    .character-modal .image-preview img {
+        max-width: 100%;
+        max-height: 200px;
+    }
 }
 
 /* CampaignImportModal.vue styles */
