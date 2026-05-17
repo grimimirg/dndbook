@@ -227,9 +227,16 @@ watch(searchQuery, (newValue) => {
 watch(() => campaignsStore.currentCampaign, async (newCampaign) => {
   if (newCampaign) {
     fetchViewedStatus();
-    checkPendingCharacterCreation();
   } else {
     showCharacterNotification.value = false;
+  }
+});
+
+watch(() => campaignsStore.pendingCharacterCreation, (pending) => {
+  if (pending) {
+    notificationMode.value = pending.mode;
+    showCharacterNotification.value = true;
+    campaignsStore.clearPendingCharacterCreation();
   }
 });
 
