@@ -168,8 +168,8 @@ def test_create_character_success(app):
 
 def test_create_character_unauthorized(app):
     """GIVEN a campaign owned by one user
-    WHEN another user attempts to create a character
-    THEN creation should be denied with 'Only campaign owner can create characters' error
+    WHEN a non-member user attempts to create a character
+    THEN creation should be denied with 'Unauthorized' error
     """
     with app.app_context():
         # GIVEN
@@ -192,7 +192,7 @@ def test_create_character_unauthorized(app):
         db.session.commit()
         
         # WHEN & THEN
-        with pytest.raises(ValueError, match='Only campaign owner can create characters'):
+        with pytest.raises(ValueError, match='Unauthorized'):
             CharactersService.create_character(
                 campaign_id=campaign.id,
                 user=other,

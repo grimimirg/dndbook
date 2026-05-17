@@ -105,9 +105,9 @@ def test_accept_invite_success(app):
         # WHEN
         result = InvitesService.accept_invite(invite.id, invitee)
         
-        # THEN
-        assert result['id'] == campaign.id
-        assert result['name'] == 'Test Campaign'
+        # THEN — accept_invite returns the Campaign model object
+        assert result.id == campaign.id
+        assert result.name == 'Test Campaign'
         
         deleted_invite = CampaignInvite.query.get(invite.id)
         assert deleted_invite is None
