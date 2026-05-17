@@ -306,7 +306,7 @@ input::placeholder, textarea::placeholder {
     margin: 0 auto;
     padding: 20px 40px;
     display: grid;
-    grid-template-columns: minmax(300px, 380px) minmax(500px, 1fr) minmax(280px, 300px);
+    grid-template-columns: minmax(260px, 340px) minmax(380px, 1fr) minmax(240px, 300px);
     gap: 20px;
     align-items: start;
 }
@@ -320,7 +320,8 @@ input::placeholder, textarea::placeholder {
 
 .feed {
     max-width: 600px;
-    min-width: 600px;
+    min-width: 0;
+    width: 100%;
     margin: 0 auto;
 }
 
@@ -757,8 +758,8 @@ input::placeholder, textarea::placeholder {
     top: 80px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     transition: background 0.3s ease;
-    width: 300px;
-    min-width: 300px;
+    width: 100%;
+    min-width: 0;
     display: flex;
     flex-direction: column;
 }
@@ -1998,7 +1999,8 @@ input::placeholder, textarea::placeholder {
 }
 
 .campaign-characters-panel .character-info {
-    flex: 0 0 150px;
+    flex: 1 1 auto;
+    min-width: 0;
     gap: 4px;
     align-items: flex-start;
     margin-left: 10px;
@@ -2006,11 +2008,17 @@ input::placeholder, textarea::placeholder {
 
 .campaign-characters-panel .character-name {
     font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .campaign-characters-panel .character-race,
 .campaign-characters-panel .character-class {
     color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 
@@ -2029,7 +2037,7 @@ input::placeholder, textarea::placeholder {
     opacity: 1;
 }
 
-.campaign-characters-panel .character-actions button {
+.campaign-characters-panel .character-actions button:not(.pick-btn) {
     background: none;
     border: none;
     cursor: pointer;
@@ -2038,7 +2046,7 @@ input::placeholder, textarea::placeholder {
     transition: opacity 0.2s, transform 0.2s;
 }
 
-.campaign-characters-panel .character-actions button:hover {
+.campaign-characters-panel .character-actions button:not(.pick-btn):hover {
     transform: scale(1.1);
 }
 
@@ -2581,6 +2589,17 @@ input::placeholder, textarea::placeholder {
 }
 
 /* Responsive design - Tablet */
+@media (max-width: 1300px) {
+    .main-content {
+        grid-template-columns: minmax(240px, 320px) 1fr;
+        padding: 20px 24px;
+    }
+
+    .main-content > .sidebar.desktop-only {
+        display: none;
+    }
+}
+
 @media (max-width: 1024px) {
     .main-content {
         grid-template-columns: 1fr;
@@ -3086,11 +3105,12 @@ input::placeholder, textarea::placeholder {
     padding: 0.25rem 0.6rem;
     font-size: 0.75rem;
     background: linear-gradient(135deg, var(--accent-gold-1), var(--accent-gold-2));
-    color: #f5e6d3;
+    color: #fff;
     border: 1px solid var(--accent-gold-2);
     border-radius: 4px;
     cursor: pointer;
     white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .pick-btn:hover {
