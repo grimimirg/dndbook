@@ -3,7 +3,7 @@ import { mockApi } from './mockData.service.js';
 
 const isMockMode = import.meta.env.VITE_MOCK_DATA === 'true';
 
-const baseURL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
+const baseURL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '') + '/api';
 
 const apiService = axios.create({
   baseURL: baseURL,
