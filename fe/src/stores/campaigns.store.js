@@ -7,6 +7,7 @@ export const useCampaignsStore = defineStore('campaigns', () => {
   const sharedCampaigns = ref([]);
   const currentCampaign = ref(null);
   const loading = ref(false);
+  const pendingCharacterCreation = ref(null);
 
   async function fetchCampaigns() {
     loading.value = true;
@@ -91,10 +92,19 @@ export const useCampaignsStore = defineStore('campaigns', () => {
     }
   }
 
+  function setPendingCharacterCreation(campaignId, mode) {
+    pendingCharacterCreation.value = { campaignId, mode };
+  }
+
+  function clearPendingCharacterCreation() {
+    pendingCharacterCreation.value = null;
+  }
+
   function $reset() {
     ownedCampaigns.value = [];
     sharedCampaigns.value = [];
     currentCampaign.value = null;
+    pendingCharacterCreation.value = null;
     loading.value = false;
   }
 
@@ -103,12 +113,15 @@ export const useCampaignsStore = defineStore('campaigns', () => {
     sharedCampaigns,
     currentCampaign,
     loading,
+    pendingCharacterCreation,
     fetchCampaigns,
     createCampaign,
     updateCampaign,
     deleteCampaign,
     setCurrentCampaign,
     addSharedCampaign,
+    setPendingCharacterCreation,
+    clearPendingCharacterCreation,
     $reset
   };
 });

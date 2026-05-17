@@ -136,12 +136,8 @@ async function handleAccept(notification) {
 
       const mode = result.campaign.character_creation_mode;
       if (mode === 'free' || mode === 'predefined') {
-        sessionStorage.setItem('pendingCharacterCreation', JSON.stringify({
-          campaignId: result.campaign.id,
-          mode: mode
-        }));
+        campaignsStore.setPendingCharacterCreation(result.campaign.id, mode);
       }
-
       campaignsStore.setCurrentCampaign(result.campaign);
     }
   }
@@ -157,6 +153,16 @@ async function handleReject(notification) {
 
 function handleNotificationClick(notification) {
   showDropdown.value = false;
+
+  if (notification.notification_type === 'character_reminder' && notification.campaign_id) {
+    const campaign = [...campaignsStore.sharedCampaigns, ...campaignsStore.ownedCampaigns]
+      .find(c => c.id === notification.campaign_id);
+    if (campaign && campaign.character_creation_mode !== 'optional') {
+      campaignsStore.setPendingCharacterCreation(campaign.id, campaign.character_creation_mode);
+      campaignsStore.setCurrentCampaign(campaign);
+    }
+    return;
+  }
 
   if (notification.related_post_id) {
     const route = {name: 'home'};

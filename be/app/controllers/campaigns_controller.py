@@ -227,3 +227,13 @@ def cancel_invite(current_user, campaign_id, invite_id):
         return jsonify({'message': 'Invite cancelled successfully'}), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 400
+
+
+@bp.route('/<int:campaign_id>/members/<int:user_id>/remind', methods=['POST'])
+@token_required
+def send_character_reminder(current_user, campaign_id, user_id):
+    try:
+        CampaignsService.send_character_reminder(campaign_id, user_id, current_user)
+        return jsonify({'message': 'Reminder sent'}), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 403

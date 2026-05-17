@@ -209,10 +209,12 @@ function hasCharacter(userId) {
   return characters.value.some(c => c.assigned_to_user_id === userId);
 }
 
-function handleSendReminder(member) {
-  // This would ideally send a notification to the player
-  // For now, we'll just show a message
-  alert(`${t('character.reminderSent')} ${member.username}`);
+async function handleSendReminder(member) {
+  try {
+    await api.post(`/campaigns/${campaignsStore.currentCampaign.id}/members/${member.id}/remind`);
+  } catch (error) {
+    alert(error.response?.data?.error || t('common.error'));
+  }
 }
 
 defineExpose({
