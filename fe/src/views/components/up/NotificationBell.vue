@@ -132,7 +132,6 @@ async function handleAccept(notification) {
     const result = await invitesStore.acceptInvite(inviteId);
     if (result.success) {
       campaignsStore.addSharedCampaign(result.campaign);
-      campaignsStore.setCurrentCampaign(result.campaign);
       notifications.value = notifications.value.filter(n => n.id !== notification.id);
 
       const mode = result.campaign.character_creation_mode;
@@ -142,6 +141,8 @@ async function handleAccept(notification) {
           mode: mode
         }));
       }
+
+      campaignsStore.setCurrentCampaign(result.campaign);
     }
   }
 }
