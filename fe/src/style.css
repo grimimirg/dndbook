@@ -3075,6 +3075,28 @@ input::placeholder, textarea::placeholder {
     margin-top: 0.25rem;
 }
 
+.my-character-badge {
+    font-size: 0.75rem;
+    color: var(--accent-gold-3);
+    font-weight: 600;
+    margin-top: 0.25rem;
+}
+
+.pick-btn {
+    padding: 0.25rem 0.6rem;
+    font-size: 0.75rem;
+    background: linear-gradient(135deg, var(--accent-gold-1), var(--accent-gold-2));
+    color: #f5e6d3;
+    border: 1px solid var(--accent-gold-2);
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.pick-btn:hover {
+    background: linear-gradient(135deg, var(--accent-gold-2), var(--accent-gold-3));
+}
+
 /* PredefinedCharactersManager.vue styles */
 .predefined-characters-manager {
     display: flex;

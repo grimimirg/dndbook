@@ -200,6 +200,8 @@ character:
   noCharacter: "No character"
   remind: "Remind"
   reminderSent: "Reminder sent"
+  pick: "Pick"
+  myCharacter: "My character"
 
 profile:
   title: "Profile Settings"

@@ -87,6 +87,10 @@ class CharactersService:
 
         image_url = CharactersService._save_character_image(image_file, campaign_id) if image_file else None
 
+        assigned_to_user_id = None
+        if not is_predefined and campaign.owner_id != user.id:
+            assigned_to_user_id = user.id
+
         character = Character(
             campaign_id=campaign_id,
             name=name,
@@ -94,7 +98,8 @@ class CharactersService:
             character_class=character_class,
             description=description,
             image_url=image_url,
-            is_predefined=is_predefined
+            is_predefined=is_predefined,
+            assigned_to_user_id=assigned_to_user_id
         )
 
         db.session.add(character)

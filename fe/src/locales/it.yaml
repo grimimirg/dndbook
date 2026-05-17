@@ -200,6 +200,8 @@ character:
   noCharacter: "Nessun personaggio"
   remind: "Ricorda"
   reminderSent: "Promemoria inviato"
+  pick: "Scegli"
+  myCharacter: "Il mio personaggio"
 
 profile:
   title: "Impostazioni Profilo"

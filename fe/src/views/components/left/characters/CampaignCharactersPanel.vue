@@ -4,7 +4,7 @@
       <div class="panel-header flex-between">
         <h3>{{ t('character.characters') }}</h3>
         <span
-            v-if="isCurrentCampaignOwned"
+            v-if="canCreateCharacter"
             @click="openCreateModal"
             class="btn-circle"
             :title="t('character.createTooltip')"
@@ -47,9 +47,22 @@
               <span class="character-name">{{ character.name }}</span>
               <span class="character-race">{{ character.race }}</span>
               <span class="character-class">{{ character.character_class }}</span>
-              <span v-if="character.assigned_to_user_id" class="character-assigned">
+              <span v-if="character.assigned_to_user_id === currentUserId" class="my-character-badge">
+                {{ t('character.myCharacter') }}
+              </span>
+              <span v-else-if="character.assigned_to_user_id" class="character-assigned">
                 {{ t('character.assignedTo') }}
               </span>
+            </div>
+
+            <div class="character-actions" @click.stop>
+              <button
+                  v-if="canPickCharacter(character)"
+                  @click.stop="handlePickCharacter(character)"
+                  class="pick-btn btn-sm"
+              >
+                {{ t('character.pick') }}
+              </button>
             </div>
 
             <div v-if="isCurrentCampaignOwned" class="character-actions" @click.stop>
@@ -163,6 +176,21 @@ const isCurrentCampaignOwned = computed(() => {
       campaign => campaign.id === campaignsStore.currentCampaign.id
   );
 });
+
+const currentUserId = computed(() => authStore.user?.id);
+
+const campaignMode = computed(() => campaignsStore.currentCampaign?.character_creation_mode);
+
+const canCreateCharacter = computed(() => {
+  if (!campaignsStore.currentCampaign) return false;
+  if (isCurrentCampaignOwned.value) return true;
+  return campaignMode.value === 'free' || campaignMode.value === 'optional';
+});
+
+function canPickCharacter(character) {
+  if (isCurrentCampaignOwned.value) return false;
+  return character.is_predefined && !character.assigned_to_user_id;
+}
 
 function getImageUrl(imageUrl) {
   if (!imageUrl) return '';
@@ -278,6 +306,19 @@ async function confirmDelete() {
     }
   }
   characterToDelete.value = null;
+}
+
+async function handlePickCharacter(character) {
+  const result = await charactersStore.assignCharacterToUser(
+    campaignsStore.currentCampaign.id,
+    character.id,
+    null
+  );
+  if (result.success) {
+    charactersStore.fetchCharacters(campaignsStore.currentCampaign.id);
+  } else {
+    alert(result.error || t('common.error'));
+  }
 }
 
 function handleClickOutside(event) {
