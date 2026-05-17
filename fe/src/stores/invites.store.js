@@ -27,7 +27,7 @@ export const useInvitesStore = defineStore('invites', () => {
       
       invites.value = invites.value.filter(inv => inv.id !== inviteId);
       
-      return { success: true, campaign: response.data };
+      return { success: true, campaign: response.data.campaign };
     } catch (error) {
       return { 
         success: false, 
