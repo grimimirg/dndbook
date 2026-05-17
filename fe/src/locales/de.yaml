@@ -199,6 +199,8 @@ character:
   noCharacter: "Kein Charakter"
   remind: "Erinnern"
   reminderSent: "Erinnerung gesendet"
+  pick: "Wählen"
+  myCharacter: "Mein Charakter"
 
 profile:
   title: "Profil Einstellungen"
