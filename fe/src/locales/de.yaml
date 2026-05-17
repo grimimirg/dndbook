@@ -206,6 +206,7 @@ profile:
   avatar: "Avatar"
   uploadAvatar: "Avatar hochladen"
   removeAvatar: "Avatar entfernen"
+  applicationLanguage: "Anwendungssprache"
   nickname: "Spitzname"
   nicknamePlaceholder: "Geben Sie Ihren Anzeigenamen ein..."
   biography: "Biografie"

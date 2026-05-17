@@ -5,7 +5,6 @@
         <div class="modal-header">
           <h2>{{ t('profile.title') }}</h2>
           <div class="header-controls flex-align-center">
-            <LanguageSelector/>
             <ThemeToggle/>
             <button @click="closeModal" class="close-btn">×</button>
           </div>
@@ -46,6 +45,11 @@
                    type="text" 
                    :placeholder="t('profile.nicknamePlaceholder')"
                    class="profile-input" />
+          </div>
+
+          <div class="profile-section">
+            <h3>{{ t('profile.applicationLanguage') }}</h3>
+            <LanguageSelector/>
           </div>
 
           <!-- Biography Section -->
@@ -102,11 +106,11 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useAuthStore } from '../stores/auth.store.js';
-import { useUserStore } from '../stores/user.store.js';
-import ToastNotification from './components/ToastNotification.vue';
-import LanguageSelector from './components/up/LanguageSelector.vue';
-import ThemeToggle from './components/up/ThemeToggle.vue';
+import { useAuthStore } from '../../../stores/auth.store.js';
+import { useUserStore } from '../../../stores/user.store.js';
+import ToastNotification from '../ToastNotification.vue';
+import LanguageSelector from './LanguageSelector.vue';
+import ThemeToggle from './ThemeToggle.vue';
 
 const { t } = useI18n();
 const authStore = useAuthStore();
