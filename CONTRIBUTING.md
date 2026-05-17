@@ -12,6 +12,7 @@ Thank you for your interest in contributing to D&D Book! This document provides 
 - [Writing Tests](#writing-tests)
 - [Code Style Guidelines](#code-style-guidelines)
 - [Submitting Changes](#submitting-changes)
+  - [Pull Request Workflow for Version Branches](#pull-request-workflow-for-version-branches)
 
 ---
 
@@ -1049,6 +1050,32 @@ pytest -v
 - Update documentation if needed
 - Request review from maintainers
 - Be responsive to feedback
+
+### Pull Request Workflow for Version Branches
+
+When contributing to version branches (e.g., `1.1.0`, `1.2.0`), all contributors must follow this workflow:
+
+#### 1. New Feature Implementation
+
+For implementing new features:
+- **Create an issue** describing the new implementation in as much detail as possible
+- **Add appropriate labels**: `pending`, `fe` (frontend) or `be` (backend)
+- **Wait for milestone assignment**: The project owner will decide in which release milestone to implement it
+- **Discuss in issue comments**: Use the issue's comment section to discuss implementation details and timeline
+
+#### 2. Bug Fixes
+
+For bug discoveries and fixes:
+- **Open an issue** with the `bug` label
+- **Fix without approval**: Bug fixes can be implemented without requiring project owner approval
+
+#### 3. Pull Request Assignment
+
+For all developed features and bug fixes:
+- **Open a pull request** for every change and bug
+- **Assign to project owner**: All pull requests must be assigned to the project owner for review
+- **Include clear description**: Describe what was changed and why
+- **Reference related issues**: Link any issues that the PR addresses
 
 ---
 

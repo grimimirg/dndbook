@@ -47,7 +47,7 @@ def accept_invite(current_user, invite_id):
         campaign = InvitesService.accept_invite(invite_id, current_user)
         return jsonify({
             'message': 'Invite accepted',
-            'campaign': campaign.to_dict()
+            'campaign': campaign
         }), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 400 if 'processed' in str(e) else 403

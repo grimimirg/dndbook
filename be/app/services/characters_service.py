@@ -43,7 +43,7 @@ class CharactersService:
 
         characters = Character.query.filter_by(campaign_id=campaign_id).order_by(Character.created_at.desc()).all()
 
-        return [character.to_dict() for character in characters]
+        return [character.to_dict(user=user) for character in characters]
 
     @staticmethod
     def create_character(campaign_id, user, name, race, character_class, description='', image_file=None, is_predefined=False):
@@ -110,7 +110,7 @@ class CharactersService:
             user: The user requesting access
 
         Returns:
-            Character: The character object
+            dict: The character data with filtering applied
 
         Raises:
             ValueError: If user is not authorized
@@ -123,7 +123,7 @@ class CharactersService:
 
         character = Character.query.filter_by(id=character_id, campaign_id=campaign_id).first_or_404()
 
-        return character
+        return character.to_dict(user=user)
 
     @staticmethod
     def update_character(campaign_id, character_id, user, name=None, race=None, character_class=None,
@@ -272,7 +272,7 @@ class CharactersService:
             is_predefined=True
         ).order_by(Character.created_at.desc()).all()
 
-        return [character.to_dict() for character in characters]
+        return [character.to_dict(user=user) for character in characters]
 
     @staticmethod
     def assign_character_to_user(campaign_id, character_id, user_id, requesting_user):
@@ -375,4 +375,4 @@ class CharactersService:
             Character.name.ilike(f'%{query}%')
         ).order_by(Character.name).limit(10).all()
 
-        return [character.to_dict() for character in characters]
+        return [character.to_dict(user=user) for character in characters]

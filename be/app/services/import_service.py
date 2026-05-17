@@ -77,7 +77,7 @@ class ImportService:
             shutil.rmtree(extract_path)
             os.remove(archive_path)
             
-            return [c.to_dict() for c in imported_campaigns]
+            return [c.to_dict(user=current_user) for c in imported_campaigns]
             
         except Exception as e:
             db.session.rollback()
