@@ -76,7 +76,7 @@ def create_character(current_user, campaign_id):
             image_file=image_file,
             is_predefined=is_predefined
         )
-        return jsonify(character.to_dict()), 201
+        return jsonify(character.to_dict(user=current_user)), 201
     except ValueError as e:
         return jsonify({'error': str(e)}), 400 if 'required' in str(e) else 403
 
@@ -102,7 +102,7 @@ def get_character(current_user, campaign_id, character_id):
     """
     try:
         character = CharactersService.get_character(campaign_id, character_id, current_user)
-        return jsonify(character.to_dict()), 200
+        return jsonify(character), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 403
 
@@ -154,7 +154,7 @@ def update_character(current_user, campaign_id, character_id):
             image_file=image_file,
             remove_image=remove_image
         )
-        return jsonify(character.to_dict()), 200
+        return jsonify(character.to_dict(user=current_user)), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 403
 
@@ -244,7 +244,7 @@ def assign_character(current_user, campaign_id, character_id):
             user_id=user_id,
             requesting_user=current_user
         )
-        return jsonify(character.to_dict()), 200
+        return jsonify(character.to_dict(user=current_user)), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 400 if 'predefined' in str(e) or 'assigned' in str(e) else 403
 
@@ -274,7 +274,7 @@ def unassign_character(current_user, campaign_id, character_id):
             character_id=character_id,
             requesting_user=current_user
         )
-        return jsonify(character.to_dict()), 200
+        return jsonify(character.to_dict(user=current_user)), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 403
 

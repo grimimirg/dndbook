@@ -56,7 +56,7 @@ def create_campaign(current_user):
         character_creation_mode=data.get('character_creation_mode', 'optional')
     )
 
-    return jsonify(campaign.to_dict()), 201
+    return jsonify(campaign.to_dict(user=current_user)), 201
 
 
 @bp.route('/<int:campaign_id>', methods=['GET'])
@@ -79,7 +79,7 @@ def get_campaign(current_user, campaign_id):
     """
     try:
         campaign = CampaignsService.get_campaign(campaign_id, current_user)
-        return jsonify(campaign.to_dict()), 200
+        return jsonify(campaign), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 403
 
@@ -117,7 +117,7 @@ def update_campaign(current_user, campaign_id):
             description=data.get('description'),
             character_creation_mode=data.get('character_creation_mode')
         )
-        return jsonify(campaign.to_dict()), 200
+        return jsonify(campaign.to_dict(user=current_user)), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 400 if 'Invalid' in str(e) else 403
 

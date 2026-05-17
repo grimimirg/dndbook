@@ -7,15 +7,50 @@ Welcome to D&D Book, your digital campaign chronicle! This manual will guide you
 ## Table of Contents
 
 - [Getting Started](#getting-started)
+  - [First Login](#first-login)
+  - [Navigation](#navigation)
 - [Campaign Management](#campaign-management)
+  - [Creating a New Campaign](#creating-a-new-campaign)
+  - [Editing Campaign Details](#editing-campaign-details)
+  - [Deleting a Campaign](#deleting-a-campaign)
 - [Character Management](#character-management)
+  - [Character Creation Modes](#character-creation-modes)
+  - [Creating a Character](#creating-a-character)
+  - [Editing a Character](#editing-a-character)
+  - [Assigning Characters (Predefined Mode)](#assigning-characters-predefined-mode)
 - [Creating Posts](#creating-posts)
+  - [Basic Post Creation](#basic-post-creation)
+  - [Post Importance Level](#post-importance-level)
+  - [Hiding Posts from Players (DM Only)](#hiding-posts-from-players-dm-only)
+  - [Hiding Text Within Content (DM Only)](#hiding-text-within-content-dm-only)
+  - [Post Ordering](#post-ordering)
 - [Image Galleries](#image-galleries)
+  - [Adding Images to Posts](#adding-images-to-posts)
+  - [Managing Images](#managing-images)
+  - [Viewing Images](#viewing-images)
 - [Comments and Collaboration](#comments-and-collaboration)
+  - [Adding Comments](#adding-comments)
+  - [Comment Features](#comment-features)
+  - [Post Viewed Status](#post-viewed-status)
 - [Inviting Players](#inviting-players)
+  - [Sending Invitations](#sending-invitations)
+  - [Accepting Invitations](#accepting-invitations)
+  - [Managing Campaign Members](#managing-campaign-members)
 - [Import/Export Campaigns](#importexport-campaigns)
+  - [Exporting a Campaign](#exporting-a-campaign)
+  - [Importing a Campaign](#importing-a-campaign)
 - [Notifications](#notifications)
+  - [Notification Types](#notification-types)
+  - [Managing Notifications](#managing-notifications)
 - [Language and Theme](#language-and-theme)
+  - [Changing Language](#changing-language)
+  - [Dark/Light Mode](#darklight-mode)
+- [Tips and Best Practices](#tips-and-best-practices)
+  - [For Dungeon Masters](#for-dungeon-masters)
+  - [For Players](#for-players)
+  - [General Tips](#general-tips)
+- [Troubleshooting](#troubleshooting)
+  - [Common Issues](#common-issues)
 
 ---
 
@@ -137,6 +172,31 @@ As the campaign owner, you can hide posts from players:
 2. Hidden posts show a lock icon (🔒)
 3. Only the DM can see hidden posts
 4. Use for DM notes, future plot hooks, or secret information
+
+### Hiding Text Within Content (DM Only)
+
+As the campaign owner, you can hide specific text within posts, character descriptions, and campaign descriptions using the `--` marker:
+
+**How it works:**
+- Wrap text you want to hide between two dashes: `--hidden text--`
+- Only the DM (campaign owner) can see the hidden text
+- Players will see the content without the hidden portions
+- Extra spaces are automatically cleaned up so players won't notice anything is missing
+
+**Example:**
+- DM writes: "The party enters the room and sees a treasure chest --but it's actually a mimic-- in the corner."
+- Players see: "The party enters the room and sees a treasure chest in the corner."
+
+**Use cases:**
+- Secret plot points or foreshadowing
+- DM notes within shared content
+- Hidden details about NPCs or locations
+- Spoilers for future encounters
+
+**Where you can use it:**
+- Campaign descriptions
+- Post content
+- Character descriptions and details
 
 ### Post Ordering
 
@@ -287,9 +347,10 @@ The application tracks which posts you've viewed:
 
 1. **Use Importance Levels**: Mark critical plot points with high importance
 2. **Hide Secret Information**: Use the hide feature for DM-only content
-3. **Organize with Custom Order**: Arrange posts to match your narrative flow
-4. **Predefine Characters**: Use predefined mode for balanced parties
-5. **Regular Backups**: Export campaigns regularly to prevent data loss
+3. **Hide Text Within Content**: Use `--` markers to hide specific text within posts and descriptions
+4. **Organize with Custom Order**: Arrange posts to match your narrative flow
+5. **Predefine Characters**: Use predefined mode for balanced parties
+6. **Regular Backups**: Export campaigns regularly to prevent data loss
 
 ### For Players
 

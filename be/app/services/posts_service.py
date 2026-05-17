@@ -102,7 +102,7 @@ class PostsService:
         pagination = query.paginate(page=page, per_page=per_page, error_out=False)
 
         return {
-            'posts': [post.to_dict() for post in pagination.items],
+            'posts': [post.to_dict(user=user) for post in pagination.items],
             'total': pagination.total,
             'page': pagination.page,
             'pages': pagination.pages,
@@ -181,7 +181,7 @@ class PostsService:
             user: The user requesting access
 
         Returns:
-            Post: The post object
+            dict: The post data with filtering applied
 
         Raises:
             ValueError: If user is not authorized
@@ -192,7 +192,7 @@ class PostsService:
         if not PostsService.can_access_campaign(campaign, user):
             raise ValueError('Unauthorized')
 
-        return post
+        return post.to_dict(user=user)
 
     @staticmethod
     def update_post(post_id, user, title=None, content=None, importance_level=None):

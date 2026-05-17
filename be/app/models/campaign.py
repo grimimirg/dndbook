@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from app import db
+from app.utils.text_filter import filter_hidden_text
 
 
 class Campaign(db.Model):
@@ -22,20 +23,25 @@ class Campaign(db.Model):
     posts = db.relationship('Post', backref='campaign', lazy=True, cascade='all, delete-orphan')
     characters = db.relationship('Character', backref='campaign', lazy=True, cascade='all, delete-orphan')
 
-    def to_dict(self, include_members=False):
+    def to_dict(self, include_members=False, user=None):
         """
         Convert campaign object to dictionary representation.
         
         Args:
             include_members (bool): Whether to include member list in output
+            user: The user requesting the data (used for filtering hidden text)
             
         Returns:
             dict: Campaign data with optional member information
         """
+        # Filter description for non-DM users
+        should_filter = user is not None and self.owner_id != user.id
+        filtered_description = filter_hidden_text(self.description, should_filter)
+        
         result = {
             'id': self.id,
             'name': self.name,
-            'description': self.description,
+            'description': filtered_description,
             'owner_id': self.owner_id,
             'character_creation_mode': self.character_creation_mode,
             'created_at': self.created_at.isoformat(),

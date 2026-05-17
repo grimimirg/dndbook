@@ -2,6 +2,7 @@ from datetime import datetime
 
 from flask import request
 from app import db
+from app.utils.text_filter import filter_hidden_text
 
 
 class Character(db.Model):
@@ -24,13 +25,20 @@ class Character(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    def to_dict(self):
+    def to_dict(self, user=None):
         """
         Convert character object to dictionary representation.
+        
+        Args:
+            user: The user requesting the data (used for filtering hidden text)
         
         Returns:
             dict: Character data
         """
+        # Filter description for non-DM users
+        should_filter = user is not None and self.campaign.owner_id != user.id
+        filtered_description = filter_hidden_text(self.description, should_filter)
+        
         image_url = None
         if self.image_url:
             if self.image_url.startswith('http'):
@@ -45,7 +53,7 @@ class Character(db.Model):
             'name': self.name,
             'race': self.race,
             'character_class': self.character_class,
-            'description': self.description,
+            'description': filtered_description,
             'image_url': image_url,
             'is_predefined': self.is_predefined,
             'assigned_to_user_id': self.assigned_to_user_id,
