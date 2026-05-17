@@ -16,26 +16,28 @@
     --placeholder-color: #6a6a6a;
     --hover-bg: rgba(60, 60, 60, 0.4);
     --success-color: #4caf50;
+    --primary-color: #a88958;
 }
 
 :root[data-theme="light"] {
-    --bg-gradient-1: #f5ebe0;
-    --bg-gradient-2: #e8dcc8;
-    --bg-primary: #f5ebe0;
-    --text-primary: #3a2f26;
-    --text-secondary: #6b5d4f;
-    --text-heading: #8b6f47;
-    --card-bg-1: rgba(255, 250, 240, 0.9);
-    --card-bg-2: rgba(250, 245, 235, 0.95);
-    --input-bg: rgba(255, 255, 255, 0.8);
-    --input-border: #d4c5b9;
-    --border-color: #d4c5b9;
-    --button-secondary-bg: rgba(228, 218, 203, 0.8);
-    --button-secondary-border: #c9b89a;
-    --button-secondary-hover: rgba(212, 197, 185, 0.9);
-    --placeholder-color: #9a8575;
-    --hover-bg: rgba(228, 218, 203, 0.5);
-    --success-color: #4caf50;
+    --bg-gradient-1: #ede0d0;
+    --bg-gradient-2: #d9c9b0;
+    --bg-primary: #ede0d0;
+    --text-primary: #2a1f16;
+    --text-secondary: #5a4d42;
+    --text-heading: #6b4f2a;
+    --card-bg-1: rgba(255, 248, 235, 0.95);
+    --card-bg-2: rgba(245, 236, 218, 0.98);
+    --input-bg: rgba(255, 255, 255, 0.9);
+    --input-border: #b8a48a;
+    --border-color: #b8a48a;
+    --button-secondary-bg: rgba(210, 195, 172, 0.9);
+    --button-secondary-border: #a89070;
+    --button-secondary-hover: rgba(192, 174, 148, 1);
+    --placeholder-color: #8a7060;
+    --hover-bg: rgba(210, 195, 172, 0.6);
+    --success-color: #3d8b40;
+    --primary-color: #8b6f47;
 }
 
 :root {

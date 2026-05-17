@@ -5,6 +5,7 @@
         <HamburgerMenu ref="hamburgerMenu" @invites-sent="handleInvitesSent" class="mobile-only"/>
         <h1>{{ t('app.title') }}</h1>
         <div class="user-info flex-align-center">
+          <ThemeToggle/>
           <NotificationBell/>
           <div class="user-avatar clickable" @click="showProfileModal = true">
             <img v-if="authStore.user?.avatar_url" 
