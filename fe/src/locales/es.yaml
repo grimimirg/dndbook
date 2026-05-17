@@ -155,6 +155,12 @@ notification:
   minutesAgo: "hace {n} min"
   hoursAgo: "hace {n} h"
   daysAgo: "hace {n} días"
+  type:
+    invite: "Invitación a Campaña"
+    post_created: "Nueva Publicación"
+    post_edited: "Publicación Actualizada"
+    comment_added: "Nuevo Comentario"
+    character_reminder: "Recordatorio de Personaje"
 
 common:
   loading: "Cargando..."
@@ -162,6 +168,8 @@ common:
   confirm: "Confirmar"
   cancel: "Cancelar"
   later: "Más tarde"
+  edit: "Editar"
+  delete: "Eliminar"
 
 character:
   characters: "Personajes"
@@ -189,7 +197,11 @@ character:
   confirmDelete: "¿Estás seguro de que quieres eliminar este personaje?"
   actions: "Actions"
   predefinedCharacter: "Personaje Predefinido"
+  predefinedCharacters: "Personajes Predefinidos"
   predefinedHelp: "Este personaje puede ser seleccionado por los jugadores al unirse a la campaña"
+  createPredefined: "Añadir Predefinido"
+  available: "Disponible"
+  assigned: "Asignado"
   chooseCharacter: "Elegir Personaje"
   chooseYourCharacter: "Elige Tu Personaje"
   chooseYourCharacterDesc: "Selecciona un personaje predefinido para comenzar tu aventura"
@@ -199,9 +211,13 @@ character:
   createYourCharacterDesc: "Crea tu propio personaje único para comenzar tu aventura"
   noCharacter: "Sin personaje"
   remind: "Recordar"
+  sendReminder: "Enviar recordatorio"
   reminderSent: "Recordatorio enviado"
   pick: "Elegir"
   myCharacter: "Mi personaje"
+  assignedTo: "Asignado"
+  unassign: "Desasignar"
+  confirmUnassign: "¿Estás seguro de que quieres desasignar este personaje?"
 
 profile:
   title: "Configuración del Perfil"

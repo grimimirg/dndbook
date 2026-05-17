@@ -155,6 +155,12 @@ notification:
   minutesAgo: "{n}m ago"
   hoursAgo: "{n}h ago"
   daysAgo: "{n}d ago"
+  type:
+    invite: "Campaign Invite"
+    post_created: "New Post"
+    post_edited: "Post Updated"
+    comment_added: "New Comment"
+    character_reminder: "Character Reminder"
 
 common:
   loading: "Loading..."
@@ -162,6 +168,8 @@ common:
   confirm: "Confirm"
   cancel: "Cancel"
   later: "Later"
+  edit: "Edit"
+  delete: "Delete"
 
 character:
   characters: "Characters"
@@ -189,7 +197,11 @@ character:
   confirmDelete: "Are you sure you want to delete this character?"
   actions: "Actions"
   predefinedCharacter: "Predefined Character"
+  predefinedCharacters: "Predefined Characters"
   predefinedHelp: "This character can be selected by players when joining the campaign"
+  createPredefined: "Add Predefined"
+  available: "Available"
+  assigned: "Assigned"
   chooseCharacter: "Choose Character"
   chooseYourCharacter: "Choose Your Character"
   chooseYourCharacterDesc: "Select a predefined character to start your adventure"
@@ -199,9 +211,13 @@ character:
   createYourCharacterDesc: "Create your own unique character to start your adventure"
   noCharacter: "No character"
   remind: "Remind"
+  sendReminder: "Send reminder"
   reminderSent: "Reminder sent"
   pick: "Pick"
   myCharacter: "My character"
+  assignedTo: "Assigned"
+  unassign: "Unassign"
+  confirmUnassign: "Are you sure you want to unassign this character?"
 
 profile:
   title: "Profile Settings"

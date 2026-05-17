@@ -188,8 +188,8 @@ const canCreateCharacter = computed(() => {
 });
 
 function canPickCharacter(character) {
-  if (isCurrentCampaignOwned.value) return false;
-  return character.is_predefined && !character.assigned_to_user_id;
+  if (character.assigned_to_user_id) return false;
+  return character.is_predefined;
 }
 
 function getImageUrl(imageUrl) {

@@ -155,6 +155,12 @@ notification:
   minutesAgo: "{n} min fa"
   hoursAgo: "{n} ore fa"
   daysAgo: "{n} giorni fa"
+  type:
+    invite: "Invito Campagna"
+    post_created: "Nuovo Post"
+    post_edited: "Post Aggiornato"
+    comment_added: "Nuovo Commento"
+    character_reminder: "Promemoria Personaggio"
 
 common:
   loading: "Caricamento..."
@@ -162,6 +168,8 @@ common:
   confirm: "Conferma"
   cancel: "Annulla"
   later: "Più tardi"
+  edit: "Modifica"
+  delete: "Elimina"
 
 character:
   characters: "Personaggi"
@@ -189,7 +197,11 @@ character:
   confirmDelete: "Sei sicuro di voler eliminare questo personaggio?"
   actions: "Actions"
   predefinedCharacter: "Personaggio Predefinito"
+  predefinedCharacters: "Personaggi Predefiniti"
   predefinedHelp: "Questo personaggio può essere selezionato dai giocatori quando entrano nella campagna"
+  createPredefined: "Aggiungi Predefinito"
+  available: "Disponibile"
+  assigned: "Assegnato"
   chooseCharacter: "Scegli Personaggio"
   chooseYourCharacter: "Scegli il Tuo Personaggio"
   chooseYourCharacterDesc: "Seleziona un personaggio predefinito per iniziare la tua avventura"
@@ -199,9 +211,13 @@ character:
   createYourCharacterDesc: "Crea il tuo personaggio unico per iniziare la tua avventura"
   noCharacter: "Nessun personaggio"
   remind: "Ricorda"
+  sendReminder: "Invia promemoria"
   reminderSent: "Promemoria inviato"
   pick: "Scegli"
   myCharacter: "Il mio personaggio"
+  assignedTo: "Assegnato"
+  unassign: "Rimuovi assegnazione"
+  confirmUnassign: "Sei sicuro di voler rimuovere l'assegnazione di questo personaggio?"
 
 profile:
   title: "Impostazioni Profilo"
