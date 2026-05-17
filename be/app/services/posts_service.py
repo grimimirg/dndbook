@@ -6,7 +6,8 @@ from flask import current_app
 from werkzeug.utils import secure_filename
 
 from app import db
-from app.models import Post, Campaign, Image, Comment, Notification
+from app.models import Post, Campaign, Image, Comment, Notification, Character, CharacterMention
+import re
 
 
 class PostsService:
@@ -153,6 +154,10 @@ class PostsService:
         db.session.commit()
         db.session.refresh(post)
 
+        # Parse and store character mentions
+        resolved_mentions = PostsService.parse_character_mentions(content, campaign_id)
+        PostsService.update_character_mentions(post, resolved_mentions)
+
         PostsService.create_notification_entries(
             user_id=user.id,
             campaign_id=campaign_id,
@@ -225,6 +230,11 @@ class PostsService:
             post.importance_level = importance_level
 
         db.session.commit()
+
+        # Parse and update character mentions if content changed
+        if content:
+            resolved_mentions = PostsService.parse_character_mentions(content, post.campaign_id)
+            PostsService.update_character_mentions(post, resolved_mentions)
 
         PostsService.create_notification_entries(
             user_id=user.id,
@@ -701,3 +711,64 @@ class PostsService:
         )
 
         return post
+
+    @staticmethod
+    def parse_character_mentions(content, campaign_id):
+        """
+        Parse character mentions from post content.
+
+        Finds all @name patterns and resolves them to character IDs.
+
+        Args:
+            content (str): The post content to parse
+            campaign_id (int): The campaign ID
+
+        Returns:
+            list: List of tuples (mention_text, character_id)
+        """
+        if not content:
+            return []
+
+        # Find all @name patterns (alphanumeric characters after @)
+        pattern = r'@(\w+)'
+        mentions = re.findall(pattern, content)
+
+        if not mentions:
+            return []
+
+        # Resolve each mention to a character ID
+        characters = Character.query.filter_by(campaign_id=campaign_id).all()
+        name_to_id = {char.name.lower(): char.id for char in characters}
+
+        resolved_mentions = []
+        for mention in mentions:
+            char_id = name_to_id.get(mention.lower())
+            if char_id:
+                resolved_mentions.append((f'@{mention}', char_id))
+
+        return resolved_mentions
+
+    @staticmethod
+    def update_character_mentions(post, resolved_mentions):
+        """
+        Update character mentions for a post.
+
+        Deletes old mentions and creates new ones based on resolved mentions.
+
+        Args:
+            post: The post object
+            resolved_mentions (list): List of tuples (mention_text, character_id)
+        """
+        # Delete existing mentions for this post
+        CharacterMention.query.filter_by(post_id=post.id).delete()
+
+        # Create new mentions
+        for mention_text, character_id in resolved_mentions:
+            mention = CharacterMention(
+                post_id=post.id,
+                character_id=character_id,
+                mention_text=mention_text
+            )
+            db.session.add(mention)
+
+        db.session.commit()

@@ -8,6 +8,7 @@ from app.models.campaign_invite import CampaignInvite
 from app.models.character import Character
 from app.models.post_viewed_status import PostViewedStatus
 from app.models.notification import Notification
+from app.models.character_mention import CharacterMention
 
 __all__ = [
     'CampaignMembers',
@@ -19,5 +20,6 @@ __all__ = [
     'CampaignInvite',
     'Character',
     'PostViewedStatus',
-    'Notification'
+    'Notification',
+    'CharacterMention'
 ]

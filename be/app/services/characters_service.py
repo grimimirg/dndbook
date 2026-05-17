@@ -343,3 +343,36 @@ class CharactersService:
         db.session.commit()
 
         return character
+
+    @staticmethod
+    def search_characters(campaign_id, user, query):
+        """
+        Search characters by name for autocomplete.
+
+        User must be either the campaign owner or a member to access.
+
+        Args:
+            campaign_id (int): The ID of the campaign
+            user: The user requesting access
+            query (str): Search query string
+
+        Returns:
+            list: Array of matching character objects
+
+        Raises:
+            ValueError: If user is not authorized
+        """
+        campaign = Campaign.query.get_or_404(campaign_id)
+
+        is_member = campaign.members.filter_by(id=user.id).first() is not None
+        if campaign.owner_id != user.id and not is_member:
+            raise ValueError('Unauthorized')
+
+        if not query:
+            return []
+
+        characters = Character.query.filter_by(campaign_id=campaign_id).filter(
+            Character.name.ilike(f'%{query}%')
+        ).order_by(Character.name).limit(10).all()
+
+        return [character.to_dict() for character in characters]

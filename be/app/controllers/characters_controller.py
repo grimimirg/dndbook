@@ -277,3 +277,33 @@ def unassign_character(current_user, campaign_id, character_id):
         return jsonify(character.to_dict()), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 403
+
+
+@bp.route('/search', methods=['GET'])
+@token_required
+def search_characters(current_user, campaign_id):
+    """
+    Search characters by name for autocomplete.
+    
+    User must be either the campaign owner or a member to access.
+    
+    Query parameters:
+        - q (str): Search query string
+        
+    Args:
+        current_user: The authenticated user (injected by token_required decorator)
+        campaign_id (int): The ID of the campaign
+        
+    Returns:
+        JSON response with:
+        - 200: Array of matching character objects
+        - 403: User is not authorized to access this campaign
+        - 404: Campaign not found
+    """
+    query = request.args.get('q', '')
+    
+    try:
+        characters = CharactersService.search_characters(campaign_id, current_user, query)
+        return jsonify(characters), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 403

@@ -24,12 +24,12 @@
             <div v-else class="players-list flex-col">
               <div v-for="member in members" :key="member.id" class="player-item flex-between">
                 <div class="player-info">
-                  <span class="player-name">{{ member.username }}</span>
-                  <span v-if="!hasCharacter(member.id)" class="no-character-badge" :title="t('character.noCharacter')">
-                     - {{ t('character.noCharacter') }}
-                  </span>
-                </div>
-                <div class="player-actions flex-align-center">
+                  <div class="player-name-row">
+                    <span class="player-name">{{ member.username }}</span>
+                    <span v-if="!hasCharacter(member.id)" class="no-character-badge" :title="t('character.noCharacter')">
+                       - {{ t('character.noCharacter') }}
+                    </span>
+                  </div>
                   <button
                       v-if="isCurrentCampaignOwned && !hasCharacter(member.id)"
                       @click="handleSendReminder(member)"
@@ -38,6 +38,8 @@
                   >
                     {{ t('character.remind') }}
                   </button>
+                </div>
+                <div class="player-actions flex-align-center">
                   <button
                       v-if="isCurrentCampaignOwned"
                       @click="handleRemoveMember(member)"

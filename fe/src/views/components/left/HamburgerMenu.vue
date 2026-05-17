@@ -37,19 +37,10 @@
             </div>
 
             <div class="menu-section menu-controls">
-              <h3>{{ t('app.settings') }}</h3>
               <div class="control-group">
                 <button @click="handleLogout" class="logout-btn primary">
                   {{ t('auth.logout') }}
                 </button>
-              </div>
-              <div class="control-group">
-                <label>{{ t('app.language') }}</label>
-                <LanguageSelector/>
-              </div>
-              <div class="control-group">
-                <label>{{ t('app.theme') }}</label>
-                <ThemeToggle/>
               </div>
             </div>
 
@@ -69,8 +60,6 @@ import {useCampaignsStore} from '../../../stores/campaigns.store.js';
 import CampaignDescriptionPanel from './CampaignDescriptionPanel.vue';
 import CampaignCharactersPanel from './characters/CampaignCharactersPanel.vue';
 import CampaignPlayersPanel from './CampaignPlayersPanel.vue';
-import LanguageSelector from '../up/LanguageSelector.vue';
-import ThemeToggle from '../up/ThemeToggle.vue';
 
 const router = useRouter();
 const {t} = useI18n();

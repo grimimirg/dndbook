@@ -5,17 +5,17 @@
         <HamburgerMenu ref="hamburgerMenu" @invites-sent="handleInvitesSent" class="mobile-only"/>
         <h1>{{ t('app.title') }}</h1>
         <div class="user-info flex-align-center">
-          <span class="username-label">{{ authStore.user?.username }}</span>
-<!--          <div v-if="campaignsStore.currentCampaign" class="test-controls flex-align-center">-->
-<!--            <button @click="testFreeModeNotification" class="test-btn" title="Test Free Mode Notification">Test Free</button>-->
-<!--            <button @click="testPredefinedModeNotification" class="test-btn" title="Test Predefined Mode Notification">Test Predefined</button>-->
-<!--            <button @click="testCreateModal" class="test-btn" title="Test Create Character Modal">Test Create</button>-->
-<!--            <button @click="testSelectionModal" class="test-btn" title="Test Character Selection Modal">Test Select</button>-->
-<!--          </div>-->
           <NotificationBell/>
+          <div class="user-avatar clickable" @click="showProfileModal = true">
+            <img v-if="authStore.user?.avatar_url" 
+                 :src="getAvatarUrl(authStore.user.avatar_url)" 
+                 :alt="authStore.user?.nickname || authStore.user?.username"
+                 class="avatar-image" />
+            <span v-else class="avatar-placeholder">
+              {{ (authStore.user?.nickname || authStore.user?.username || 'U').charAt(0).toUpperCase() }}
+            </span>
+          </div>
           <button @click="handleLogout" class="secondary desktop-only">{{ t('auth.logout') }}</button>
-          <LanguageSelector class="desktop-only"/>
-          <ThemeToggle class="desktop-only"/>
         </div>
       </div>
     </header>
@@ -138,6 +138,10 @@
         :is-owner="isCurrentCampaignOwned"
         @close="showPostDetailModal = false; startInEditMode = false"
     />
+    <UserProfileCustomization
+        v-if="showProfileModal"
+        @close="showProfileModal = false"
+    />
   </div>
 </template>
 
@@ -169,6 +173,7 @@ import HamburgerMenu from './components/left/HamburgerMenu.vue';
 import CharacterCreationNotification from './components/notifications/CharacterCreationNotification.vue';
 import CreateCharacterModal from './components/left/characters/CreateCharacterModal.vue';
 import CharacterSelectionModal from './components/modals/CharacterSelectionModal.vue';
+import UserProfileCustomization from './components/up/UserProfileCustomization.vue';
 import {SortTypes} from '../constants/sortConstants.js';
 import {ImportanceTypes} from '../constants/importanceConstants.js';
 import {SocketEvents} from '../constants/socketConstants.js';
@@ -180,6 +185,15 @@ const campaignsStore = useCampaignsStore();
 const postsStore = usePostsStore();
 const invitesStore = useInvitesStore();
 const permissionsStore = usePermissionsStore();
+
+const apiBaseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
+
+function getAvatarUrl(url) {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  const baseUrl = apiBaseUrl.replace(/\/api$/, '');
+  return `${baseUrl}${url.startsWith('/') ? url : '/' + url}`;
+}
 
 const postRefs = ref({});
 const playersPanel = ref(null);
@@ -196,6 +210,7 @@ const showCharacterNotification = ref(false);
 const notificationMode = ref('free');
 const showCreateCharacterModal = ref(false);
 const showCharacterSelectionModal = ref(false);
+const showProfileModal = ref(false);
 
 let debounceTimeout = null;
 
