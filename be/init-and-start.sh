@@ -32,17 +32,20 @@ echo "Waiting for database to be ready..."
 MAX_RETRIES=30
 RETRY_COUNT=0
 
-until python3 -c "
+until python3 << 'PYCHECK'
 import os, sys
 url = os.getenv('DATABASE_URL', '')
+url = url.replace('postgresql+psycopg://', 'postgresql://', 1)
 try:
     import psycopg
-    psycopg.connect(url.replace('postgresql+psycopg://', 'postgresql://', 1), connect_timeout=5).close()
+    conn = psycopg.connect(url, connect_timeout=5)
+    conn.close()
     sys.exit(0)
 except Exception as e:
-    print(f'  connect error: {e}', file=sys.stderr)
+    sys.stderr.write('connect error: ' + str(e) + '\n')
     sys.exit(1)
-"; do
+PYCHECK
+do
     RETRY_COUNT=$((RETRY_COUNT + 1))
     
     if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
