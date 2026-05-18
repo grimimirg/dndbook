@@ -14,10 +14,10 @@ function pick(arr) {
 // ── LUOGHI ────────────────────────────────────────────────────────────────────
 
 const prefissiLuogo = [
-  'le antiche foreste di', 'le montagne spezzate di', 'le pianure desolate di',
-  'le paludi silenziose di', 'le rovine sommerse di', 'i deserti ardenti di',
-  'le isole nebbiose di', 'le catacombe dimenticate di', 'i porti oscuri di',
-  'le valli proibite di', 'i boschi maledetti di', 'le scogliere battute dai venti di',
+  'Nelle antiche foreste di', 'Nelle montagne spezzate di', 'Nelle pianure desolate di',
+  'Nelle paludi silenziose di', 'Nelle rovine sommerse di', 'Nei deserti ardenti di',
+  'Nelle isole nebbiose di', 'Nelle catacombe dimenticate di', 'Nei porti oscuri di',
+  'Nelle valli proibite di', 'Nei boschi maledetti di', 'Nelle scogliere battute dai venti di',
 ];
 
 const nomiLuogo = [
@@ -105,7 +105,7 @@ export function generateCampaign() {
   const obj = pick(obiettivi);
 
   return (
-    `Nelle ${luogo}, ${ant.n} ${minaccia}. ` +
+    `${luogo}, ${ant.n} ${minaccia}. ` +
     `${hook}.\n\n` +
     `Ambientazione: ${ambientazione}\nAntagonista: ${ant.l}\nObiettivo: ${obj.l}`
   );
