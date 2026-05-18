@@ -13,6 +13,28 @@
       >
         <span class="expand-icon">{{ expandedCampaignId === campaign.id ? '▼' : '▶' }}</span>
         <span class="campaign-name">{{ campaign.name }}</span>
+        <div class="campaign-menu-container">
+          <button
+              :ref="el => setButtonRef(campaign.id, el)"
+              @click.stop="toggleCampaignMenu(campaign.id, $event)"
+              class="menu-toggle-btn"
+              :title="t('campaign.actions')"
+          >
+            ⋮
+          </button>
+          <Teleport to="body">
+            <div
+                v-if="openMenuId === campaign.id"
+                class="campaign-actions-menu"
+                :style="menuPosition"
+            >
+              <button @click.stop="handleExportPdf(campaign.id)" class="menu-item">
+                <span class="menu-icon">📄</span>
+                <span>{{ t('pdfExport.exportToPdf') }}</span>
+              </button>
+            </div>
+          </Teleport>
+        </div>
       </div>
 
       <div v-if="expandedCampaignId === campaign.id" class="posts-list">
@@ -71,10 +93,16 @@
         @confirm="confirmToggleVisibility"
         @cancel="cancelToggleVisibility"
     />
+    <PdfExportModal
+        :show="showPdfExportModal"
+        :campaign-id="selectedCampaignId"
+        @close="showPdfExportModal = false"
+    />
   </div>
 </template>
 
 <script setup>
+import {onMounted, onUnmounted, ref} from 'vue';
 import {useI18n} from 'vue-i18n';
 import {useCampaignsStore} from '../../../../stores/campaigns.store.js';
 import {usePostsStore} from '../../../../stores/posts.store.js';
@@ -83,14 +111,28 @@ import draggable from 'vuedraggable';
 import {usePostActionsMenu} from '../../../../composables/usePostActionsMenu.js';
 import PostItemTree from './PostItemTree.vue';
 import ConfirmModal from '../../modals/ConfirmModal.vue';
+import PdfExportModal from '../../modals/PdfExportModal.vue';
 
 const {t} = useI18n();
 const campaignsStore = useCampaignsStore();
 const postsStore = usePostsStore();
 const permissionsStore = usePermissionsStore();
+const openMenuId = ref(null);
+const menuPosition = ref({});
+const buttonRefs = ref({});
+const showPdfExportModal = ref(false);
+const selectedCampaignId = ref(null);
 
 const emit = defineEmits(['toggle-campaign', 'scroll-to-post', 'edit-post']);
-const {openMenuPostId, menuPosition, togglePostMenu, handleEditPost, showToggleVisibilityConfirm, confirmToggleVisibility, cancelToggleVisibility, showVisibilityConfirm} = usePostActionsMenu(emit);
+const {openMenuPostId, menuPosition: postMenuPosition, togglePostMenu, handleEditPost, showToggleVisibilityConfirm, confirmToggleVisibility, cancelToggleVisibility, showVisibilityConfirm} = usePostActionsMenu(emit);
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
 
 const props = defineProps({
   expandedCampaignId: {
@@ -124,6 +166,46 @@ function scrollToPost(postId) {
 
 async function handlePostReorder() {
   await postsStore.reorderPosts();
+}
+
+function setButtonRef(campaignId, el) {
+  if (el) {
+    buttonRefs.value[campaignId] = el;
+  }
+}
+
+function toggleCampaignMenu(campaignId, event) {
+  if (openMenuId.value === campaignId) {
+    openMenuId.value = null;
+    menuPosition.value = {};
+  } else {
+    openMenuId.value = campaignId;
+    const button = event.currentTarget;
+    const rect = button.getBoundingClientRect();
+
+    const menuWidth = 200;
+    const top = rect.bottom + 8;
+    const left = rect.right - menuWidth;
+
+    menuPosition.value = {
+      top: `${top}px`,
+      left: `${left}px`,
+      right: 'auto'
+    };
+  }
+}
+
+function handleExportPdf(campaignId) {
+  openMenuId.value = null;
+  selectedCampaignId.value = campaignId;
+  showPdfExportModal.value = true;
+}
+
+function handleClickOutside(event) {
+  const menuContainer = event.target.closest('.campaign-menu-container');
+  if (!menuContainer && openMenuId.value !== null) {
+    openMenuId.value = null;
+  }
 }
 
 function getVisibilityLabel() {

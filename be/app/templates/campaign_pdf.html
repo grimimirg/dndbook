@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ campaign.name }}</title>
+</head>
+<body>
+    <div class="pdf-container">
+        <!-- Campaign Description -->
+        <div class="campaign-header">
+            <h1 class="campaign-title">{{ campaign.name }}</h1>
+            <div class="campaign-description">
+                {{ campaign.description }}
+            </div>
+        </div>
+
+        <!-- Posts -->
+        <div class="posts-container">
+            {% for post in posts %}
+            <div class="post">
+                <h2 class="post-title">{{ post.title }}</h2>
+                <div class="post-author">by {{ post.author }}</div>
+                
+                <div class="post-content">
+                    {{ post.content }}
+                </div>
+
+                <!-- Images with alternating layout -->
+                {% if post.images %}
+                <div class="images-container">
+                    {% if post.images|length == 1 %}
+                        <!-- Single image: image left, description right -->
+                        <div class="image-row single">
+                            <div class="image-wrapper">
+                                {% if post.images[0].data %}
+                                <img src="data:{{ post.images[0].mime_type }};base64,{{ post.images[0].data }}" alt="Image">
+                                {% endif %}
+                            </div>
+                            <div class="image-description">
+                                {{ post.images[0].description }}
+                            </div>
+                        </div>
+                    {% else %}
+                        <!-- Multiple images: alternate layout -->
+                        {% for image in post.images %}
+                        {% if loop.index % 2 == 1 %}
+                        <div class="image-row left">
+                            <div class="image-wrapper">
+                                {% if image.data %}
+                                <img src="data:{{ image.mime_type }};base64,{{ image.data }}" alt="Image">
+                                {% endif %}
+                            </div>
+                            <div class="image-description">
+                                {{ image.description }}
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="image-row right">
+                            <div class="image-description">
+                                {{ image.description }}
+                            </div>
+                            <div class="image-wrapper">
+                                {% if image.data %}
+                                <img src="data:{{ image.mime_type }};base64,{{ image.data }}" alt="Image">
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Comments -->
+                {% if post.comments %}
+                <div class="comments-container">
+                    <h3 class="comments-title">Comments</h3>
+                    {% for comment in post.comments %}
+                    <div class="comment">
+                        <div class="comment-author">{{ comment.author }}</div>
+                        <div class="comment-content">{{ comment.content }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
