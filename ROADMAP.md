@@ -4,21 +4,28 @@ This document outlines the planned features and improvements for D&D Book. For d
 
 ---
 
-## Features
+## v1.2.0
 
-- **Favicon support for browser tabs**
-- **Image thumbnails in campaign post list**
-- **User Profile Customization**
-- **Interactive Character Stat Sheet & Dice Roller**
-- **Narrative Tagging & Campaign Wiki System**
-- **Export Campaign Chronicle to PDF**
-- **Hidden NPC Details (DM Privacy)**
+### Tools Section with GM Tools and Player Tools
 
----
+Create a "Tools" section with two separate repositories for uploading and organizing attachments and resources.
 
-## Epics
+**Acceptance Criteria:**
+- Two distinct categories: GM Tools and Player Tools
+- Functional Upload/Download system for PDF and images
+- Folder or Tag-based organization
+- Granular access permissions (Players cannot access GM tools)
+- Search bar for quick resource filtering
 
-- **Resources & Tools Repository (GM & Players)**
+#### Sub-stories
+
+- **#15**: Add campaign notes button and left slide-out panel - Creates CampaignResourcesAndTools component with toggleable slide-out panel
+- **#16**: Implement notes tree with "Personal notes" and "Player notes" sections - Two tree sections with CRUD operations
+- **#17**: Simple Markdown textarea editor with Save and Cancel - Markdown editor for creating/editing notes
+- **#18**: Backend API and storage for notes - CRUD endpoints and persistent storage for notes
+- **#19**: Per-player visibility menu for notes - Menu to control which players can see specific notes
+- **#20**: Authorization rules for players notes - Server-side rules to ensure players only see allowed notes
+- **#21**: Personal notes section visible only to DM - Restricts personal notes section to DM only
 
 ---
 
