@@ -99,6 +99,7 @@ post:
   confirmDelete: "Are you sure you want to delete this post?"
   uploadImage: "Upload image"
   addImages: "Add images"
+  dropHere: "...or drop here"
   imageDescription: "Image description"
   reorderImages: "Reorder images"
   previousImage: "Previous image"

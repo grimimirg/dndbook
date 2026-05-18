@@ -99,6 +99,7 @@ post:
   confirmDelete: "Sind Sie sicher, dass Sie diesen Beitrag löschen möchten?"
   uploadImage: "Bild hochladen"
   addImages: "Bilder hinzufügen"
+  dropHere: "...oder hier ablegen"
   imageDescription: "Bildbeschreibung"
   reorderImages: "Bilder neu anordnen"
   previousImage: "Vorheriges Bild"

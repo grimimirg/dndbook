@@ -747,6 +747,33 @@ input::placeholder, textarea::placeholder {
     font-size: 20px;
 }
 
+.post-upload-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.post-drop-zone {
+    padding: 8px 16px;
+    border: 2px dashed var(--button-secondary-border);
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    cursor: default;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.post-drop-zone.drag-over {
+    border-color: var(--accent-gold-2);
+    color: var(--text-heading);
+    background: rgba(168, 137, 88, 0.08);
+}
+
 .sidebar {
     background: linear-gradient(145deg, var(--card-bg-1) 0%, var(--card-bg-2) 100%);
     border-radius: 8px;
@@ -2280,9 +2307,8 @@ input::placeholder, textarea::placeholder {
 
 .character-modal .drag-hint {
     margin: 0 0 0.5rem;
-    font-size: 0.75rem;
-    color: var(--text-muted, #8b7355);
-    opacity: 0.65;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
 }
 
 .character-modal .generate-image-link {

@@ -99,6 +99,7 @@ post:
   confirmDelete: "Sei sicuro di voler eliminare questo post?"
   uploadImage: "Carica immagine"
   addImages: "Aggiungi immagini"
+  dropHere: "...o trascina qui"
   imageDescription: "Descrizione immagine"
   reorderImages: "Riordina immagini"
   previousImage: "Immagine precedente"

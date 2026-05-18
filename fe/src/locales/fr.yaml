@@ -99,6 +99,7 @@ post:
   confirmDelete: "Êtes-vous sûr de vouloir supprimer cette publication ?"
   uploadImage: "Télécharger une image"
   addImages: "Ajouter des images"
+  dropHere: "...ou déposer ici"
   imageDescription: "Description de l'image"
   reorderImages: "Réorganiser les images"
   previousImage: "Image précédente"
