@@ -749,7 +749,7 @@ input::placeholder, textarea::placeholder {
 
 .post-upload-group {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     gap: 8px;
 }
 
@@ -765,7 +765,8 @@ input::placeholder, textarea::placeholder {
     text-transform: uppercase;
     cursor: default;
     transition: all 0.3s;
-    white-space: nowrap;
+    display: flex;
+    align-items: center;
 }
 
 .post-drop-zone.drag-over {
