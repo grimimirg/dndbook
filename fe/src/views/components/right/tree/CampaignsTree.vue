@@ -196,6 +196,10 @@ async function handleCreateCampaign({name, description}) {
 
   if (result.success) {
     showCreateModal.value = false;
+    expandedCampaignId.value = result.campaign.id;
+    campaignsStore.setCurrentCampaign(result.campaign);
+    postsStore.resetSort();
+    await postsStore.fetchPosts(result.campaign.id);
   }
 }
 

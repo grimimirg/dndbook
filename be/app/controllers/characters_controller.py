@@ -63,8 +63,9 @@ def create_character(current_user, campaign_id):
     character_class = request.form.get('character_class')
     description = request.form.get('description', '')
     image_file = request.files.get('image') if 'image' in request.files else None
+    image_url_external = request.form.get('image_url') or None
     is_predefined = request.form.get('is_predefined') == 'true'
-    
+
     try:
         character = CharactersService.create_character(
             campaign_id=campaign_id,
@@ -74,9 +75,10 @@ def create_character(current_user, campaign_id):
             character_class=character_class,
             description=description,
             image_file=image_file,
+            image_url_external=image_url_external,
             is_predefined=is_predefined
         )
-        return jsonify(character.to_dict()), 201
+        return jsonify(character.to_dict(user=current_user)), 201
     except ValueError as e:
         return jsonify({'error': str(e)}), 400 if 'required' in str(e) else 403
 
@@ -102,7 +104,7 @@ def get_character(current_user, campaign_id, character_id):
     """
     try:
         character = CharactersService.get_character(campaign_id, character_id, current_user)
-        return jsonify(character.to_dict()), 200
+        return jsonify(character), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 403
 
@@ -140,8 +142,9 @@ def update_character(current_user, campaign_id, character_id):
     character_class = request.form.get('character_class')
     description = request.form.get('description')
     image_file = request.files.get('image') if 'image' in request.files else None
+    image_url_external = request.form.get('image_url') or None
     remove_image = request.form.get('remove_image') == 'true'
-    
+
     try:
         character = CharactersService.update_character(
             campaign_id=campaign_id,
@@ -152,9 +155,10 @@ def update_character(current_user, campaign_id, character_id):
             character_class=character_class,
             description=description,
             image_file=image_file,
+            image_url_external=image_url_external,
             remove_image=remove_image
         )
-        return jsonify(character.to_dict()), 200
+        return jsonify(character.to_dict(user=current_user)), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 403
 
@@ -235,7 +239,7 @@ def assign_character(current_user, campaign_id, character_id):
         - 404: Campaign or character not found
     """
     data = request.get_json()
-    user_id = data.get('user_id', current_user.id) if data else current_user.id
+    user_id = (data.get('user_id') or current_user.id) if data else current_user.id
     
     try:
         character = CharactersService.assign_character_to_user(
@@ -244,7 +248,7 @@ def assign_character(current_user, campaign_id, character_id):
             user_id=user_id,
             requesting_user=current_user
         )
-        return jsonify(character.to_dict()), 200
+        return jsonify(character.to_dict(user=current_user)), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 400 if 'predefined' in str(e) or 'assigned' in str(e) else 403
 
@@ -274,7 +278,7 @@ def unassign_character(current_user, campaign_id, character_id):
             character_id=character_id,
             requesting_user=current_user
         )
-        return jsonify(character.to_dict()), 200
+        return jsonify(character.to_dict(user=current_user)), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 403
 

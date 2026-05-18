@@ -109,6 +109,7 @@ CREATE TABLE IF NOT EXISTS notifications (
     message TEXT NOT NULL,
     related_post_id INTEGER REFERENCES posts(id) ON DELETE CASCADE,
     related_comment_id INTEGER REFERENCES comments(id) ON DELETE CASCADE,
+    related_invite_id INTEGER REFERENCES campaign_invites(id) ON DELETE CASCADE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -120,13 +121,27 @@ CREATE TABLE IF NOT EXISTS notifications (
 DO $$
 BEGIN
     IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
+        SELECT 1 FROM information_schema.columns
         WHERE table_name = 'notifications' AND column_name = 'related_comment_id'
     ) THEN
         ALTER TABLE notifications ADD COLUMN related_comment_id INTEGER REFERENCES comments(id);
         RAISE NOTICE 'Added related_comment_id column to notifications table';
     ELSE
         RAISE NOTICE 'related_comment_id column already exists in notifications table';
+    END IF;
+END $$;
+
+-- Add related_invite_id to notifications if it doesn't exist
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'notifications' AND column_name = 'related_invite_id'
+    ) THEN
+        ALTER TABLE notifications ADD COLUMN related_invite_id INTEGER REFERENCES campaign_invites(id) ON DELETE CASCADE;
+        RAISE NOTICE 'Added related_invite_id column to notifications table';
+    ELSE
+        RAISE NOTICE 'related_invite_id column already exists in notifications table';
     END IF;
 END $$;
 

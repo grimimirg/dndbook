@@ -84,9 +84,10 @@ def create_post(current_user):
             campaign_id=data['campaign_id'],
             title=data['title'],
             content=data['content'],
-            importance_level=data.get('importance_level', 0)
+            importance_level=data.get('importance_level', 0),
+            is_hidden=bool(data.get('is_hidden', False))
         )
-        return jsonify(post.to_dict()), 201
+        return jsonify(post.to_dict(user=current_user)), 201
     except ValueError as e:
         return jsonify({'error': str(e)}), 400 if 'importance' in str(e) else 403
 
@@ -110,7 +111,7 @@ def get_post(current_user, post_id):
     """
     try:
         post = PostsService.get_post(post_id, current_user)
-        return jsonify(post.to_dict()), 200
+        return jsonify(post), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 403
 
@@ -146,7 +147,7 @@ def update_post(current_user, post_id):
             content=data.get('content'),
             importance_level=data.get('importance_level')
         )
-        return jsonify(post.to_dict()), 200
+        return jsonify(post.to_dict(user=current_user)), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 400 if 'importance' in str(e) else 403
 
@@ -477,6 +478,6 @@ def toggle_post_visibility(current_user, campaign_id, post_id):
 
     try:
         post = PostsService.toggle_post_visibility(post_id, current_user, data['is_hidden'])
-        return jsonify(post.to_dict()), 200
+        return jsonify(post.to_dict(user=current_user)), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 403

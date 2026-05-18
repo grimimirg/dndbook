@@ -6,7 +6,7 @@ services:
     restart: always
     environment:
       - FLASK_ENV=production
-      - DATABASE_URL=postgresql://${DNDBOOK_DB_USER}:${DNDBOOK_DB_PASS}@shared_postgres:5432/${DNDBOOK_DB_NAME}
+      - DATABASE_URL=postgresql+psycopg://${DNDBOOK_DB_USER}:${DNDBOOK_DB_PASS}@shared_postgres:5432/${DNDBOOK_DB_NAME}
       - SECRET_KEY=${SECRET_KEY}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}

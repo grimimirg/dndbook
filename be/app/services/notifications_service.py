@@ -34,6 +34,7 @@ class NotificationsService:
                 'message': notif.message,
                 'related_post_id': notif.related_post_id,
                 'related_comment_id': notif.related_comment_id,
+                'related_invite_id': notif.related_invite_id,
                 'created_at': notif.created_at.isoformat() + 'Z' if notif.created_at else None
             })
 

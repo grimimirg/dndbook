@@ -281,7 +281,7 @@ const props = defineProps({
   },
   post: {
     type: Object,
-    required: true
+    default: null
   },
   startInEditMode: {
     type: Boolean,

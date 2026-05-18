@@ -1,6 +1,7 @@
 <template>
-  <div 
-    class="post-item flex-align-center" 
+  <div
+    v-bind="$attrs"
+    class="post-item flex-align-center"
     :class="{ 'hidden-post-item': post.is_hidden && isOwner }"
     @mouseenter="handleMouseEnter"
     @mouseleave="handleMouseLeave"
@@ -22,6 +23,9 @@
   />
 </template>
 
+<script>
+export default { inheritAttrs: false };
+</script>
 <script setup>
 import {ref} from 'vue';
 import {usePermissionsStore} from '../../../../stores/permissions.store.js';

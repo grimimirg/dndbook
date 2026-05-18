@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from app import db
+from app.utils.text_filter import filter_hidden_text
 
 
 class Post(db.Model):
@@ -28,7 +29,7 @@ class Post(db.Model):
                                order_by='Comment.created_at')
     notifications = db.relationship('Notification', backref='related_post', lazy=True, cascade='all, delete-orphan')
 
-    def to_dict(self, include_images=True, include_comments=True, include_mentions=True):
+    def to_dict(self, include_images=True, include_comments=True, include_mentions=True, user=None):
         """
         Convert post object to dictionary representation.
 
@@ -36,17 +37,22 @@ class Post(db.Model):
             include_images (bool): Whether to include images in output
             include_comments (bool): Whether to include comments in output
             include_mentions (bool): Whether to include character mentions in output
+            user: The user requesting the data (used for filtering hidden text)
 
         Returns:
             dict: Post data with optional images, comments, and mentions
         """
+        # Filter content for non-DM users
+        should_filter = user is not None and self.campaign.owner_id != user.id
+        filtered_content = filter_hidden_text(self.content, should_filter)
+        
         result = {
             'id': self.id,
             'campaign_id': self.campaign_id,
             'author_id': self.author_id,
             'author': self.author.username if self.author else None,
             'title': self.title,
-            'content': self.content,
+            'content': filtered_content,
             'order': self.post_order,
             'importance_level': self.importance_level,
             'is_hidden': self.is_hidden,

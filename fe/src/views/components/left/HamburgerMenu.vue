@@ -36,12 +36,13 @@
               <CampaignPlayersPanel v-if="campaignsStore.currentCampaign" ref="playersPanel"/>
             </div>
 
-            <div class="menu-section menu-controls">
-              <div class="control-group">
-                <button @click="handleLogout" class="logout-btn primary">
-                  {{ t('auth.logout') }}
-                </button>
+            <div class="menu-section menu-account-section">
+              <div class="account-separator">
+                <span class="account-label">{{ t('auth.account') }}</span>
               </div>
+              <button @click="handleLogout" class="logout-btn">
+                🚪 {{ t('auth.logout') }}
+              </button>
             </div>
 
           </div>

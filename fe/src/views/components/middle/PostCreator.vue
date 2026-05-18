@@ -72,18 +72,29 @@
       </div>
 
       <div class="actions flex-between">
-        <label class="image-upload-btn flex-align-center">
-          <input
-            type="file"
-            ref="fileInput"
-            @change="handleImageSelect"
-            accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
-            multiple
-            class="hidden-file-input"
-          />
-          <span class="upload-icon">📷</span>
-          <span>{{ t('post.addImages') }}</span>
-        </label>
+        <div class="post-upload-group">
+          <label class="image-upload-btn flex-align-center">
+            <input
+              type="file"
+              ref="fileInput"
+              @change="handleImageSelect"
+              accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
+              multiple
+              class="hidden-file-input"
+            />
+            <span class="upload-icon">📷</span>
+            <span>{{ t('post.addImages') }}</span>
+          </label>
+          <div
+            class="post-drop-zone"
+            :class="{ 'drag-over': isPostDragOver }"
+            @dragover.prevent="isPostDragOver = true"
+            @dragleave.prevent="isPostDragOver = false"
+            @drop.prevent="handlePostDrop"
+          >
+            {{ t('post.dropHere') }}
+          </div>
+        </div>
         <button type="submit" class="primary" :disabled="loading">
           {{ loading ? t('post.creating') : t('post.createPost') }}
         </button>
@@ -112,6 +123,7 @@ const isHidden = ref(false);
 const loading = ref(false);
 const selectedImages = ref([]);
 const fileInput = ref(null);
+const isPostDragOver = ref(false);
 const contentTextarea = ref(null);
 const mentionAutocomplete = ref(null);
 
@@ -149,6 +161,23 @@ function handleImageSelect(event) {
   if (fileInput.value) {
     fileInput.value.value = '';
   }
+}
+
+function handlePostDrop(event) {
+  isPostDragOver.value = false;
+  const files = Array.from(event.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+  if (!files.length) return;
+  if (selectedImages.value.length + files.length > 10) {
+    alert(t('post.maxImagesWarning', { max: 10 }));
+    return;
+  }
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      selectedImages.value.push({ file, preview: e.target.result, description: '' });
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
 function removeImage(index) {

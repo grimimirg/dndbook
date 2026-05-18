@@ -2,6 +2,56 @@
 
 Thank you for your interest in contributing to D&D Book! This document provides technical instructions for developers who want to contribute to the project.
 
+---
+
+## ⚠️ Gotchas & Known Constraints
+
+Hard-learned rules that aren't obvious from reading the code.
+
+### Database & Migrations
+
+**Migration revision IDs must be ≤ 32 characters.**
+The `alembic_version.version_num` column is `varchar(32)`. IDs longer than 32 chars are silently truncated, corrupting migration state and causing the app to fall back to `db.create_all()` — which creates tables but doesn't stamp Alembic, so every future migration run will be confused. Use `flask db revision` to generate standard 12-char hex IDs automatically. Never use descriptive strings as revision IDs (e.g. `add_related_invite_id_to_notifications` is 38 chars — too long).
+
+**Always write migrations defensively.**
+Use `IF NOT EXISTS` / `IF EXISTS` guards in raw SQL. `init-and-start.sh` runs on every deploy against an already-initialised database.
+
+**When there are multiple migration heads, use `revision='heads'` (plural).**
+`flask db upgrade head` (singular) fails silently or errors with multiple heads. Use `'heads'` in code, or run `flask db merge heads` to create a merge migration first.
+
+**`db.create_all()` is a last-resort fallback, not a migration strategy.**
+The app falls back to it if migrations fail. This creates tables but leaves Alembic state untracked — fix the root cause instead of relying on the fallback.
+
+### Backend
+
+**The database driver is psycopg3 — not psycopg2.**
+`requirements.txt` uses `psycopg[binary]>=3.1`. The SQLAlchemy URL prefix must be `postgresql+psycopg://`, not `postgresql+psycopg2://`. The two are not interchangeable and the wrong prefix causes silent connection failures.
+
+**External database connections require `?sslmode=require`.**
+When connecting from outside the Docker network (local dev against a remote DB, or production on Render), append `?sslmode=require` to the connection string.
+
+**Hidden posts must not generate notifications.**
+`PostsService.create_post()` skips `create_notification_entries()` when `is_hidden=True`. If you add new notification logic in the post creation flow, respect this rule.
+
+### Frontend
+
+**Every i18n key must be added to all 5 locale files.**
+`fe/src/locales/`: `it.yaml`, `en.yaml`, `fr.yaml`, `de.yaml`, `es.yaml`. Missing a key causes a silent fallback or a visible `[key]` string in that language.
+
+**`it` locale is the primary language.**
+Write the Italian string first, then translate. Keep the key structure identical across all files.
+
+**`style.css` is the single stylesheet — no scoped `<style>` blocks.**
+All CSS lives in `fe/src/style.css`. Search by component name before adding rules to avoid duplicates.
+
+**Width belongs on the container, not on individual sibling components.**
+If you need a fixed width for a group of sibling panels, set it on their shared parent and use `width: 100%` on the children. Setting `width` on one child makes its siblings appear misaligned.
+
+**The campaign generator (`fe/src/utils/campaignGenerator.js`) has two vocabularies.**
+Italian for the `it` locale, English for all others. If you add entries, add them to both `it` and `en` objects. The `pick()` function treats `[value, weight]` as a weighted item — use `{n, l}` objects for paired data (narrative text + label), not plain arrays.
+
+---
+
 ## Table of Contents
 
 - [Development Setup](#development-setup)
@@ -12,6 +62,7 @@ Thank you for your interest in contributing to D&D Book! This document provides 
 - [Writing Tests](#writing-tests)
 - [Code Style Guidelines](#code-style-guidelines)
 - [Submitting Changes](#submitting-changes)
+  - [Pull Request Workflow for Version Branches](#pull-request-workflow-for-version-branches)
 
 ---
 
@@ -1049,6 +1100,32 @@ pytest -v
 - Update documentation if needed
 - Request review from maintainers
 - Be responsive to feedback
+
+### Pull Request Workflow for Version Branches
+
+When contributing to version branches (e.g., `1.1.0`, `1.2.0`), all contributors must follow this workflow:
+
+#### 1. New Feature Implementation
+
+For implementing new features:
+- **Create an issue** describing the new implementation in as much detail as possible
+- **Add appropriate labels**: `pending`, `fe` (frontend) or `be` (backend)
+- **Wait for milestone assignment**: The project owner will decide in which release milestone to implement it
+- **Discuss in issue comments**: Use the issue's comment section to discuss implementation details and timeline
+
+#### 2. Bug Fixes
+
+For bug discoveries and fixes:
+- **Open an issue** with the `bug` label
+- **Fix without approval**: Bug fixes can be implemented without requiring project owner approval
+
+#### 3. Pull Request Assignment
+
+For all developed features and bug fixes:
+- **Open a pull request** for every change and bug
+- **Assign to project owner**: All pull requests must be assigned to the project owner for review
+- **Include clear description**: Describe what was changed and why
+- **Reference related issues**: Link any issues that the PR addresses
 
 ---
 
