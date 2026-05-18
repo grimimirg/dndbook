@@ -84,7 +84,8 @@ def create_post(current_user):
             campaign_id=data['campaign_id'],
             title=data['title'],
             content=data['content'],
-            importance_level=data.get('importance_level', 0)
+            importance_level=data.get('importance_level', 0),
+            is_hidden=bool(data.get('is_hidden', False))
         )
         return jsonify(post.to_dict(user=current_user)), 201
     except ValueError as e:

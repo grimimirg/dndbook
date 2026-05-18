@@ -47,7 +47,7 @@ class CharactersService:
         return [character.to_dict(user=user) for character in characters]
 
     @staticmethod
-    def create_character(campaign_id, user, name, race, character_class, description='', image_file=None, is_predefined=False):
+    def create_character(campaign_id, user, name, race, character_class, description='', image_file=None, image_url_external=None, is_predefined=False):
         """
         Create a new character for a campaign.
 
@@ -86,7 +86,12 @@ class CharactersService:
         if not name or not race or not character_class:
             raise ValueError('Name, race, and class are required')
 
-        image_url = CharactersService._save_character_image(image_file, campaign_id) if image_file else None
+        if image_file:
+            image_url = CharactersService._save_character_image(image_file, campaign_id)
+        elif image_url_external:
+            image_url = image_url_external
+        else:
+            image_url = None
 
         assigned_to_user_id = None
         if not is_predefined and campaign.owner_id != user.id:
@@ -138,7 +143,7 @@ class CharactersService:
 
     @staticmethod
     def update_character(campaign_id, character_id, user, name=None, race=None, character_class=None,
-                        description=None, image_file=None, remove_image=False):
+                        description=None, image_file=None, image_url_external=None, remove_image=False):
         """
         Update a character.
 
@@ -183,6 +188,9 @@ class CharactersService:
         elif image_file:
             CharactersService._delete_character_image(character.image_url)
             character.image_url = CharactersService._save_character_image(image_file, campaign_id)
+        elif image_url_external:
+            CharactersService._delete_character_image(character.image_url)
+            character.image_url = image_url_external
 
         db.session.commit()
 

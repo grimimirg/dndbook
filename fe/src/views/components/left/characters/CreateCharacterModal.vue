@@ -56,7 +56,13 @@
                   {{ t('character.removeImage') }}
                 </button>
               </div>
-              <div v-else class="upload-placeholder">
+              <div v-else
+                class="upload-placeholder"
+                :class="{ 'drag-over': isDragOver }"
+                @dragover.prevent="isDragOver = true"
+                @dragleave.prevent="isDragOver = false"
+                @drop.prevent="handleDrop"
+              >
                 <input
                     type="file"
                     ref="fileInput"
@@ -64,9 +70,26 @@
                     accept="image/*"
                     class="file-input"
                 />
-                <button type="button" @click="$refs.fileInput.click()" class="upload-btn">
-                  {{ t('character.uploadImage') }}
-                </button>
+                <div class="upload-actions">
+                  <button type="button" @click="$refs.fileInput.click()" class="upload-btn">
+                    📁 {{ t('character.uploadImage') }}
+                  </button>
+                  <span class="upload-or">{{ t('common.or') }}</span>
+                  <button type="button" @click="showUrlInput = !showUrlInput" class="upload-btn upload-btn-url">
+                    🔗 URL
+                  </button>
+                </div>
+                <div v-if="showUrlInput" class="url-input-row">
+                  <input
+                    v-model="imageUrl"
+                    type="url"
+                    :placeholder="t('character.imageUrlPlaceholder')"
+                    class="url-input"
+                    @keydown.enter.prevent="applyImageUrl"
+                  />
+                  <button type="button" @click="applyImageUrl" class="url-confirm-btn">✓</button>
+                </div>
+                <p class="drag-hint">{{ t('character.dragHint') }}</p>
                 <a
                     href="https://perchance.org/image-generator-dnd"
                     target="_blank"
@@ -134,7 +157,10 @@ const imagePreview = ref(null);
 const fileInput = ref(null);
 const saving = ref(false);
 const removeExistingImage = ref(false);
-const isPredefined = ref(false);
+const isPredefined = ref(true);
+const isDragOver = ref(false);
+const showUrlInput = ref(false);
+const imageUrl = ref('');
 
 const isEditing = computed(() => !!props.character);
 const canCreatePredefined = computed(() => {
@@ -177,26 +203,48 @@ function resetForm() {
   };
   imageFile.value = null;
   imagePreview.value = null;
+  imageUrl.value = '';
+  showUrlInput.value = false;
+  isDragOver.value = false;
   removeExistingImage.value = false;
-  isPredefined.value = false;
+  isPredefined.value = true;
+}
+
+function loadFile(file) {
+  imageFile.value = file;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    imagePreview.value = e.target.result;
+  };
+  reader.readAsDataURL(file);
+  removeExistingImage.value = false;
 }
 
 function handleFileChange(event) {
   const file = event.target.files[0];
-  if (file) {
-    imageFile.value = file;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      imagePreview.value = e.target.result;
-    };
-    reader.readAsDataURL(file);
-    removeExistingImage.value = false;
-  }
+  if (file) loadFile(file);
+}
+
+function handleDrop(event) {
+  isDragOver.value = false;
+  const file = event.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) loadFile(file);
+}
+
+function applyImageUrl() {
+  const url = imageUrl.value.trim();
+  if (!url) return;
+  imagePreview.value = url;
+  imageFile.value = null;
+  removeExistingImage.value = false;
+  showUrlInput.value = false;
 }
 
 function removeImage() {
   imageFile.value = null;
   imagePreview.value = null;
+  imageUrl.value = '';
+  showUrlInput.value = false;
   removeExistingImage.value = true;
   if (fileInput.value) {
     fileInput.value.value = '';
@@ -215,6 +263,8 @@ async function handleSubmit() {
 
   if (imageFile.value) {
     submitData.append('image', imageFile.value);
+  } else if (imagePreview.value && !imagePreview.value.startsWith('data:')) {
+    submitData.append('image_url', imagePreview.value);
   } else if (removeExistingImage.value && isEditing.value) {
     submitData.append('remove_image', 'true');
   }

@@ -196,6 +196,7 @@ async function handleCreateCampaign({name, description}) {
 
   if (result.success) {
     showCreateModal.value = false;
+    campaignsStore.setCurrentCampaign(result.campaign);
   }
 }
 

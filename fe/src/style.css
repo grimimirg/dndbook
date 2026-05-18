@@ -2248,23 +2248,93 @@ input::placeholder, textarea::placeholder {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    border: 2px dashed var(--border-color, rgba(200,169,110,0.25));
+    border-radius: 8px;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.character-modal .upload-placeholder.drag-over {
+    border-color: var(--accent-gold-2, #c8a96e);
+    background: rgba(200,169,110,0.06);
 }
 
 .character-modal .file-input {
     display: none;
 }
 
+.character-modal .upload-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.character-modal .upload-or {
+    font-size: 0.75rem;
+    color: var(--text-muted, #8b7355);
+    opacity: 0.7;
+}
+
 .character-modal .upload-btn {
-    padding: 0.5rem 1rem;
+    padding: 0.45rem 0.9rem;
     background-color: var(--primary-color);
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.character-modal .upload-btn-url {
+    background: rgba(200,169,110,0.15);
+    color: var(--accent-gold-2, #c8a96e);
+    border: 1px solid rgba(200,169,110,0.35);
+}
+
+.character-modal .upload-btn-url:hover {
+    background: rgba(200,169,110,0.25);
+    opacity: 1;
 }
 
 .character-modal .upload-btn:hover {
+    opacity: 0.9;
+}
+
+.character-modal .drag-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted, #8b7355);
+    opacity: 0.6;
+    margin: 0;
+}
+
+.character-modal .url-input-row {
+    display: flex;
+    gap: 0.4rem;
+    width: 100%;
+}
+
+.character-modal .url-input {
+    flex: 1;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--border-color, rgba(200,169,110,0.3));
+    border-radius: 4px;
+    background: var(--input-bg, rgba(0,0,0,0.3));
+    color: var(--text-primary, #e8d5b7);
+    font-size: 0.85rem;
+}
+
+.character-modal .url-confirm-btn {
+    padding: 0.4rem 0.7rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.character-modal .url-confirm-btn:hover {
     opacity: 0.9;
 }
 
