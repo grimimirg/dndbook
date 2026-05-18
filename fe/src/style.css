@@ -2278,6 +2278,13 @@ input::placeholder, textarea::placeholder {
     opacity: 0.9;
 }
 
+.character-modal .drag-hint {
+    margin: 0 0 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-muted, #8b7355);
+    opacity: 0.65;
+}
+
 .character-modal .generate-image-link {
     display: inline-flex;
     align-items: center;

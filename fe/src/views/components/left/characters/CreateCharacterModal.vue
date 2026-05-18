@@ -73,6 +73,7 @@
                 <button type="button" @click="$refs.fileInput.click()" class="upload-btn">
                   📁 {{ t('character.uploadImage') }}
                 </button>
+                <p class="drag-hint">{{ t('character.dragHint') }}</p>
                 <a
                     href="https://perchance.org/image-generator-dnd"
                     target="_blank"
@@ -81,9 +82,6 @@
                 >
                   🎨 {{ t('character.generateImage') }}
                 </a>
-                <span class="drag-hint generate-image-link">
-                  🖼️ {{ t('character.dragHint') }}
-                </span>
               </div>
             </div>
           </div>

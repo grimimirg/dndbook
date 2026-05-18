@@ -195,7 +195,7 @@ character:
   uploadImage: "Upload Image"
   generateImage: "Generate AI image"
   removeImage: "Remove Image"
-  dragHint: "Drag an image here"
+  dragHint: "...or drop an image file here"
   imageUrlPlaceholder: "Paste image URL..."
   edit: "Edit"
   delete: "Delete"

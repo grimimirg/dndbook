@@ -195,7 +195,7 @@ character:
   uploadImage: "Télécharger une image"
   generateImage: "Générer une image IA"
   removeImage: "Supprimer l'image"
-  dragHint: "Glissez une image ici"
+  dragHint: "...ou déposez une image ici"
   imageUrlPlaceholder: "Collez l'URL de l'image..."
   edit: "Modifier"
   delete: "Supprimer"
