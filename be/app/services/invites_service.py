@@ -84,7 +84,7 @@ class InvitesService:
             'player_username': user.username
         })
 
-        return campaign.to_dict()
+        return campaign.to_dict(user=user)
 
     @staticmethod
     def reject_invite(invite_id, user):

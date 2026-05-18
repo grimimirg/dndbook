@@ -229,3 +229,10 @@ profile:
   avatarUploadError: "Failed to upload avatar"
   avatarRemoveSuccess: "Avatar removed successfully"
   avatarRemoveError: "Failed to remove avatar"
+
+pdfExport:
+  exportToPdf: "Export PDF"
+  styleClassic: "Classic"
+  styleDark: "Dark"
+  styleFantasy: "Fantasy"
+  exportFailed: "PDF export failed"

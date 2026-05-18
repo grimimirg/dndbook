@@ -229,3 +229,10 @@ profile:
   avatarUploadError: "Avatar konnte nicht hochgeladen werden"
   avatarRemoveSuccess: "Avatar erfolgreich entfernt"
   avatarRemoveError: "Avatar konnte nicht entfernt werden"
+
+pdfExport:
+  exportToPdf: "PDF exportieren"
+  styleClassic: "Klassisch"
+  styleDark: "Dunkel"
+  styleFantasy: "Fantasy"
+  exportFailed: "PDF-Export fehlgeschlagen"

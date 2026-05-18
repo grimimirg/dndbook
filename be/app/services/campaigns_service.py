@@ -26,8 +26,8 @@ class CampaignsService:
         member_campaigns = [c for c in user.member_campaigns if c.owner_id != user.id]
 
         return {
-            'owned': [campaign.to_dict() for campaign in owned_campaigns],
-            'shared': [campaign.to_dict() for campaign in member_campaigns]
+            'owned': [campaign.to_dict(user=user) for campaign in owned_campaigns],
+            'shared': [campaign.to_dict(user=user) for campaign in member_campaigns]
         }
 
     @staticmethod
@@ -86,7 +86,8 @@ class CampaignsService:
         if campaign.owner_id != user.id and not is_member:
             raise ValueError('Unauthorized')
 
-        return campaign
+        # Return the campaign with user context for filtering
+        return campaign.to_dict(user=user)
 
     @staticmethod
     def update_campaign(campaign_id, user, name=None, description=None, character_creation_mode=None):
