@@ -1,6 +1,6 @@
 """Add character mentions table
 
-Revision ID: 20260516_add_character_mentions
+Revision ID: ba8f362d619f
 Revises: add_user_profile_fields
 Create Date: 2026-05-16
 
@@ -9,8 +9,8 @@ from alembic import op
 import sqlalchemy as sa
 
 
-revision = '20260516_add_character_mentions'
-down_revision = 'add_user_profile_fields'
+revision = 'ba8f362d619f'
+down_revision = 'f31993015ef0'
 branch_labels = None
 depends_on = None
 

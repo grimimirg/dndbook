@@ -1,6 +1,6 @@
 """Add related_invite_id to notifications
 
-Revision ID: add_related_invite_id_to_notifications
+Revision ID: c674070d201e
 Revises: add_user_profile_fields
 Create Date: 2026-05-17
 
@@ -9,8 +9,8 @@ from alembic import op
 import sqlalchemy as sa
 
 
-revision = 'add_related_invite_id_to_notifications'
-down_revision = 'add_user_profile_fields'
+revision = 'c674070d201e'
+down_revision = 'f31993015ef0'
 branch_labels = None
 depends_on = None
 
