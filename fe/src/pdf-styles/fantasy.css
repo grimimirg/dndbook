@@ -1,0 +1,191 @@
+/* Fantasy PDF style with medieval/old book aesthetic */
+
+@page {
+    size: A4;
+    margin: 2cm;
+}
+
+body {
+    font-family: 'Garamond', 'Palatino', 'Georgia', serif;
+    font-size: 12pt;
+    line-height: 1.7;
+    color: #2c1810;
+    background-color: #f4e4c1;
+    margin: 0;
+    padding: 0;
+}
+
+.pdf-container {
+    max-width: 100%;
+    padding: 0;
+}
+
+/* Campaign Header */
+.campaign-header {
+    margin-bottom: 40px;
+    padding: 25px;
+    background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+    border: 3px double #5c3317;
+    border-radius: 8px;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.campaign-title {
+    font-size: 26pt;
+    font-weight: bold;
+    color: #ffd700;
+    margin: 0 0 15px 0;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-family: 'Times New Roman', serif;
+    letter-spacing: 2px;
+}
+
+.campaign-description {
+    font-size: 12pt;
+    line-height: 1.8;
+    color: #f4e4c1;
+    white-space: pre-wrap;
+    font-style: italic;
+}
+
+/* Posts */
+.posts-container {
+    margin-top: 30px;
+}
+
+.post {
+    margin-bottom: 40px;
+    padding: 20px;
+    background-color: rgba(244, 228, 193, 0.6);
+    border: 2px solid #8b4513;
+    border-radius: 6px;
+    page-break-inside: avoid;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.post-title {
+    font-size: 18pt;
+    font-weight: bold;
+    color: #5c3317;
+    margin: 0 0 10px 0;
+    border-bottom: 2px solid #a0522d;
+    padding-bottom: 8px;
+    font-family: 'Times New Roman', serif;
+    letter-spacing: 1px;
+}
+
+.post-author {
+    font-size: 11pt;
+    font-style: italic;
+    color: #6b4423;
+    margin-bottom: 15px;
+    text-align: right;
+}
+
+.post-content {
+    font-size: 12pt;
+    line-height: 1.8;
+    color: #2c1810;
+    margin-bottom: 20px;
+    white-space: pre-wrap;
+    font-family: 'Garamond', serif;
+}
+
+/* Images */
+.images-container {
+    margin: 25px 0;
+}
+
+.image-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 25px;
+    margin-bottom: 20px;
+}
+
+.image-row.single {
+    justify-content: flex-start;
+}
+
+.image-row.left {
+    flex-direction: row;
+}
+
+.image-row.right {
+    flex-direction: row-reverse;
+}
+
+.image-wrapper {
+    flex: 0 0 auto;
+    max-width: 50%;
+    padding: 8px;
+    background-color: #f4e4c1;
+    border: 3px double #8b4513;
+    border-radius: 4px;
+}
+
+.image-wrapper img {
+    max-width: 100%;
+    max-height: 320px;
+    object-fit: contain;
+    display: block;
+}
+
+.image-description {
+    flex: 1;
+    font-size: 11pt;
+    font-style: italic;
+    color: #5c3317;
+    line-height: 1.7;
+    padding: 10px;
+    background-color: rgba(139, 69, 19, 0.1);
+    border-left: 3px solid #a0522d;
+    border-radius: 4px;
+}
+
+/* Comments */
+.comments-container {
+    margin-top: 25px;
+    padding: 20px;
+    background-color: rgba(139, 69, 19, 0.1);
+    border: 2px solid #a0522d;
+    border-radius: 6px;
+}
+
+.comments-title {
+    font-size: 14pt;
+    font-weight: bold;
+    color: #5c3317;
+    margin: 0 0 15px 0;
+    font-family: 'Times New Roman', serif;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+.comment {
+    margin-bottom: 15px;
+    padding: 12px;
+    background-color: rgba(244, 228, 193, 0.8);
+    border: 1px solid #a0522d;
+    border-radius: 4px;
+}
+
+.comment:last-child {
+    margin-bottom: 0;
+}
+
+.comment-author {
+    font-size: 11pt;
+    font-weight: bold;
+    color: #8b4513;
+    margin-bottom: 6px;
+    font-family: 'Times New Roman', serif;
+}
+
+.comment-content {
+    font-size: 11pt;
+    color: #2c1810;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}

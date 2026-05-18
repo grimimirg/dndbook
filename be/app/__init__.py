@@ -114,6 +114,7 @@ def create_app():
     from app.controllers import posts_viewed_status_controller as posts_viewed_status
     from app.controllers import notifications_controller as notifications
     from app.controllers import user_controller as user
+    from app.controllers import pdf_export_controller as pdf_export
     from app.events import socketio_events
 
     app.register_blueprint(auth.bp)
@@ -126,6 +127,7 @@ def create_app():
     app.register_blueprint(posts_viewed_status.bp)
     app.register_blueprint(notifications.bp)
     app.register_blueprint(user.bp)
+    app.register_blueprint(pdf_export.bp)
 
     @app.route('/uploads/<path:filename>')
     def serve_upload(filename):

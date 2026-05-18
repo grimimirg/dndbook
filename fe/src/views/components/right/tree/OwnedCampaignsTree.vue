@@ -36,6 +36,10 @@
                 <span class="menu-icon">⬇</span>
                 <span>{{ t('campaign.export') }}</span>
               </button>
+              <button @click.stop="handleExportPdf(campaign.id)" class="menu-item">
+                <span class="menu-icon">📄</span>
+                <span>{{ t('pdfExport.exportToPdf') }}</span>
+              </button>
             </div>
           </Teleport>
         </div>
@@ -97,6 +101,11 @@
         @confirm="confirmToggleVisibility"
         @cancel="cancelToggleVisibility"
     />
+    <PdfExportModal
+        :show="showPdfExportModal"
+        :campaign-id="selectedCampaignId"
+        @close="showPdfExportModal = false"
+    />
   </div>
 </template>
 
@@ -110,6 +119,7 @@ import draggable from 'vuedraggable';
 import {usePostActionsMenu} from '../../../../composables/usePostActionsMenu.js';
 import PostItemTree from './PostItemTree.vue';
 import ConfirmModal from '../../modals/ConfirmModal.vue';
+import PdfExportModal from '../../modals/PdfExportModal.vue';
 
 const {t} = useI18n();
 const campaignsStore = useCampaignsStore();
@@ -118,6 +128,8 @@ const permissionsStore = usePermissionsStore();
 const openMenuId = ref(null);
 const menuPosition = ref({});
 const buttonRefs = ref({});
+const showPdfExportModal = ref(false);
+const selectedCampaignId = ref(null);
 
 const props = defineProps({
   expandedCampaignId: {
@@ -203,6 +215,12 @@ function handleInvite(campaignId) {
 function handleExport(campaignId) {
   openMenuId.value = null;
   openExportModal(campaignId);
+}
+
+function handleExportPdf(campaignId) {
+  openMenuId.value = null;
+  selectedCampaignId.value = campaignId;
+  showPdfExportModal.value = true;
 }
 
 async function handlePostReorder() {
