@@ -316,6 +316,8 @@ input::placeholder, textarea::placeholder {
     position: sticky;
     top: 80px;
     align-self: start;
+    width: 380px;
+    min-width: 380px;
 }
 
 .feed {
@@ -1503,8 +1505,10 @@ input::placeholder, textarea::placeholder {
 /* CampaignDescriptionPanel.vue styles */
 .campaign-description-panel {
     height: fit-content;
-    width: 380px;
-    min-width: 380px;
+}
+
+.campaign-info-column > * {
+    width: 100%;
 }
 
 .campaign-description-panel .panel-header {
