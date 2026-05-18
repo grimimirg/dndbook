@@ -29,7 +29,7 @@
         >
           <div class="notification-content">
             <div class="notification-type">{{ getNotificationTypeLabel(notification.notification_type) }}</div>
-            <div class="notification-message">{{ notification.message }}</div>
+            <div class="notification-message">{{ getNotificationMessage(notification) }}</div>
             <div class="notification-time">{{ formatTime(notification.created_at) }}</div>
           </div>
           <!-- Invite-specific actions -->
@@ -93,6 +93,15 @@ function toggleDropdown() {
 
 function getNotificationTypeLabel(type) {
   return t(`notification.type.${type}`);
+}
+
+function getNotificationMessage(notification) {
+  if (notification.notification_type === 'invite') {
+    const inviter = notification.message?.split(' invited')[0]?.split(' ha invitato')[0] || '?';
+    const campaign = notification.title?.replace(/^Campaign invite:\s*/i, '') || '?';
+    return t('invite.inviteMessage', { inviter, campaign });
+  }
+  return notification.message;
 }
 
 async function fetchNotifications() {

@@ -12,7 +12,10 @@
           @click="toggleCampaign(campaign)"
       >
         <span class="expand-icon">{{ expandedCampaignId === campaign.id ? '▼' : '▶' }}</span>
-        <span class="campaign-name">{{ campaign.name }}</span>
+        <span class="campaign-info">
+          <span class="campaign-name">{{ campaign.name }}</span>
+          <span v-if="campaign.owner_username" class="campaign-dm">{{ t('campaign.dm') }}: {{ campaign.owner_username }}</span>
+        </span>
       </div>
 
       <div v-if="expandedCampaignId === campaign.id" class="posts-list">
