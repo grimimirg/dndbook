@@ -33,16 +33,16 @@ MAX_RETRIES=30
 RETRY_COUNT=0
 
 until python3 -c "
-import os
-from sqlalchemy import create_engine
+import os, sys
+url = os.getenv('DATABASE_URL', '')
 try:
-    engine = create_engine(os.getenv('DATABASE_URL'))
-    conn = engine.connect()
-    conn.close()
-    exit(0)
-except Exception:
-    exit(1)
-" 2>/dev/null; do
+    import psycopg
+    psycopg.connect(url.replace('postgresql+psycopg://', 'postgresql://', 1), connect_timeout=5).close()
+    sys.exit(0)
+except Exception as e:
+    print(f'  connect error: {e}', file=sys.stderr)
+    sys.exit(1)
+"; do
     RETRY_COUNT=$((RETRY_COUNT + 1))
     
     if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
