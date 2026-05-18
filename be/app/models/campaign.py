@@ -43,6 +43,7 @@ class Campaign(db.Model):
             'name': self.name,
             'description': filtered_description,
             'owner_id': self.owner_id,
+            'owner_username': self.owner.username if self.owner else None,
             'character_creation_mode': self.character_creation_mode,
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat(),

@@ -1,6 +1,7 @@
 """Service for character operations."""
 
 import os
+import time
 from flask import current_app
 from werkzeug.utils import secure_filename
 
@@ -46,7 +47,7 @@ class CharactersService:
         return [character.to_dict(user=user) for character in characters]
 
     @staticmethod
-    def create_character(campaign_id, user, name, race, character_class, description='', image_file=None, is_predefined=False):
+    def create_character(campaign_id, user, name, race, character_class, description='', image_file=None, image_url_external=None, is_predefined=False):
         """
         Create a new character for a campaign.
 
@@ -71,16 +72,30 @@ class CharactersService:
         """
         campaign = Campaign.query.get_or_404(campaign_id)
 
-        if campaign.owner_id != user.id:
-            raise ValueError('Only campaign owner can create characters')
+        is_member = campaign.members.filter_by(id=user.id).first() is not None
+        if campaign.owner_id != user.id and not is_member:
+            raise ValueError('Unauthorized')
 
         if is_predefined and campaign.owner_id != user.id:
             raise ValueError('Only campaign owner can create predefined characters')
 
+        if not is_predefined and campaign.owner_id != user.id:
+            if campaign.character_creation_mode not in ('free', 'optional'):
+                raise ValueError('Only campaign owner can create characters in this campaign')
+
         if not name or not race or not character_class:
             raise ValueError('Name, race, and class are required')
 
-        image_url = CharactersService._save_character_image(image_file, campaign_id) if image_file else None
+        if image_file:
+            image_url = CharactersService._save_character_image(image_file, campaign_id)
+        elif image_url_external:
+            image_url = image_url_external
+        else:
+            image_url = None
+
+        assigned_to_user_id = None
+        if not is_predefined and campaign.owner_id != user.id:
+            assigned_to_user_id = user.id
 
         character = Character(
             campaign_id=campaign_id,
@@ -89,7 +104,8 @@ class CharactersService:
             character_class=character_class,
             description=description,
             image_url=image_url,
-            is_predefined=is_predefined
+            is_predefined=is_predefined,
+            assigned_to_user_id=assigned_to_user_id
         )
 
         db.session.add(character)
@@ -127,7 +143,7 @@ class CharactersService:
 
     @staticmethod
     def update_character(campaign_id, character_id, user, name=None, race=None, character_class=None,
-                        description=None, image_file=None, remove_image=False):
+                        description=None, image_file=None, image_url_external=None, remove_image=False):
         """
         Update a character.
 
@@ -172,6 +188,9 @@ class CharactersService:
         elif image_file:
             CharactersService._delete_character_image(character.image_url)
             character.image_url = CharactersService._save_character_image(image_file, campaign_id)
+        elif image_url_external:
+            CharactersService._delete_character_image(character.image_url)
+            character.image_url = image_url_external
 
         db.session.commit()
 
@@ -221,7 +240,7 @@ class CharactersService:
             return None
 
         filename = secure_filename(image_file.filename)
-        timestamp = str(int(os.path.getmtime(__file__) * 1000))
+        timestamp = str(int(time.time() * 1000))
         unique_filename = f"character_{campaign_id}_{timestamp}_{filename}"
         filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
         image_file.save(filepath)

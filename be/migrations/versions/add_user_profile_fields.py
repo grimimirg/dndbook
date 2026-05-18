@@ -1,6 +1,6 @@
 """Add user profile fields
 
-Revision ID: add_user_profile_fields
+Revision ID: f31993015ef0
 Revises: 
 Create Date: 2026-05-16
 
@@ -9,7 +9,7 @@ from alembic import op
 import sqlalchemy as sa
 
 
-revision = 'add_user_profile_fields'
+revision = 'f31993015ef0'
 down_revision = None
 branch_labels = None
 depends_on = None

@@ -56,7 +56,13 @@
                   {{ t('character.removeImage') }}
                 </button>
               </div>
-              <div v-else class="upload-placeholder">
+              <div v-else
+                class="upload-placeholder"
+                :class="{ 'drag-over': isDragOver }"
+                @dragover.prevent="isDragOver = true"
+                @dragleave.prevent="isDragOver = false"
+                @drop.prevent="handleDrop"
+              >
                 <input
                     type="file"
                     ref="fileInput"
@@ -65,8 +71,17 @@
                     class="file-input"
                 />
                 <button type="button" @click="$refs.fileInput.click()" class="upload-btn">
-                  {{ t('character.uploadImage') }}
+                  📁 {{ t('character.uploadImage') }}
                 </button>
+                <p class="drag-hint">{{ t('character.dragHint') }}</p>
+                <a
+                    href="https://perchance.org/image-generator-dnd"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="generate-image-link"
+                >
+                  🎨 {{ t('character.generateImage') }}
+                </a>
               </div>
             </div>
           </div>
@@ -126,7 +141,8 @@ const imagePreview = ref(null);
 const fileInput = ref(null);
 const saving = ref(false);
 const removeExistingImage = ref(false);
-const isPredefined = ref(false);
+const isPredefined = ref(true);
+const isDragOver = ref(false);
 
 const isEditing = computed(() => !!props.character);
 const canCreatePredefined = computed(() => {
@@ -169,21 +185,30 @@ function resetForm() {
   };
   imageFile.value = null;
   imagePreview.value = null;
+  isDragOver.value = false;
   removeExistingImage.value = false;
-  isPredefined.value = false;
+  isPredefined.value = true;
+}
+
+function loadFile(file) {
+  imageFile.value = file;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    imagePreview.value = e.target.result;
+  };
+  reader.readAsDataURL(file);
+  removeExistingImage.value = false;
 }
 
 function handleFileChange(event) {
   const file = event.target.files[0];
-  if (file) {
-    imageFile.value = file;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      imagePreview.value = e.target.result;
-    };
-    reader.readAsDataURL(file);
-    removeExistingImage.value = false;
-  }
+  if (file) loadFile(file);
+}
+
+function handleDrop(event) {
+  isDragOver.value = false;
+  const file = event.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) loadFile(file);
 }
 
 function removeImage() {

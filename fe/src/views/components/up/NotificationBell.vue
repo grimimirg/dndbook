@@ -29,7 +29,7 @@
         >
           <div class="notification-content">
             <div class="notification-type">{{ getNotificationTypeLabel(notification.notification_type) }}</div>
-            <div class="notification-message">{{ notification.message }}</div>
+            <div class="notification-message">{{ getNotificationMessage(notification) }}</div>
             <div class="notification-time">{{ formatTime(notification.created_at) }}</div>
           </div>
           <!-- Invite-specific actions -->
@@ -95,6 +95,15 @@ function getNotificationTypeLabel(type) {
   return t(`notification.type.${type}`);
 }
 
+function getNotificationMessage(notification) {
+  if (notification.notification_type === 'invite') {
+    const inviter = notification.message?.split(' invited')[0]?.split(' ha invitato')[0] || '?';
+    const campaign = notification.title?.replace(/^Campaign invite:\s*/i, '') || '?';
+    return t('invite.inviteMessage', { inviter, campaign });
+  }
+  return notification.message;
+}
+
 async function fetchNotifications() {
   loading.value = true;
   try {
@@ -133,14 +142,12 @@ async function handleAccept(notification) {
     if (result.success) {
       campaignsStore.addSharedCampaign(result.campaign);
       notifications.value = notifications.value.filter(n => n.id !== notification.id);
-      
+
       const mode = result.campaign.character_creation_mode;
       if (mode === 'free' || mode === 'predefined') {
-        sessionStorage.setItem('pendingCharacterCreation', JSON.stringify({
-          campaignId: result.campaign.id,
-          mode: mode
-        }));
+        campaignsStore.setPendingCharacterCreation(result.campaign.id, mode);
       }
+      campaignsStore.setCurrentCampaign(result.campaign);
     }
   }
 }
@@ -155,6 +162,16 @@ async function handleReject(notification) {
 
 function handleNotificationClick(notification) {
   showDropdown.value = false;
+
+  if (notification.notification_type === 'character_reminder' && notification.campaign_id) {
+    const campaign = [...campaignsStore.sharedCampaigns, ...campaignsStore.ownedCampaigns]
+      .find(c => c.id === notification.campaign_id);
+    if (campaign && campaign.character_creation_mode !== 'optional') {
+      campaignsStore.setPendingCharacterCreation(campaign.id, campaign.character_creation_mode);
+      campaignsStore.setCurrentCampaign(campaign);
+    }
+    return;
+  }
 
   if (notification.related_post_id) {
     const route = {name: 'home'};

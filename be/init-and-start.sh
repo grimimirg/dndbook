@@ -32,17 +32,20 @@ echo "Waiting for database to be ready..."
 MAX_RETRIES=30
 RETRY_COUNT=0
 
-until python3 -c "
-import os
-from sqlalchemy import create_engine
+until python3 << 'PYCHECK'
+import os, sys
+url = os.getenv('DATABASE_URL', '')
+url = url.replace('postgresql+psycopg://', 'postgresql://', 1)
 try:
-    engine = create_engine(os.getenv('DATABASE_URL'))
-    conn = engine.connect()
+    import psycopg
+    conn = psycopg.connect(url, connect_timeout=5)
     conn.close()
-    exit(0)
-except Exception:
-    exit(1)
-" 2>/dev/null; do
+    sys.exit(0)
+except Exception as e:
+    sys.stderr.write('connect error: ' + str(e) + '\n')
+    sys.exit(1)
+PYCHECK
+do
     RETRY_COUNT=$((RETRY_COUNT + 1))
     
     if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
@@ -73,11 +76,13 @@ try:
         # Run database migrations
         from flask_migrate import upgrade as migrate_upgrade
         try:
-            migrate_upgrade()
+            migrate_upgrade(revision='heads')
             print("✓ Database migrations applied successfully")
         except Exception as e:
             print(f"⚠️  Migration warning: {e}")
-            print("Continuing with database initialization...")
+            print("Falling back to db.create_all()...")
+            db.create_all()
+            print("✓ Tables created via db.create_all()")
         
         # Check if admin user exists
         admin_user = User.query.filter_by(username='admin').first()

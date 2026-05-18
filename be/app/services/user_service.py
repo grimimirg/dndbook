@@ -3,12 +3,14 @@
 from app import db
 from app.models import User
 
+_UNSET = object()
+
 
 class UserService:
     """Service for handling user profile business logic."""
 
     @staticmethod
-    def update_profile(user_id, nickname=None, biography=None, avatar_url=None):
+    def update_profile(user_id, nickname=None, biography=None, avatar_url=_UNSET):
         """
         Update user profile information.
 
@@ -16,7 +18,8 @@ class UserService:
             user_id (int): The ID of the user to update
             nickname (str, optional): New nickname
             biography (str, optional): New biography
-            avatar_url (str, optional): New avatar URL (None to remove avatar)
+            avatar_url (str | None, optional): New avatar URL; pass None to remove avatar,
+                omit entirely to leave it unchanged
 
         Returns:
             User: Updated user object
@@ -32,8 +35,8 @@ class UserService:
             user.nickname = nickname
         if biography is not None:
             user.biography = biography
-        # Allow setting avatar_url to None to remove avatar
-        user.avatar_url = avatar_url
+        if avatar_url is not _UNSET:
+            user.avatar_url = avatar_url
 
         db.session.commit()
         return user

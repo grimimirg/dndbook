@@ -111,7 +111,7 @@ class PostsService:
         }
 
     @staticmethod
-    def create_post(user, campaign_id, title, content, importance_level=0):
+    def create_post(user, campaign_id, title, content, importance_level=0, is_hidden=False):
         """
         Create a new post in a campaign.
 
@@ -123,6 +123,7 @@ class PostsService:
             title (str): Post title
             content (str): Post content
             importance_level (int): Importance level (0-10)
+            is_hidden (bool): Whether the post is hidden from players
 
         Returns:
             Post: The created post
@@ -147,7 +148,8 @@ class PostsService:
             title=title,
             content=content,
             post_order=new_order,
-            importance_level=importance_level
+            importance_level=importance_level,
+            is_hidden=is_hidden
         )
 
         db.session.add(post)
@@ -158,14 +160,15 @@ class PostsService:
         resolved_mentions = PostsService.parse_character_mentions(content, campaign_id)
         PostsService.update_character_mentions(post, resolved_mentions)
 
-        PostsService.create_notification_entries(
-            user_id=user.id,
-            campaign_id=campaign_id,
-            notification_type='post_created',
-            title=f'New post: {title}',
-            message=f'A new post "{title}" was created in the campaign.',
-            related_post_id=post.id
-        )
+        if not is_hidden:
+            PostsService.create_notification_entries(
+                user_id=user.id,
+                campaign_id=campaign_id,
+                notification_type='post_created',
+                title=f'New post: {title}',
+                message=f'A new post "{title}" was created in the campaign.',
+                related_post_id=post.id
+            )
 
         return post
 

@@ -3,7 +3,8 @@
 from sqlalchemy import and_
 
 from app import db
-from app.models import Campaign, CampaignInvite, CampaignMembers
+from app.models import Campaign, CampaignInvite, CampaignMembers, User, Notification
+from app.events.socketio_events import send_notification
 
 
 class CampaignsService:
@@ -59,6 +60,10 @@ class CampaignsService:
         )
 
         db.session.add(campaign)
+        db.session.flush()
+
+        stmt = CampaignMembers.insert().values(user_id=user.id, campaign_id=campaign.id)
+        db.session.execute(stmt)
         db.session.commit()
 
         return campaign
@@ -174,7 +179,13 @@ class CampaignsService:
         if campaign.owner_id != user.id and not is_member:
             raise ValueError('Unauthorized')
 
-        members = [{'id': m.id, 'username': m.username, 'email': m.email} for m in campaign.members.all()]
+        owner = User.query.get(campaign.owner_id)
+        member_ids_seen = {owner.id}
+        members = [{'id': owner.id, 'username': owner.username, 'email': owner.email}]
+        for m in campaign.members.all():
+            if m.id not in member_ids_seen:
+                member_ids_seen.add(m.id)
+                members.append({'id': m.id, 'username': m.username, 'email': m.email})
 
         pending_invites = []
         if campaign.owner_id == user.id:
@@ -264,3 +275,36 @@ class CampaignsService:
 
         db.session.delete(invite)
         db.session.commit()
+
+    @staticmethod
+    def send_character_reminder(campaign_id, user_id, requester):
+        campaign = Campaign.query.get_or_404(campaign_id)
+
+        if campaign.owner_id != requester.id:
+            raise ValueError('Only the campaign owner can send reminders')
+
+        user = User.query.get_or_404(user_id)
+
+        is_member = db.session.execute(
+            db.select(CampaignMembers).where(
+                and_(
+                    CampaignMembers.c.user_id == user_id,
+                    CampaignMembers.c.campaign_id == campaign_id
+                )
+            )
+        ).first()
+
+        if not is_member:
+            raise ValueError('User is not a member of this campaign')
+
+        notification = Notification(
+            user_id=user_id,
+            campaign_id=campaign_id,
+            notification_type='character_reminder',
+            title=f'Character reminder: {campaign.name}',
+            message=f'{requester.username} is reminding you to pick a character for "{campaign.name}".'
+        )
+        db.session.add(notification)
+        db.session.commit()
+
+        send_notification(user_id)

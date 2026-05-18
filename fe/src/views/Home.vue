@@ -5,6 +5,7 @@
         <HamburgerMenu ref="hamburgerMenu" @invites-sent="handleInvitesSent" class="mobile-only"/>
         <h1>{{ t('app.title') }}</h1>
         <div class="user-info flex-align-center">
+          <ThemeToggle/>
           <NotificationBell/>
           <div class="user-avatar clickable" @click="showProfileModal = true">
             <img v-if="authStore.user?.avatar_url" 
@@ -227,9 +228,16 @@ watch(searchQuery, (newValue) => {
 watch(() => campaignsStore.currentCampaign, async (newCampaign) => {
   if (newCampaign) {
     fetchViewedStatus();
-    checkPendingCharacterCreation();
   } else {
     showCharacterNotification.value = false;
+  }
+});
+
+watch(() => campaignsStore.pendingCharacterCreation, (pending) => {
+  if (pending) {
+    notificationMode.value = pending.mode;
+    showCharacterNotification.value = true;
+    campaignsStore.clearPendingCharacterCreation();
   }
 });
 
