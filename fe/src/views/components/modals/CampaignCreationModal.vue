@@ -8,6 +8,9 @@
         </div>
         <div class="form-group">
           <textarea v-model="localDescription" :placeholder="t('campaign.description')" rows="4"></textarea>
+          <button type="button" class="generate-setup-btn" @click="generateSetup">
+            🎲 {{ t('campaign.generateSetup') }}
+          </button>
         </div>
         <div class="form-group mode-group">
           <div class="mode-select-wrapper">
@@ -32,6 +35,7 @@
 <script setup>
 import {ref, watch} from 'vue';
 import {useI18n} from 'vue-i18n';
+import {generateCampaign} from '../../../utils/campaignGenerator.js';
 
 const {t} = useI18n();
 
@@ -67,6 +71,10 @@ function getModeDescription(mode) {
     default:
       return '';
   }
+}
+
+function generateSetup() {
+  localDescription.value = generateCampaign();
 }
 
 function handleSubmit() {

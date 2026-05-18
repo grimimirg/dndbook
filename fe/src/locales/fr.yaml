@@ -25,6 +25,7 @@ campaign:
   newTooltip: "Créer une nouvelle campagne"
   create: "Nouvelle campagne"
   createButton: "À l'aventure...!"
+  generateSetup: "Générer le scénario"
   name: "Nom de l'aventure"
   description: "Racontez votre histoire..."
   cancel: "Annuler"
