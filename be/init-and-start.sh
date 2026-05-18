@@ -73,11 +73,13 @@ try:
         # Run database migrations
         from flask_migrate import upgrade as migrate_upgrade
         try:
-            migrate_upgrade()
+            migrate_upgrade(revision='heads')
             print("✓ Database migrations applied successfully")
         except Exception as e:
             print(f"⚠️  Migration warning: {e}")
-            print("Continuing with database initialization...")
+            print("Falling back to db.create_all()...")
+            db.create_all()
+            print("✓ Tables created via db.create_all()")
         
         # Check if admin user exists
         admin_user = User.query.filter_by(username='admin').first()
