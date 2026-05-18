@@ -192,6 +192,7 @@ character:
   image: "Portrait"
   imagePreview: "Character portrait"
   uploadImage: "Upload Image"
+  generateImage: "Generate AI image"
   removeImage: "Remove Image"
   edit: "Edit"
   delete: "Delete"

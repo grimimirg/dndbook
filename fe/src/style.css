@@ -2268,6 +2268,21 @@ input::placeholder, textarea::placeholder {
     opacity: 0.9;
 }
 
+.character-modal .generate-image-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    font-size: 0.8rem;
+    color: var(--text-muted, #8b7355);
+    text-decoration: none;
+    border-bottom: 1px dashed currentColor;
+    transition: color 0.2s;
+}
+
+.character-modal .generate-image-link:hover {
+    color: var(--accent-gold-2, #c8a96e);
+}
+
 .character-modal .modal-actions {
     display: flex;
     justify-content: flex-end;

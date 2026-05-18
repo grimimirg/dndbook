@@ -192,6 +192,7 @@ character:
   image: "Porträt"
   imagePreview: "Charakterporträt"
   uploadImage: "Bild hochladen"
+  generateImage: "KI-Bild generieren"
   removeImage: "Bild entfernen"
   edit: "Bearbeiten"
   delete: "Löschen"

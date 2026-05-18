@@ -192,6 +192,7 @@ character:
   image: "Portrait"
   imagePreview: "Portrait du personnage"
   uploadImage: "Télécharger une image"
+  generateImage: "Générer une image IA"
   removeImage: "Supprimer l'image"
   edit: "Modifier"
   delete: "Supprimer"
