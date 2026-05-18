@@ -195,7 +195,7 @@ character:
   uploadImage: "Carica Immagine"
   generateImage: "Genera immagine AI"
   removeImage: "Rimuovi Immagine"
-  dragHint: "oppure trascina qui un'immagine"
+  dragHint: "Trascina un'immagine qui"
   imageUrlPlaceholder: "Incolla URL immagine..."
   edit: "Modifica"
   delete: "Elimina"

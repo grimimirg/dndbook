@@ -195,7 +195,7 @@ character:
   uploadImage: "Bild hochladen"
   generateImage: "KI-Bild generieren"
   removeImage: "Bild entfernen"
-  dragHint: "oder Bild hier hineinziehen"
+  dragHint: "Bild hier hineinziehen"
   imageUrlPlaceholder: "Bild-URL einfügen..."
   edit: "Bearbeiten"
   delete: "Löschen"

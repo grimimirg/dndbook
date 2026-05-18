@@ -70,26 +70,9 @@
                     accept="image/*"
                     class="file-input"
                 />
-                <div class="upload-actions">
-                  <button type="button" @click="$refs.fileInput.click()" class="upload-btn">
-                    📁 {{ t('character.uploadImage') }}
-                  </button>
-                  <span class="upload-or">{{ t('common.or') }}</span>
-                  <button type="button" @click="showUrlInput = !showUrlInput" class="upload-btn upload-btn-url">
-                    🔗 URL
-                  </button>
-                </div>
-                <div v-if="showUrlInput" class="url-input-row">
-                  <input
-                    v-model="imageUrl"
-                    type="url"
-                    :placeholder="t('character.imageUrlPlaceholder')"
-                    class="url-input"
-                    @keydown.enter.prevent="applyImageUrl"
-                  />
-                  <button type="button" @click="applyImageUrl" class="url-confirm-btn">✓</button>
-                </div>
-                <p class="drag-hint">{{ t('character.dragHint') }}</p>
+                <button type="button" @click="$refs.fileInput.click()" class="upload-btn">
+                  📁 {{ t('character.uploadImage') }}
+                </button>
                 <a
                     href="https://perchance.org/image-generator-dnd"
                     target="_blank"
@@ -98,6 +81,9 @@
                 >
                   🎨 {{ t('character.generateImage') }}
                 </a>
+                <span class="drag-hint generate-image-link">
+                  🖼️ {{ t('character.dragHint') }}
+                </span>
               </div>
             </div>
           </div>
@@ -159,8 +145,6 @@ const saving = ref(false);
 const removeExistingImage = ref(false);
 const isPredefined = ref(true);
 const isDragOver = ref(false);
-const showUrlInput = ref(false);
-const imageUrl = ref('');
 
 const isEditing = computed(() => !!props.character);
 const canCreatePredefined = computed(() => {
@@ -203,8 +187,6 @@ function resetForm() {
   };
   imageFile.value = null;
   imagePreview.value = null;
-  imageUrl.value = '';
-  showUrlInput.value = false;
   isDragOver.value = false;
   removeExistingImage.value = false;
   isPredefined.value = true;
@@ -231,20 +213,9 @@ function handleDrop(event) {
   if (file && file.type.startsWith('image/')) loadFile(file);
 }
 
-function applyImageUrl() {
-  const url = imageUrl.value.trim();
-  if (!url) return;
-  imagePreview.value = url;
-  imageFile.value = null;
-  removeExistingImage.value = false;
-  showUrlInput.value = false;
-}
-
 function removeImage() {
   imageFile.value = null;
   imagePreview.value = null;
-  imageUrl.value = '';
-  showUrlInput.value = false;
   removeExistingImage.value = true;
   if (fileInput.value) {
     fileInput.value.value = '';
@@ -263,8 +234,6 @@ async function handleSubmit() {
 
   if (imageFile.value) {
     submitData.append('image', imageFile.value);
-  } else if (imagePreview.value && !imagePreview.value.startsWith('data:')) {
-    submitData.append('image_url', imagePreview.value);
   } else if (removeExistingImage.value && isEditing.value) {
     submitData.append('remove_image', 'true');
   }
