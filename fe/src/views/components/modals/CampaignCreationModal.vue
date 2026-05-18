@@ -37,7 +37,7 @@ import {ref, watch} from 'vue';
 import {useI18n} from 'vue-i18n';
 import {generateCampaign} from '../../../utils/campaignGenerator.js';
 
-const {t} = useI18n();
+const {t, locale} = useI18n();
 
 const props = defineProps({
   show: {
@@ -74,7 +74,7 @@ function getModeDescription(mode) {
 }
 
 function generateSetup() {
-  localDescription.value = generateCampaign();
+  localDescription.value = generateCampaign(locale.value);
 }
 
 function handleSubmit() {
