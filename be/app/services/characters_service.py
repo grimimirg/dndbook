@@ -123,7 +123,7 @@ class CharactersService:
 
         character = Character.query.filter_by(id=character_id, campaign_id=campaign_id).first_or_404()
 
-        return character.to_dict(user=user)
+        return character
 
     @staticmethod
     def update_character(campaign_id, character_id, user, name=None, race=None, character_class=None,
