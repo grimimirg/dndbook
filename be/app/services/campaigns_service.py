@@ -86,8 +86,7 @@ class CampaignsService:
         if campaign.owner_id != user.id and not is_member:
             raise ValueError('Unauthorized')
 
-        # Return the campaign with user context for filtering
-        return campaign.to_dict(user=user)
+        return campaign
 
     @staticmethod
     def update_campaign(campaign_id, user, name=None, description=None, character_creation_mode=None):
