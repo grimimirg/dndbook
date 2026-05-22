@@ -307,6 +307,7 @@ input::placeholder, textarea::placeholder {
     grid-template-columns: minmax(300px, 380px) minmax(500px, 1fr) minmax(280px, 300px);
     gap: 20px;
     align-items: start;
+    min-height: 0;
 }
 
 .campaign-info-column {
@@ -314,6 +315,9 @@ input::placeholder, textarea::placeholder {
     position: sticky;
     top: 80px;
     align-self: start;
+    max-height: calc(100vh - 100px);
+    min-height: 0;
+    overflow-y: auto;
 }
 
 .feed {
@@ -750,7 +754,7 @@ input::placeholder, textarea::placeholder {
     border: 1px solid rgba(139, 111, 71, 0.3);
     padding: 16px;
     max-height: calc(100vh - 100px);
-    overflow-y: auto;
+    min-height: 0;
     position: sticky;
     top: 80px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -772,7 +776,8 @@ input::placeholder, textarea::placeholder {
 
 
 .campaigns-tree {
-    max-height: 600px;
+    flex: 1;
+    min-height: 0;
     overflow-y: auto;
 }
 
