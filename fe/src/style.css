@@ -781,31 +781,18 @@ input::placeholder, textarea::placeholder {
     overflow-y: auto;
 }
 
-/* Custom scrollbar */
+/* Hide scrollbars for side columns */
+.campaigns-tree,
+.campaign-description-panel .panel-content,
+.campaign-info-column {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
 .campaigns-tree::-webkit-scrollbar,
-.campaign-description-panel .panel-content::-webkit-scrollbar {
-    width: 8px;
-}
-
-.campaigns-tree::-webkit-scrollbar-track,
-.campaign-description-panel .panel-content::-webkit-scrollbar-track {
-    background: var(--input-bg);
-    border-radius: 4px;
-}
-
-.campaigns-tree::-webkit-scrollbar-thumb,
-.campaign-description-panel .panel-content::-webkit-scrollbar-thumb {
-    background: rgba(139, 111, 71, 0.5);
-    border-radius: 4px;
-}
-
-.campaigns-tree::-webkit-scrollbar-thumb:hover,
-.campaign-description-panel .panel-content::-webkit-scrollbar-thumb:hover {
-    background: rgba(139, 111, 71, 0.7);
-}
-
-.campaign-description-panel .panel-content::-webkit-scrollbar {
-    width: 6px;
+.campaign-description-panel .panel-content::-webkit-scrollbar,
+.campaign-info-column::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
 }
 
 .campaign-node {
