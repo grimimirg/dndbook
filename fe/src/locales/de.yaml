@@ -229,6 +229,8 @@ profile:
   avatarUploadError: "Avatar konnte nicht hochgeladen werden"
   avatarRemoveSuccess: "Avatar erfolgreich entfernt"
   avatarRemoveError: "Avatar konnte nicht entfernt werden"
+  performanceMode: "Leistungsmodus"
+  performanceModeDescription: "Aktivieren, um die Leistung auf langsamen Geräten zu verbessern, indem Animationen und visuelle Effekte deaktiviert werden"
 
 pdfExport:
   exportToPdf: "PDF exportieren"

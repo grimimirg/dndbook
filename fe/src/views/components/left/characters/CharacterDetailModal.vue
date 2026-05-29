@@ -7,7 +7,7 @@
         <div class="character-detail-content">
           <div class="character-header">
             <div v-if="character.image_url" class="character-image">
-              <img :src="getImageUrl(character.image_url)" :alt="character.name"/>
+              <img :src="getImageUrl(character.image_url)" :alt="character.name" loading="lazy"/>
             </div>
             <div class="character-title">
               <h2>{{ character.name }}</h2>

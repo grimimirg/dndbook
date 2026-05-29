@@ -22,7 +22,7 @@
             @click="handleCharacterClick(character)"
           >
             <div v-if="character.image_url" class="character-image">
-              <img :src="character.image_url" :alt="character.name"/>
+              <img :src="character.image_url" :alt="character.name" loading="lazy"/>
             </div>
             <div class="character-info">
               <div class="character-name">{{ character.name }}</div>

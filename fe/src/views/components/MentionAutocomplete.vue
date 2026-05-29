@@ -9,7 +9,7 @@
       @mouseenter="selectedIndex = index"
     >
       <div v-if="character.image_url" class="character-avatar">
-        <img :src="character.image_url" :alt="character.name" />
+        <img :src="character.image_url" :alt="character.name" loading="lazy" />
       </div>
       <div v-else class="character-avatar placeholder">
         {{ character.name.charAt(0) }}

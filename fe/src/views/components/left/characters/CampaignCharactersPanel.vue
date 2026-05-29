@@ -36,6 +36,7 @@
                   v-if="character.image_url"
                   :src="getImageUrl(character.image_url)"
                   :alt="character.name"
+                  loading="lazy"
               />
               <div v-else class="no-image">?</div>
               <div v-if="character.is_predefined" class="predefined-badge" :title="t('character.predefinedCharacter')">
