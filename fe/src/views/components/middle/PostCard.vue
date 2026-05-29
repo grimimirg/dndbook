@@ -31,7 +31,7 @@
             class="grid-image"
             @click="openModalWithImage(index)"
         >
-          <img :src="getImageUrl(image.file_path)" :alt="`Post image ${index + 1}`" />
+          <img :src="getImageUrl(image.file_path)" :alt="`Post image ${index + 1}`" loading="lazy" />
           <div v-if="index === 2 && post.images.length > 3" class="more-images-overlay">
             <span>{{ t('post.moreImages', { count: post.images.length - 3 }) }}</span>
           </div>
