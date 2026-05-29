@@ -54,7 +54,7 @@
 
       <div v-if="selectedImages.length > 0" class="image-previews">
         <div v-for="(image, index) in selectedImages" :key="index" class="image-preview">
-          <img :src="image.preview" :alt="`Preview ${index + 1}`" />
+          <img :src="image.preview" :alt="`Preview ${index + 1}`" loading="lazy" />
           <button @click="moveImageUp(index)" v-if="index > 0" class="move-image btn-circle btn-circle-sm">↑</button>
           <button @click="moveImageDown(index)" v-if="index < selectedImages.length - 1" class="move-image btn-circle btn-circle-sm">↓</button>
           <button @click="removeImage(index)" class="remove-image btn-circle btn-circle-sm">×</button>

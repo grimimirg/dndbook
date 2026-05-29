@@ -10,7 +10,7 @@
             <img v-if="authStore.user?.avatar_url" 
                  :src="getAvatarUrl(authStore.user.avatar_url)" 
                  :alt="authStore.user?.nickname || authStore.user?.username"
-                 class="avatar-image" />
+                 class="avatar-image" loading="lazy" />
             <span v-else class="avatar-placeholder">
               {{ (authStore.user?.nickname || authStore.user?.username || 'U').charAt(0).toUpperCase() }}
             </span>
@@ -80,6 +80,7 @@
                 :highlighted-comment-id="highlightedCommentId"
                 @mark-viewed="markPostAsViewed"
                 :ref="el => setPostRef(post.id, el)"
+                v-memo="[post.id, post.updated_at, post.is_hidden, viewedPostIds.has(post.id), highlightedCommentId]"
             />
           </template>
         </draggable>
@@ -94,6 +95,7 @@
               :highlighted-comment-id="highlightedCommentId"
               @mark-viewed="markPostAsViewed"
               :ref="el => setPostRef(post.id, el)"
+              v-memo="[post.id, post.updated_at, post.is_hidden, viewedPostIds.has(post.id), highlightedCommentId]"
           />
         </template>
 
@@ -221,7 +223,7 @@ watch(searchQuery, (newValue) => {
 
   debounceTimeout = setTimeout(() => {
     debouncedSearchQuery.value = newValue;
-  }, 500);
+  }, 300);
 });
 
 watch(() => campaignsStore.currentCampaign, async (newCampaign) => {
@@ -306,8 +308,14 @@ const sortOptions = computed(() => {
 });
 
 const filteredPosts = computed(() => {
-  let filtered = postsStore.posts;
+  const posts = postsStore.posts;
+  
+  // Early return if no posts
+  if (!posts || posts.length === 0) return [];
+  
+  let filtered = posts;
 
+  // Only filter if there's a search query
   if (debouncedSearchQuery.value.trim()) {
     const query = debouncedSearchQuery.value.toLowerCase();
     filtered = filtered.filter(post => {
@@ -317,6 +325,7 @@ const filteredPosts = computed(() => {
     });
   }
 
+  // Only filter if importance filter is not ALL
   if (importanceFilter.value !== ImportanceTypes.ALL) {
     if (importanceFilter.value === ImportanceTypes.NONE) {
       filtered = filtered.filter(post => post.importance_level === 0);

@@ -229,6 +229,8 @@ profile:
   avatarUploadError: "Error al subir el avatar"
   avatarRemoveSuccess: "Avatar eliminado correctamente"
   avatarRemoveError: "Error al eliminar el avatar"
+  performanceMode: "Modo Rendimiento"
+  performanceModeDescription: "Activa para mejorar el rendimiento en dispositivos lentos desactivando animaciones y efectos visuales"
 
 pdfExport:
   exportToPdf: "Exportar PDF"

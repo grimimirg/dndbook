@@ -229,6 +229,8 @@ profile:
   avatarUploadError: "Impossibile caricare l'avatar"
   avatarRemoveSuccess: "Avatar rimosso con successo"
   avatarRemoveError: "Impossibile rimuovere l'avatar"
+  performanceMode: "Modalità Performance"
+  performanceModeDescription: "Attiva per migliorare le performance su dispositivi lenti disabilitando animazioni ed effetti visivi"
 
 pdfExport:
   exportToPdf: "Esporta PDF"

@@ -19,7 +19,7 @@
                 <img v-if="formData.avatar_url || authStore.user?.avatar_url" 
                      :src="getAvatarUrl(formData.avatar_url || authStore.user?.avatar_url)" 
                      :alt="t('profile.avatar')"
-                     class="avatar-image" />
+                     class="avatar-image" loading="lazy" />
                 <div v-else class="avatar-placeholder">
                   {{ (authStore.user?.nickname || authStore.user?.username || 'U').charAt(0).toUpperCase() }}
                 </div>
@@ -50,6 +50,23 @@
           <div class="profile-section">
             <h3>{{ t('profile.applicationLanguage') }}</h3>
             <LanguageSelector/>
+          </div>
+
+          <!-- Performance Mode Section -->
+          <div class="profile-section">
+            <h3>{{ t('profile.performanceMode') }}</h3>
+            <div class="performance-mode-toggle flex-align-center">
+              <input 
+                type="checkbox" 
+                id="performance-mode" 
+                v-model="performanceMode" 
+                @change="handlePerformanceModeToggle"
+                class="performance-checkbox"
+              />
+              <label for="performance-mode" class="performance-label">
+                {{ t('profile.performanceModeDescription') }}
+              </label>
+            </div>
           </div>
 
           <!-- Biography Section -->
@@ -146,12 +163,17 @@ const toast = reactive({
   message: ''
 });
 
+const performanceMode = ref(localStorage.getItem('performanceMode') !== 'false');
+
 onMounted(() => {
   if (authStore.user) {
     formData.nickname = authStore.user.nickname || '';
     formData.biography = authStore.user.biography || '';
     formData.avatar_url = authStore.user.avatar_url || '';
   }
+  
+  // Apply performance mode on mount
+  applyPerformanceMode();
 });
 
 function closeModal() {
@@ -257,6 +279,19 @@ async function updatePassword() {
     toast.show = true;
     toast.type = 'error';
     toast.message = result.error;
+  }
+}
+
+function handlePerformanceModeToggle() {
+  localStorage.setItem('performanceMode', performanceMode.value.toString());
+  applyPerformanceMode();
+}
+
+function applyPerformanceMode() {
+  if (performanceMode.value) {
+    document.body.classList.add('performance-mode');
+  } else {
+    document.body.classList.remove('performance-mode');
   }
 }
 </script>

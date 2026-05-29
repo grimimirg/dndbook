@@ -96,13 +96,28 @@ echo "Activating virtual environment..."
 source venv/bin/activate
 
 echo ""
+echo "Ensuring pip is installed..."
+python3 -m ensurepip --upgrade || python3 -m pip install --upgrade pip
+
+echo ""
 echo "Installing Python dependencies..."
-pip install --upgrade pip
-pip install -r requirements.txt
+python3 -m pip install --upgrade pip
+python3 -m pip install -r requirements.txt
 echo "✓ Dependencies installed"
 
 echo ""
 echo "Setting up PostgreSQL container..."
+
+# Check if PostgreSQL image exists locally, pull if needed
+POSTGRES_IMAGE="postgres:16-alpine"
+if ! docker images --format '{{.Repository}}:{{.Tag}}' | grep -q "^${POSTGRES_IMAGE}$"; then
+    echo "PostgreSQL image not found locally. Pulling ${POSTGRES_IMAGE}..."
+    docker pull ${POSTGRES_IMAGE}
+    echo "✓ PostgreSQL image downloaded"
+else
+    echo "✓ PostgreSQL image found locally"
+fi
+
 if docker ps -a -q -f name=$POSTGRES_CONTAINER | grep -q .; then
     if docker ps -q -f name=$POSTGRES_CONTAINER | grep -q .; then
         echo "✓ PostgreSQL container already running"
@@ -120,7 +135,7 @@ else
         -e POSTGRES_DB=$POSTGRES_DB \
         -p $POSTGRES_PORT:5432 \
         -v $POSTGRES_VOLUME:/var/lib/postgresql/data \
-        postgres:16-alpine
+        ${POSTGRES_IMAGE}
     echo "✓ PostgreSQL container created and started"
     echo "⏳ Waiting for PostgreSQL to be ready..."
     sleep 5
