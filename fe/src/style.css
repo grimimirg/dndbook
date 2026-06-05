@@ -2302,6 +2302,20 @@ input::placeholder, textarea::placeholder {
     margin-left: 0;
 }
 
+.sidebar-header-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.resources-toggle-btn {
+    opacity: 0.6;
+}
+
+.resources-toggle-btn:hover {
+    opacity: 1;
+}
+
 .campaign-header .campaign-menu-container {
     margin-left: auto;
 }

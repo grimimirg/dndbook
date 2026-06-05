@@ -75,7 +75,9 @@ campaign:
   modeFreeDesc: "I giocatori devono creare il proprio personaggio per entrare"
   modePredefined: "Personaggi Predefiniti"
   modePredefinedDesc: "I giocatori selezionano tra i personaggi predefiniti creati dal master"
-  
+  resourcesTitle: "Risorse e Strumenti"
+  resourcesEmpty: "Nessuna risorsa ancora."
+
 post:
   createPost: "Crea Post"
   title: "Titolo del post..."
@@ -162,6 +164,7 @@ common:
   confirm: "Conferma"
   cancel: "Annulla"
   later: "Più tardi"
+  close: "Chiudi"
 
 character:
   characters: "Personaggi"
