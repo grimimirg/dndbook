@@ -75,7 +75,9 @@ campaign:
   modeFreeDesc: "Players must create their own character to join"
   modePredefined: "Predefined Characters"
   modePredefinedDesc: "Players select from predefined characters created by the master"
-  
+  resourcesTitle: "Resources & Tools"
+  resourcesEmpty: "No resources yet."
+
 post:
   createPost: "Create Post"
   title: "Post title..."
@@ -162,6 +164,7 @@ common:
   confirm: "Confirm"
   cancel: "Cancel"
   later: "Later"
+  close: "Close"
 
 character:
   characters: "Characters"

@@ -1,7 +1,14 @@
 <template>
   <div class="sidebar">
     <div class="sidebar-header flex-between">
-      <h2>{{ t('campaign.campaigns') }}</h2>
+      <div class="sidebar-header-left flex-align-center">
+        <button
+          class="menu-toggle-btn resources-toggle-btn"
+          @click="showResources = true"
+          :title="t('campaign.resourcesTitle')"
+        >◧</button>
+        <h2>{{ t('campaign.campaigns') }}</h2>
+      </div>
       <div class="campaign-menu-container">
         <button 
             ref="actionsMenuButton"
@@ -76,6 +83,11 @@
         @confirm="handleExportConfirm"
         @cancel="showExportConfirm = false"
     />
+
+    <CampaignResourcesAndTools
+        :show="showResources"
+        @close="showResources = false"
+    />
   </div>
 </template>
 
@@ -90,12 +102,14 @@ import CampaignImportModal from '../../modals/CampaignImportModal.vue';
 import ConfirmModal from '../../modals/ConfirmModal.vue';
 import OwnedCampaignsTree from './OwnedCampaignsTree.vue';
 import SharedCampaignsTree from './SharedCampaignsTree.vue';
+import CampaignResourcesAndTools from '../CampaignResourcesAndTools.vue';
 import axios from 'axios';
 
 const {t} = useI18n();
 const campaignsStore = useCampaignsStore();
 const postsStore = usePostsStore();
 
+const showResources = ref(false);
 const expandedCampaignId = ref(null);
 const showCreateModal = ref(false);
 const showInviteModal = ref(false);
