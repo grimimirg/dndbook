@@ -20,7 +20,8 @@
           <button class="menu-toggle-btn" @click="$emit('close')" :title="t('common.close')">✕</button>
         </div>
         <div class="resources-panel-body">
-          <p class="resources-empty">{{ t('campaign.resourcesEmpty') }}</p>
+          <PersonalNotesTree />
+          <PlayerNotesTree />
         </div>
       </div>
     </Transition>
@@ -30,8 +31,12 @@
 <script setup>
 import { onUnmounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useNotesStore } from '../../../stores/notes.store.js';
+import PersonalNotesTree from './tree/PersonalNotesTree.vue';
+import PlayerNotesTree from './tree/PlayerNotesTree.vue';
 
 const { t } = useI18n();
+const notesStore = useNotesStore();
 
 const props = defineProps({
   show: {
@@ -49,6 +54,7 @@ function onKeydown(e) {
 watch(() => props.show, (val) => {
   if (val) {
     document.addEventListener('keydown', onKeydown);
+    notesStore.fetchNotes();
   } else {
     document.removeEventListener('keydown', onKeydown);
   }

@@ -238,3 +238,17 @@ pdfExport:
   styleDark: "Dunkel"
   styleFantasy: "Fantasy"
   exportFailed: "PDF-Export fehlgeschlagen"
+
+notes:
+  personalNotes: "Meine Notizen"
+  playerNotes: "Geteilte Notizen"
+  newNote: "Neue Notiz"
+  addNote: "Notiz hinzufügen"
+  addChild: "Unternotiz hinzufügen"
+  rename: "Umbenennen"
+  delete: "Löschen"
+  deleteTitle: "Notiz löschen"
+  confirmDelete: "Möchten Sie diese Notiz und alle Unternotizen wirklich löschen?"
+  noNotes: "Noch keine Notizen."
+  contentPlaceholder: "Notiz hier eingeben (Markdown unterstützt)..."
+  actions: "Notizaktionen"

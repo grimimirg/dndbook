@@ -4,6 +4,7 @@ import api from '../services/api.service.js';
 import { useCampaignsStore } from './campaigns.store.js';
 import { useInvitesStore } from './invites.store.js';
 import { usePostsStore } from './posts.store.js';
+import { useNotesStore } from './notes.store.js';
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref(localStorage.getItem('token') || null);
@@ -56,10 +57,12 @@ export const useAuthStore = defineStore('auth', () => {
     const campaignsStore = useCampaignsStore();
     const invitesStore = useInvitesStore();
     const postsStore = usePostsStore();
-    
+    const notesStore = useNotesStore();
+
     campaignsStore.$reset();
     invitesStore.$reset();
     postsStore.$reset();
+    notesStore.$reset();
   }
 
   return {

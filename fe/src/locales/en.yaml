@@ -241,3 +241,17 @@ pdfExport:
   styleDark: "Dark"
   styleFantasy: "Fantasy"
   exportFailed: "PDF export failed"
+
+notes:
+  personalNotes: "My Notes"
+  playerNotes: "Shared Notes"
+  newNote: "New note"
+  addNote: "Add note"
+  addChild: "Add sub-note"
+  rename: "Rename"
+  delete: "Delete"
+  deleteTitle: "Delete Note"
+  confirmDelete: "Are you sure you want to delete this note and all its sub-notes?"
+  noNotes: "No notes yet."
+  contentPlaceholder: "Write your note here (markdown supported)..."
+  actions: "Note actions"
