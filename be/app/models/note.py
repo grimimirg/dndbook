@@ -1,55 +1,80 @@
+"""Note model for personal and player-facing notes within campaigns."""
+
 from datetime import datetime
 
 from app import db
 
 
 class Note(db.Model):
-    """
-    Note model for freeform markdown notes.
+    """Note model representing DM notes within a campaign.
 
-    Notes are owned by a user and can optionally nest under a parent note.
-    Visibility controls who can read the note beyond its owner.
+    Notes can be personal (DM-only) or player-visible with per-player
+    permissions managed via the NotePermission cross-reference table.
+
+    Fields:
+        id: Primary key
+        campaign_id: Campaign this note belongs to
+        owner_id: User who created the note (always the DM/campaign owner)
+        title: Note title
+        content: Markdown body
+        visibility: 'personal' (DM-only) or 'players' (per-player gated)
+        parent_id: Optional parent note for nesting
+        created_at: Creation timestamp
+        updated_at: Last modification timestamp
     """
     __tablename__ = 'notes'
 
-    VISIBILITY_PRIVATE = 'private'
-    VISIBILITY_PUBLIC = 'public'
-    ALLOWED_VISIBILITIES = {VISIBILITY_PRIVATE, VISIBILITY_PUBLIC}
-
     id = db.Column(db.Integer, primary_key=True)
+    campaign_id = db.Column(db.Integer, db.ForeignKey('campaigns.id'), nullable=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     title = db.Column(db.String(200), nullable=False)
     content = db.Column(db.Text, nullable=False, default='')
-    owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    visibility = db.Column(db.String(20), nullable=False, default=VISIBILITY_PRIVATE)
+    visibility = db.Column(db.String(20), nullable=False, default='personal')
+    parent_id = db.Column(db.Integer, db.ForeignKey('notes.id'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    parent_id = db.Column(db.Integer, db.ForeignKey('notes.id'), nullable=True)
 
-    owner = db.relationship('User', backref=db.backref('notes', lazy=True, cascade='all, delete-orphan'))
-    children = db.relationship('Note', backref=db.backref('parent', remote_side=[id]), lazy=True,
-                               cascade='all, delete-orphan')
+    owner = db.relationship('User', backref='notes', foreign_keys=[owner_id])
+    parent = db.relationship('Note', remote_side=[id], backref='children')
+    permitted_users = db.relationship(
+        'User',
+        secondary='note_permissions',
+        backref='visible_notes',
+        lazy='joined'
+    )
 
-    def to_dict(self, include_children=False):
-        """
-        Convert note object to dictionary representation.
+    def to_dict(self, user=None):
+        """Convert note to dictionary for API output.
 
         Args:
-            include_children (bool): Whether to include direct child notes in output
+            user: The requesting user (used to determine if permission
+                  controls should be included in the response).
 
         Returns:
-            dict: Note data
+            dict: Note data safe for the requesting user to see.
         """
         result = {
             'id': self.id,
+            'campaign_id': self.campaign_id,
+            'owner_id': self.owner_id,
             'title': self.title,
             'content': self.content,
-            'owner_id': self.owner_id,
-            'owner': self.owner.username if self.owner else None,
             'visibility': self.visibility,
             'parent_id': self.parent_id,
             'created_at': self.created_at.isoformat() + 'Z',
             'updated_at': self.updated_at.isoformat() + 'Z',
         }
-        if include_children:
-            result['children'] = [child.to_dict() for child in self.children]
+
+        # Only DM/owner sees the permission list
+        if user is not None and self.owner_id == user.id:
+            result['permitted_user_ids'] = [u.id for u in self.permitted_users]
+
         return result
+
+
+# Cross-reference table for per-player note visibility
+note_permissions = db.Table(
+    'note_permissions',
+    db.Column('note_id', db.Integer, db.ForeignKey('notes.id'), primary_key=True),
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+)

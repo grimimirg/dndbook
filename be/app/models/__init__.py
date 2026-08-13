@@ -9,7 +9,7 @@ from app.models.character import Character
 from app.models.post_viewed_status import PostViewedStatus
 from app.models.notification import Notification
 from app.models.character_mention import CharacterMention
-from app.models.note import Note
+from app.models.note import Note, note_permissions
 
 __all__ = [
     'CampaignMembers',
@@ -23,5 +23,6 @@ __all__ = [
     'PostViewedStatus',
     'Notification',
     'CharacterMention',
-    'Note'
+    'Note',
+    'note_permissions',
 ]
