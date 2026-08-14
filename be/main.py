@@ -1,6 +1,6 @@
-import eventlet
+from gevent import monkey
 
-eventlet.monkey_patch()
+monkey.patch_all()
 
 from app import create_app, socketio
 
