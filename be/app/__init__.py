@@ -17,7 +17,7 @@ load_dotenv()
 
 db = SQLAlchemy()
 migrate = Migrate()
-socketio = SocketIO(cors_allowed_origins="*")
+socketio = SocketIO(cors_allowed_origins="*", async_mode="gevent")
 
 
 def create_app():

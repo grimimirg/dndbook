@@ -148,8 +148,17 @@ chmod 755 uploads
 echo "✓ Uploads directory ready"
 
 echo ""
+echo "Creating database tables if needed..."
+python - <<'PY'
+from app import create_app, db
+app = create_app()
+with app.app_context():
+    db.create_all()
+PY
+
+echo ""
 echo "Running database migrations..."
-export FLASK_APP=main.py
+export FLASK_APP="app:create_app()"
 flask db upgrade || echo "⚠️  Migration failed or no migrations to apply"
 echo "✓ Database migrations complete"
 
