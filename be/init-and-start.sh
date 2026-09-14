@@ -70,6 +70,17 @@ try:
     app = create_app()
     
     with app.app_context():
+        # Make sure the core schema is present. The Alembic revisions assume
+        # tables such as users already exist; if the PostgreSQL init scripts
+        # have not run (e.g. an external/shared database), create them now.
+        from sqlalchemy import inspect
+        inspector = inspect(db.engine)
+        if 'users' not in inspector.get_table_names():
+            db.create_all()
+            print("✓ Base database schema created")
+        else:
+            print("✓ Base database schema already exists")
+        
         # Run database migrations
         from flask_migrate import upgrade as migrate_upgrade
         try:
